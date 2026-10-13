@@ -120,7 +120,8 @@
             "useFrameworks": "dynamic"
           }
         }
-      ]
+      ],
+      "./plugins/with-gradle-memory"
     ],
     "experiments": {
       "typedRoutes": true
