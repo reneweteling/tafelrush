@@ -22,6 +22,8 @@ export type Settings = {
   name: string
   mode: 'slim' | 'alles' | 'eigen'
   tables: number[]
+  /** Tables above 10 she added herself, kept as buttons on the start screen. */
+  ownTables: number[]
   /** Anonymous usage statistics. null = not asked yet, so off. */
   analytics: boolean | null
   /** Chosen Dutch voice (identifier); null = the best one the app finds. */
@@ -91,6 +93,7 @@ export const DEFAULT_SETTINGS: Settings = {
   name: '',
   mode: 'slim',
   tables: [6, 7, 8],
+  ownTables: [],
   analytics: null,
   voice: null,
 }

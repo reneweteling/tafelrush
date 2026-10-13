@@ -33,7 +33,8 @@ export default async function Image({ params }: { params: Promise<{ code: string
   const who = c.name || 'Iemand'
   const headline = c.reply ? `${who} deed jouw sommen` : `${who} daagt je uit`
   const cta = c.reply ? 'Wie wint?' : c.score === c.sums.length ? 'Foutloos. Durf jij?' : 'Kun jij het beter?'
-  const tile = c.sums.length > 12 ? 30 : 38
+  const longest = Math.max(...c.sums.map((s) => `${s.a}×${s.b}`.length))
+  const tile = Math.min(c.sums.length > 12 ? 30 : 38, Math.floor(190 / longest))
 
   return new ImageResponse(
     (
@@ -115,7 +116,7 @@ export default async function Image({ params }: { params: Promise<{ code: string
                   justifyContent: 'center',
                   alignItems: 'center',
                   width: 175,
-                  height: tile * 1.7,
+                  height: 64,
                   borderRadius: 18,
                   background: C.bg,
                   color: C.fg,

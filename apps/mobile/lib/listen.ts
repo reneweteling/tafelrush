@@ -111,6 +111,8 @@ export async function canListen(): Promise<'ok' | 'denied' | 'unavailable'> {
 
 export function listenForNumber(opts: {
   timeoutMs: number
+  /** The right answer: once heard it counts at once, even for a long number. */
+  expected?: number
   signal: { cancelled: boolean }
   onPartial?: (text: string) => void
   /** The mic is open: start the visible clock. */
@@ -176,7 +178,7 @@ export function listenForNumber(opts: {
         if (n === null) return
         if (speechAt === null) heardSpeech()
         if (numberAt === null) numberAt = Date.now()
-        if (e.isFinal || numberIsComplete(text)) return finish(n)
+        if (e.isFinal || numberIsComplete(text, opts.expected)) return finish(n)
         if (n !== last) {
           last = n
           if (shortTimer) clearTimeout(shortTimer)

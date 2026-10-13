@@ -1,4 +1,5 @@
-// Slim oefenen: every sum 1×1..10×10 has its own level 0..5. Low levels come
+// Slim oefenen: every sum has its own level 0..5. A table is 1..10 times that
+// number, so the tafel van 17 is 1×17..10×17 (and the mirrors). Low levels come
 // back more often, a wrong sum returns later in the same round, and a sum and
 // its mirror (7×8, 8×7) help each other. Pure, so it runs in Vitest.
 
@@ -45,16 +46,40 @@ export function isBoss(stats: SumStats): boolean {
   return stats.wrong >= 2 && rankOf(stats.level) < 2
 }
 
-/** All sums where one of the factors is in the chosen tables. */
+/** Highest table you can pick. */
+export const MAX_TABLE = 1000
+/** The tables on the board: 1..10. Anything above is a custom table. */
+export const BASE_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+export const isTable = (t: number) => Number.isInteger(t) && t >= 1 && t <= MAX_TABLE
+
+/** All sums of the chosen tables: 1..10 times the table, both ways round. */
 export function poolFor(tables: number[]): Sum[] {
-  const set = new Set(tables)
+  const seen = new Set<string>()
   const out: Sum[] = []
-  for (let a = 1; a <= 10; a++) {
-    for (let b = 1; b <= 10; b++) {
-      if (set.has(a) || set.has(b)) out.push({ a, b })
+  const add = (s: Sum) => {
+    if (seen.has(key(s))) return
+    seen.add(key(s))
+    out.push(s)
+  }
+  for (const t of tables.filter(isTable)) {
+    for (let m = 1; m <= 10; m++) {
+      add({ a: m, b: t })
+      add({ a: t, b: m })
     }
   }
   return out
+}
+
+/** Tables above 10 that have been played, smallest first. */
+export function customTablesIn(progress: Progress): number[] {
+  const found = new Set<number>()
+  for (const k of Object.keys(progress)) {
+    const { a, b } = parseKey(k)
+    if (a > 10) found.add(a)
+    if (b > 10) found.add(b)
+  }
+  return [...found].sort((x, y) => x - y)
 }
 
 export function weightOf(progress: Progress, s: Sum): number {
@@ -124,10 +149,10 @@ export function applyOutcome(progress: Progress, s: Sum, outcome: Outcome, now: 
   return next
 }
 
-/** Average rank per table (1..10), only for tables with tried sums. */
+/** Average rank per table, only for tables with tried sums. */
 export function tableScores(progress: Progress): { table: number; avg: number; tried: number }[] {
   const out: { table: number; avg: number; tried: number }[] = []
-  for (let t = 1; t <= 10; t++) {
+  for (const t of [...BASE_TABLES, ...customTablesIn(progress)]) {
     const sums = poolFor([t]).map((s) => statsOf(progress, s))
     const tried = sums.filter((x) => x.tries > 0)
     if (tried.length === 0) continue

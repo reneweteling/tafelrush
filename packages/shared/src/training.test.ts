@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { decodeChallenge, describeTables, encodeChallenge } from './challenge'
 import {
   applyOutcome,
+  customTablesIn,
   isBoss,
   key,
   levelFromXp,
@@ -121,5 +122,54 @@ describe('challenge links', () => {
   it('rejects junk', () => {
     expect(decodeChallenge('hallo')).toBeNull()
     expect(decodeChallenge('abc.z.5.0')).toBeNull()
+  })
+})
+
+describe('big tables', () => {
+  it('pools 1..10 times the table, both ways round', () => {
+    const pool = poolFor([17])
+    expect(pool).toHaveLength(20)
+    expect(pool).toContainEqual({ a: 7, b: 17 })
+    expect(pool).toContainEqual({ a: 17, b: 7 })
+  })
+
+  it('keeps the 1..10 pool as it was', () => {
+    expect(poolFor([7])).toHaveLength(19)
+    expect(poolFor([6, 7, 8])).toHaveLength(51)
+  })
+
+  it('skips tables out of range', () => {
+    expect(poolFor([0, 1001, 2.5])).toEqual([])
+    expect(poolFor([1000])).toContainEqual({ a: 10, b: 1000 })
+  })
+
+  it('scores a played custom table and can call it the weakest', () => {
+    let p = {}
+    for (const m of [3, 4, 6, 7]) p = applyOutcome(p, { a: m, b: 13 }, 'fout', 1)
+    expect(customTablesIn(p)).toEqual([13])
+    expect(weakestTable(p)).toBe(13)
+  })
+
+  it('round-trips challenge links with big tables', () => {
+    const sums = [
+      { a: 7, b: 125 },
+      { a: 1000, b: 10 },
+      { a: 3, b: 13 },
+    ]
+    const code = encodeChallenge({ sums, score: 2, seconds: 30, name: 'Sanne', reply: false })
+    expect(decodeChallenge(code)).toEqual({ sums, score: 2, seconds: 30, name: 'Sanne', reply: false })
+    expect(describeTables(sums)).toContain('125')
+  })
+
+  it('still reads old short links', () => {
+    const sums = [{ a: 7, b: 8 }]
+    const code = encodeChallenge({ sums, score: 1, seconds: 3, name: '', reply: false })
+    expect(code).not.toContain('_')
+    expect(decodeChallenge(code)?.sums).toEqual(sums)
+  })
+
+  it('rejects broken big-table codes', () => {
+    expect(decodeChallenge('7_zz_3.1.3.0')).toBeNull()
+    expect(decodeChallenge('7_8_3.1.3.0')).toBeNull()
   })
 })

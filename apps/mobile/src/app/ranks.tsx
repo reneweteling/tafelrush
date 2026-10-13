@@ -1,4 +1,4 @@
-import { bosses, isBoss, rankOf, RANKS, RANK_COLORS, statsOf } from '@tafelrush/shared'
+import { BASE_TABLES, bosses, customTablesIn, isBoss, rankOf, RANKS, RANK_COLORS, statsOf, type Progress } from '@tafelrush/shared'
 import { router } from 'expo-router'
 import { ChevronLeft } from 'lucide-react-native'
 import { ScrollView, StyleSheet, View } from 'react-native'
@@ -7,10 +7,19 @@ import { IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { useStore } from '@/lib/store'
 import { colors, fonts, space } from '@/lib/theme'
 
-const N = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const N = BASE_TABLES
+
+/** A big table's cell: 7×17 and 17×7 share one square, showing the better of the two. */
+function bigCell(progress: Progress, t: number, m: number) {
+  const x = statsOf(progress, { a: m, b: t })
+  const y = statsOf(progress, { a: t, b: m })
+  return x.level >= y.level ? x : y
+}
 
 export default function Ranks() {
   const progress = useStore((s) => s.progress)
+  const own = useStore((s) => s.settings.ownTables ?? [])
+  const big = [...new Set([...own, ...customTablesIn(progress)])].sort((x, y) => x - y)
   let gold = 0
   for (const a of N) for (const b of N) if (rankOf(statsOf(progress, { a, b }).level) >= 3) gold++
   const boss = bosses(progress)
@@ -71,6 +80,29 @@ export default function Ranks() {
             </View>
           ))}
         </View>
+
+        {big.length > 0 ? (
+          <View style={{ gap: 3 }} accessibilityLabel="Rank per som van je eigen tafels">
+            <Txt variant="label" color={colors.muted} style={{ marginBottom: 6 }}>
+              Eigen tafels
+            </Txt>
+            {big.map((t) => (
+              <View key={t} style={s.row}>
+                <Head label={String(t)} />
+                {N.map((m) => {
+                  const st = bigCell(progress, t, m)
+                  const r = rankOf(st.level)
+                  return (
+                    <View
+                      key={m}
+                      style={[s.cell, { backgroundColor: RANK_COLORS[r], borderColor: isBoss(st) ? colors.pink : RANK_COLORS[r] }]}
+                    />
+                  )
+                })}
+              </View>
+            ))}
+          </View>
+        ) : null}
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
           {RANKS.map((name, i) => (

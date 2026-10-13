@@ -1,20 +1,20 @@
 import {
+  BASE_TABLES,
   bosses,
+  isTable,
   levelFromXp,
   smartTables,
   weakestTable,
 } from '@tafelrush/shared'
 import { router } from 'expo-router'
-import { ChevronRight, Flame, Mic, Play, Settings as SettingsIcon } from 'lucide-react-native'
-import { useEffect } from 'react'
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
+import { ChevronRight, Flame, Mic, Play, Plus, Settings as SettingsIcon, X } from 'lucide-react-native'
+import { useEffect, useState } from 'react'
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 
 import { Button, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { analyticsAvailable } from '@/lib/analytics'
 import { streak, updateSettings, useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
-
-const ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 export default function Start() {
   const settings = useStore((s) => s.settings)
@@ -41,12 +41,33 @@ export default function Start() {
     return b
   }, null)
 
-  const picked = settings.mode === 'slim' ? smartTables(progress) : settings.mode === 'alles' ? ALL : settings.tables
+  const picked = settings.mode === 'slim' ? smartTables(progress) : settings.mode === 'alles' ? BASE_TABLES : settings.tables
+  const own = settings.ownTables ?? []
+  const [adding, setAdding] = useState(false)
+  const [draft, setDraft] = useState('')
 
   function toggle(t: number) {
     const cur = settings.mode === 'eigen' ? settings.tables : picked
     const next = cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t].sort((a, b) => a - b)
     updateSettings({ mode: 'eigen', tables: next.length ? next : [t] })
+  }
+
+  function addOwn() {
+    const t = Number(draft)
+    setDraft('')
+    setAdding(false)
+    if (!isTable(t)) return
+    const cur = settings.mode === 'eigen' ? settings.tables : picked
+    updateSettings({
+      mode: 'eigen',
+      tables: [...new Set([...cur, t])].sort((a, b) => a - b),
+      ownTables: t > 10 ? [...new Set([...own, t])].sort((a, b) => a - b) : own,
+    })
+  }
+
+  function removeOwn(t: number) {
+    const rest = settings.tables.filter((x) => x !== t)
+    updateSettings({ ownTables: own.filter((x) => x !== t), tables: rest.length ? rest : [7] })
   }
 
   return (
@@ -123,7 +144,7 @@ export default function Start() {
             Tafels
           </Txt>
           <View style={s.grid}>
-            {ALL.map((t) => {
+            {BASE_TABLES.map((t) => {
               const on = picked.includes(t)
               return (
                 <Pressable
@@ -139,6 +160,60 @@ export default function Start() {
                 </Pressable>
               )
             })}
+          </View>
+          <View style={s.own}>
+            {own.map((t) => {
+              const on = picked.includes(t)
+              return (
+                <Pressable
+                  key={t}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                  accessibilityLabel={`Tafel van ${t}`}
+                  accessibilityHint="Lang drukken om weg te halen"
+                  onPress={() => toggle(t)}
+                  onLongPress={() => removeOwn(t)}
+                  style={[s.ownTable, on ? s.tableOn : null]}>
+                  <Txt style={{ fontFamily: fonts.displayBold, fontSize: 16 }} color={on ? colors.ink : colors.text}>
+                    {t}
+                  </Txt>
+                  {on ? null : (
+                    <Pressable accessibilityLabel={`Tafel van ${t} weghalen`} hitSlop={10} onPress={() => removeOwn(t)}>
+                      <X size={14} color={colors.muted} />
+                    </Pressable>
+                  )}
+                </Pressable>
+              )
+            })}
+            {adding ? (
+              <View style={[s.ownTable, s.ownInput]}>
+                <TextInput
+                  autoFocus
+                  value={draft}
+                  onChangeText={(v) => setDraft(v.replace(/[^0-9]/g, '').slice(0, 4))}
+                  onSubmitEditing={addOwn}
+                  onBlur={() => (draft ? addOwn() : setAdding(false))}
+                  keyboardType="number-pad"
+                  returnKeyType="done"
+                  submitBehavior="blurAndSubmit"
+                  placeholder="1 t/m 1000"
+                  placeholderTextColor={colors.muted}
+                  accessibilityLabel="Eigen tafel, 1 tot en met 1000"
+                  style={s.ownField}
+                />
+              </View>
+            ) : (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Eigen tafel toevoegen"
+                onPress={() => setAdding(true)}
+                style={({ pressed }) => [s.ownTable, s.ownAdd, pressed && { opacity: 0.7 }]}>
+                <Plus size={16} color={colors.muted} />
+                <Txt variant="bodyBold" color={colors.muted} style={{ fontSize: 15 }}>
+                  Eigen tafel
+                </Txt>
+              </Pressable>
+            )}
           </View>
           <View style={{ flexDirection: 'row', gap: space.s }}>
             <Pill label="Slimme mix" on={settings.mode === 'slim'} onPress={() => updateSettings({ mode: 'slim' })} />
@@ -218,6 +293,21 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   tableOn: { backgroundColor: colors.text, borderColor: colors.text },
+  own: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  ownTable: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minHeight: 44,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: colors.line,
+  },
+  ownAdd: { borderStyle: 'dashed', backgroundColor: 'transparent' },
+  ownInput: { borderColor: colors.lime, paddingHorizontal: 12 },
+  ownField: { minWidth: 110, color: colors.text, fontFamily: fonts.bodyBold, fontSize: 16, paddingVertical: 8 },
   pill: {
     flex: 1,
     minHeight: 44,

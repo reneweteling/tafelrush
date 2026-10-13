@@ -5,6 +5,7 @@ import {
   answer,
   applyOutcome,
   decodeChallenge,
+  BASE_TABLES,
   dutchNumberWord,
   FAST_MS,
   isBoss,
@@ -165,6 +166,7 @@ export default function Ronde() {
       timeoutMs: number,
       token: Token,
       withTimer: boolean,
+      expected: number,
     ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' }> => {
       let started = Date.now()
       // Voice: the clock waits until the mic is really open, and stops once she talks.
@@ -193,6 +195,7 @@ export default function Ronde() {
         patch({ typing: false })
         const heard = await listenForNumber({
           timeoutMs,
+          expected,
           signal: token,
           onPartial: (t) => patch({ heard: t }),
           onListening: () => {
@@ -252,7 +255,7 @@ export default function Ronde() {
       if (token.cancelled) return false
 
       const timeoutMs = settings.seconds > 0 ? settings.seconds * 1000 : NO_TIMER_MS
-      const { value, ms, input } = await getAnswer(timeoutMs, token, true)
+      const { value, ms, input } = await getAnswer(timeoutMs, token, true, s.a * s.b)
       if (token.cancelled) return false
 
       e.thinkMs += value === null ? timeoutMs : (ms ?? timeoutMs)
@@ -334,7 +337,7 @@ export default function Ronde() {
         addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
         await say(`Zeg maar na: ${s.a} keer ${s.b} is`)
         if (token.cancelled) return false
-        const again = await getAnswer(REPEAT_MS, token, false)
+        const again = await getAnswer(REPEAT_MS, token, false, s.a * s.b)
         if (token.cancelled) return false
         if (again.value !== null) addLine('me', dutchNumberWord(again.value))
         track('repeat_after_wrong', { ok: again.value === ans })
@@ -411,7 +414,7 @@ export default function Ronde() {
       while (e.plan.length < ROUND) e.plan.push(challenge.sums[e.plan.length % challenge.sums.length])
     } else {
       const tables =
-        settings.mode === 'slim' ? smartTables(progress) : settings.mode === 'alles' ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : settings.tables
+        settings.mode === 'slim' ? smartTables(progress) : settings.mode === 'alles' ? BASE_TABLES : settings.tables
       e.plan = planRound(poolFor(tables), progress, Math.random, ROUND)
     }
 
@@ -580,8 +583,14 @@ function TopBar({ view, onPause, fg, accent }: { view: View_; onPause: () => voi
   )
 }
 
+/** Big tables make long numbers: shrink the font so `text` keeps fitting where `chars` characters did. */
+function fit(size: number, text: string, chars: number): number {
+  return text.length <= chars ? size : Math.round((size * chars) / text.length)
+}
+
 function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
   const ans = sum.a * sum.b
+  const label = `${sum.a}×${sum.b}`
   if (view.phase === 'goed') {
     const [before, after] = view.rank ?? [0, 0]
     return (
@@ -594,7 +603,9 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
         <Txt style={{ fontFamily: fonts.display, fontSize: 34 }} color={colors.ink}>
           {sum.a}×{sum.b} =
         </Txt>
-        <Txt style={{ fontFamily: fonts.display, fontSize: 140, lineHeight: 150, letterSpacing: -5 }} color={colors.ink}>
+        <Txt
+          style={{ fontFamily: fonts.display, fontSize: fit(140, String(ans), 3), lineHeight: fit(150, String(ans), 3), letterSpacing: -5 }}
+          color={colors.ink}>
           {ans}
         </Txt>
         <View style={{ flexDirection: 'row', gap: space.s, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -625,7 +636,7 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
             {view.headline}
           </Txt>
         </View>
-        <View style={[ui.row, { alignItems: 'baseline', gap: space.l, marginTop: space.m }]}>
+        <View style={[ui.row, s.wrap, { alignItems: 'baseline', gap: space.l, marginTop: space.m }]}>
           <Txt style={{ fontFamily: fonts.display, fontSize: 30 }} color={colors.ink}>
             {sum.a}×{sum.b} =
           </Txt>
@@ -634,7 +645,7 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
               {view.given}
             </Txt>
           ) : null}
-          <Txt style={{ fontFamily: fonts.display, fontSize: 76, letterSpacing: -3 }} color={colors.ink}>
+          <Txt style={{ fontFamily: fonts.display, fontSize: fit(76, String(ans), 3), letterSpacing: -3 }} color={colors.ink}>
             {ans}
           </Txt>
         </View>
@@ -645,11 +656,11 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
     return (
       <>
         <Txt style={{ fontFamily: fonts.display, fontSize: 42, marginTop: space.xl }}>{view.headline}</Txt>
-        <View style={[ui.row, { alignItems: 'baseline', gap: space.m }]}>
+        <View style={[ui.row, s.wrap, { alignItems: 'baseline', gap: space.m }]}>
           <Txt style={{ fontFamily: fonts.display, fontSize: 30 }} color={colors.muted}>
             {sum.a}×{sum.b} =
           </Txt>
-          <Txt style={{ fontFamily: fonts.display, fontSize: 72, letterSpacing: -2 }} color={colors.cyan}>
+          <Txt style={{ fontFamily: fonts.display, fontSize: fit(72, String(ans), 3), letterSpacing: -2 }} color={colors.cyan}>
             {ans}
           </Txt>
         </View>
@@ -659,8 +670,8 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
   const asking = view.phase === 'luisteren'
   return (
     <View style={[ui.row, { gap: space.m }]}>
-      <Txt style={{ fontFamily: fonts.display, fontSize: asking ? 72 : 96, letterSpacing: -3 }} color={fg}>
-        {sum.a}×{sum.b}
+      <Txt style={{ fontFamily: fonts.display, fontSize: asking ? fit(72, `${label} =`, 6) : fit(96, label, 6), letterSpacing: -3 }} color={fg}>
+        {label}
         {asking ? ' =' : ''}
       </Txt>
       {asking ? (
@@ -702,7 +713,7 @@ function Bottom({
         <TextInput
           autoFocus
           value={typed}
-          onChangeText={(t) => setTyped(t.replace(/[^0-9]/g, '').slice(0, 3))}
+          onChangeText={(t) => setTyped(t.replace(/[^0-9]/g, '').slice(0, 5))}
           onSubmitEditing={submit}
           keyboardType="number-pad"
           returnKeyType="done"
@@ -753,6 +764,7 @@ function Bottom({
 }
 
 const s = StyleSheet.create({
+  wrap: { flexWrap: 'wrap', justifyContent: 'center' },
   lines: { flex: 1, justifyContent: 'flex-end', gap: 10 },
   segments: { flex: 1, flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 8, borderRadius: 4 },
