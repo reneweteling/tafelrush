@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: { default: 'Tafel Rush', template: '%s · Tafel Rush' },
   description: 'Tafels oefenen door ze hardop te zeggen. De app zegt de som, jij zegt het antwoord.',
   openGraph: { siteName: 'Tafel Rush', locale: 'nl_NL', type: 'website' },
+  twitter: { card: 'summary_large_image' },
 }
 
 export const viewport: Viewport = { themeColor: '#101018' }
