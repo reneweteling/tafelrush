@@ -244,6 +244,13 @@ export function listenForNumber(opts: {
           requiresOnDeviceRecognition: onDevice === true,
           ...(onDevice ? { androidRecognitionServicePackage: ON_DEVICE_PACKAGE } : {}),
           iosTaskHint: 'confirmation',
+          // The library default is mode 'measurement', which makes the voice and sounds
+          // after it very quiet, as if they come from the earpiece.
+          iosCategory: {
+            category: 'playAndRecord',
+            categoryOptions: ['defaultToSpeaker', 'allowBluetooth'],
+            mode: 'default',
+          },
           androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'web_search' },
         })
       } catch {
