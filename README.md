@@ -41,7 +41,7 @@ Altijd lokaal, nooit in de EAS-cloud.
 
 Eenmalig:
 1. `cd apps/mobile && npx eas-cli@latest init` om het EAS-project te koppelen (zet `extra.eas.projectId` in app.json).
-2. App aanmaken in de Play Console met package `com.felobo.tafelrush`.
+2. App aanmaken in de Play Console met package `nl.tafelrush.app`.
 3. Service-account-key voor uploaden in `apps/mobile/google-service-account.json` (staat in .gitignore) en `serviceAccountKeyPath` in `eas.json` zetten.
 
 Daarna:

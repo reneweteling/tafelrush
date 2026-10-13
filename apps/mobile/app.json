@@ -10,7 +10,7 @@
     "backgroundColor": "#101018",
     "owner": "reneweteling",
     "ios": {
-      "bundleIdentifier": "com.felobo.tafelrush",
+      "bundleIdentifier": "nl.tafelrush.app",
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
@@ -24,7 +24,7 @@
       "googleServicesFile": "./firebase/GoogleService-Info.plist"
     },
     "android": {
-      "package": "com.felobo.tafelrush",
+      "package": "nl.tafelrush.app",
       "adaptiveIcon": {
         "backgroundColor": "#101018",
         "foregroundImage": "./assets/android-icon-foreground.png",

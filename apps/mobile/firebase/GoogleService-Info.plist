@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.felobo.tafelrush</string>
+	<string>nl.tafelrush.app</string>
 	<key>PROJECT_ID</key>
 	<string>tafel-rush</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:922952625890:ios:574c7a17cd397edc4d78bb</string>
+	<string>1:922952625890:ios:91a9c33b28781cbf4d78bb</string>
 </dict>
 </plist>
