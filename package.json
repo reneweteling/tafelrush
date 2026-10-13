@@ -9,7 +9,10 @@
     "typecheck": "turbo run check-types",
     "lint": "turbo run lint",
     "test": "vitest run",
-    "mobile": "pnpm --filter mobile start"
+    "mobile": "pnpm --filter mobile start",
+    "release:ios": "pnpm --filter mobile release:ios",
+    "release:android": "pnpm --filter mobile release:android",
+    "release": "pnpm --filter mobile release:android && pnpm --filter mobile release:ios"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

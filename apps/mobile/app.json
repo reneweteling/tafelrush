@@ -16,7 +16,9 @@
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Tafel Rush kan je weekoverzicht als plaatje bewaren in je foto's.",
+        "NSPhotoLibraryAddUsageDescription": "Tafel Rush kan je weekoverzicht als plaatje bewaren in je foto's."
       },
       "associatedDomains": [
         "applinks:tafelrush.nl"

@@ -29,11 +29,15 @@
   "submit": {
     "production": {
       "android": {
-        "track": "internal"
+        "track": "internal",
+        "serviceAccountKeyPath": "../../secrets/play-service-account.json"
       },
       "ios": {
         "appleTeamId": "ND82KXRD2Q",
-        "ascAppId": "6822244770"
+        "ascAppId": "6822244770",
+        "ascApiKeyPath": "../../secrets/AuthKey_DSKW796U8W.p8",
+        "ascApiKeyIssuerId": "f7c12ebb-574f-4e77-b03d-bc6b1f0d390c",
+        "ascApiKeyId": "DSKW796U8W"
       }
     }
   }
