@@ -119,7 +119,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "dynamic"
+            "useFrameworks": "dynamic",
+            "enableSceneSupport": true
           }
         }
       ],
