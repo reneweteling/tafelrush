@@ -1,0 +1,9 @@
+# generated native folders (CNG)
+/android
+/ios
+/build
+/dist
+.expo/
+expo-env.d.ts
+google-service-account.json
+credentials.json

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "922952625890",
+    "project_id": "tafel-rush",
+    "storage_bucket": "tafel-rush.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922952625890:android:c63ba3a8340b2dad4d78bb",
+        "android_client_info": {
+          "package_name": "com.felobo.tafelrush"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIL6Wy3nQUuH_-A5j0qQ_8qm0kic9Zpu4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

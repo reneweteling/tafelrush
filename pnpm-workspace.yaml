@@ -1,0 +1,13 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+
+# react-native-worklets loads @babel/traverse in its Babel plugin without declaring it.
+packageExtensions:
+  react-native-worklets:
+    dependencies:
+      '@babel/traverse': '*'

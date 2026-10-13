@@ -1,0 +1,27 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "tafelrush.nl: landing page, challenge links, privacy and app-link files (Next.js).",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 3070",
+    "build": "next build",
+    "start": "next start -p ${PORT:-3000}",
+    "check-types": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@tafelrush/shared": "workspace:*",
+    "next": "^16.4.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "~19.2.18",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3"
+  }
+}

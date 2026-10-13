@@ -1,0 +1,39 @@
+# Every push to main: typecheck + tests, then the website to Dokku (app: tafelrush).
+# The app goes through EAS on the Mac, not through CI.
+# Secret: DOKKU_SSH_PRIVATE_KEY.
+name: web
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: web
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  deploy:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/dokku-push
+        with:
+          app: tafelrush
+          ssh-key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
+      - run: curl -fsS https://tafelrush.nl/api/health

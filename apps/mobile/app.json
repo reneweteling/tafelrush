@@ -1,0 +1,129 @@
+{
+  "expo": {
+    "name": "Tafel Rush",
+    "slug": "tafel-rush",
+    "scheme": "tafelrush",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#101018",
+    "owner": "reneweteling",
+    "ios": {
+      "bundleIdentifier": "com.felobo.tafelrush",
+      "supportsTablet": false,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "associatedDomains": [
+        "applinks:tafelrush.nl"
+      ],
+      "googleServicesFile": "./firebase/GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.felobo.tafelrush",
+      "adaptiveIcon": {
+        "backgroundColor": "#101018",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "tafelrush.nl",
+              "pathPrefix": "/d/"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "googleServicesFile": "./firebase/google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 140,
+          "backgroundColor": "#101018"
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Tafel Rush luistert naar je antwoord op de som.",
+          "speechRecognitionPermission": "Tafel Rush zet je gesproken antwoord om in een getal.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.tts"
+          ]
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Tafel Rush luistert naar je antwoord op de som."
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./node_modules/@expo-google-fonts/unbounded/800ExtraBold/Unbounded_800ExtraBold.ttf",
+            "./node_modules/@expo-google-fonts/unbounded/900Black/Unbounded_900Black.ttf",
+            "./node_modules/@expo-google-fonts/dm-sans/500Medium/DMSans_500Medium.ttf",
+            "./node_modules/@expo-google-fonts/dm-sans/700Bold/DMSans_700Bold.ttf"
+          ]
+        }
+      ],
+      "expo-sharing",
+      "expo-web-browser",
+      "expo-asset",
+      "@react-native-firebase/app",
+      [
+        "@react-native-firebase/analytics",
+        {
+          "ios": {
+            "withoutAdIdSupport": true
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "dynamic"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

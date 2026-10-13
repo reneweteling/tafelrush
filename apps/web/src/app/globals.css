@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+
+/* Same dark game look as the app. One theme on purpose. */
+@theme {
+  --color-bg: #101018;
+  --color-surface: #1c1c28;
+  --color-line: #2e2e40;
+  --color-fg: #f4f4f8;
+  --color-muted: #a0a0b8;
+  --color-lime: #c6ff3d;
+  --color-pink: #ff3d8b;
+  --color-cyan: #3ddcff;
+  --color-ink: #101018;
+  --font-display: var(--font-unbounded), 'Arial Black', system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}

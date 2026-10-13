@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+.git
+.turbo
+**/.turbo
+apps/mobile
+*.log
+.env
+.env.*
+.DS_Store
+**/.next

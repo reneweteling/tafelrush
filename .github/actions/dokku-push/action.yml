@@ -1,0 +1,23 @@
+name: dokku-push
+description: Push the current commit to a Dokku app on weteling.com
+inputs:
+  app:
+    required: true
+  ssh-key:
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        SSH_KEY: ${{ inputs.ssh-key }}
+      run: |
+        mkdir -p ~/.ssh && chmod 700 ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/dokku && chmod 600 ~/.ssh/dokku
+        ssh-keyscan -H weteling.com >> ~/.ssh/known_hosts 2>/dev/null
+        export GIT_SSH_COMMAND="ssh -i ~/.ssh/dokku -o IdentitiesOnly=yes"
+        for i in 1 2 3; do
+          git push --force "dokku@weteling.com:${{ inputs.app }}" HEAD:refs/heads/main && exit 0
+          echo "push failed, retrying in 15s"; sleep 15
+        done
+        exit 1

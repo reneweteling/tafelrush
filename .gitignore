@@ -39,3 +39,10 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local builds
+/build
+google-service-account.json
+credentials.json
+.turbo
+**/.next

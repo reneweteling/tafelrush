@@ -1,22 +1,25 @@
 {
-  "name": "tafels",
+  "name": "tafel-rush",
   "version": "1.0.0",
-  "main": "index.ts",
-  "dependencies": {
-    "expo": "~57.0.28",
-    "expo-status-bar": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.3"
+  "private": true,
+  "description": "Tafel Rush: tafels oefenen door ze hardop te zeggen. App plus website tafelrush.nl.",
+  "scripts": {
+    "dev": "turbo run dev --filter=web",
+    "build": "turbo run build",
+    "typecheck": "turbo run check-types",
+    "lint": "turbo run lint",
+    "test": "vitest run",
+    "mobile": "pnpm --filter mobile start"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "@types/node": "^24.0.0",
+    "turbo": "^2.10.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.4"
   },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
   },
-  "private": true
+  "packageManager": "pnpm@10.30.1"
 }
