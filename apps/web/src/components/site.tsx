@@ -77,7 +77,10 @@ export function Footer() {
         </a>{' '}
         · {COMPANY}
       </p>
-      <p>
+      <p className="flex gap-4">
+        <Link href="/#faq" className="underline">
+          Veelgestelde vragen
+        </Link>
         <Link href="/privacy" className="underline">
           Privacy
         </Link>

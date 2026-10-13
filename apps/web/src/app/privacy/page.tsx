@@ -2,8 +2,13 @@ import { COMPANY, MAKER, MAKER_URL } from '@tafelrush/shared'
 import type { Metadata } from 'next'
 
 import { Footer, Header } from '@/components/site'
+import { NAME, pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = { title: 'Privacy' }
+export const metadata: Metadata = pageMetadata({
+  title: `Privacy · ${NAME}`,
+  description: 'Geen account, geen reclame. Wat Tafel Rush op je telefoon bewaart, hoe spraakherkenning werkt en wanneer er anonieme statistieken worden gedeeld.',
+  path: '/privacy',
+})
 
 export default function Privacy() {
   return (

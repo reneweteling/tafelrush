@@ -1,7 +1,11 @@
+import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
 import { PromoVideo, Reveal } from '@/components/motion'
 import { Footer, Header, Mark, StoreButtons } from '@/components/site'
+import { DESCRIPTION, FAQ, homeJsonLd, ldJson, NAME, pageMetadata, SCREENS, TAGLINE } from '@/lib/seo'
+
+export const metadata: Metadata = pageMetadata({ title: `${NAME}: ${TAGLINE.toLowerCase()}`, description: DESCRIPTION, path: '/' })
 
 type Vars = CSSProperties & Record<`--${string}`, string | number>
 
@@ -58,18 +62,10 @@ const FLOATERS = [
   { t: '64', x: '2%', y: '44%', s: 1.5, d: 9.5 },
 ]
 
-const SCREENS = [
-  ['1-start', 'Kies je tafels, tot 1000'],
-  ['2-luisteren', 'De app luistert'],
-  ['3-goed', 'Goed: XP en combo'],
-  ['4-fout', 'Fout: wat de helly.'],
-  ['5-ranks', 'Elke som een rank'],
-  ['6-delen', 'Deel je week'],
-] as const
-
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(homeJsonLd()) }} />
       <Reveal />
       <div className="mx-auto max-w-6xl px-5">
         <Header />
@@ -82,6 +78,7 @@ export default function Home() {
         <Showcase />
         <Ranks />
         <Challenge />
+        <Faq />
         <FinalCta />
       </main>
 
@@ -326,7 +323,7 @@ function Showcase() {
       </div>
       <div className="mx-auto max-w-6xl">
         <ul className="shots mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pt-4 pb-8">
-          {SCREENS.map(([file, label], i) => (
+          {SCREENS.map(([file, label, alt], i) => (
             <li
               key={file}
               data-reveal
@@ -338,7 +335,7 @@ function Showcase() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/media/screens/${file}.webp`}
-                    alt={label}
+                    alt={alt}
                     width={540}
                     height={1200}
                     loading="lazy"
@@ -500,6 +497,27 @@ function Challenge() {
             dat zelf wilt.
           </p>
         </div>
+      </div>
+    </section>
+  )
+}
+
+function Faq() {
+  return (
+    <section id="faq" className="mx-auto max-w-6xl scroll-mt-8 px-5 py-16 md:py-24">
+      <SectionHead kicker="Vragen" title="Veelgestelde vragen" />
+      <div className="mt-12 grid gap-4 md:grid-cols-2">
+        {FAQ.map(({ q, a }, i) => (
+          <div
+            key={q}
+            data-reveal
+            style={{ '--d': `${(i % 2) * 120}ms` } as Vars}
+            className="flex flex-col gap-3 rounded-3xl bg-surface p-6 sm:p-8"
+          >
+            <h3 className="font-display text-xl font-extrabold">{q}</h3>
+            <p className="text-lg text-muted">{a}</p>
+          </div>
+        ))}
       </div>
     </section>
   )

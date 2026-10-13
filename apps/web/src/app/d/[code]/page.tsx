@@ -1,11 +1,12 @@
 // A challenge link. With the app installed (and app links verified) the phone opens the app
 // directly; otherwise this page shows the challenge and the way to the store.
 
-import { APP_SCHEME, decodeChallenge, describeTables } from '@tafelrush/shared'
+import { APP_SCHEME, challengeUrl, decodeChallenge, describeTables } from '@tafelrush/shared'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Footer, Header, Mark, StoreButtons } from '@/components/site'
+import { APP_STORE_ID, NAME } from '@/lib/seo'
 
 type Props = { params: Promise<{ code: string }> }
 
@@ -19,11 +20,18 @@ function title(code: string): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params
   const t = title(decodeURIComponent(code))
+  const description = 'Zelfde 10 sommen. Kun jij het beter? Tafel Rush: tafels oefenen door ze hardop te zeggen.'
+  const path = `/d/${code}`
   return {
     title: t,
-    description: 'Zelfde 10 sommen. Kun jij het beter? Tafel Rush: tafels oefenen door ze hardop te zeggen.',
-    openGraph: { title: t },
-    robots: { index: false },
+    description,
+    alternates: { canonical: path },
+    openGraph: { title: t, description, url: path, siteName: NAME, locale: 'nl_NL', type: 'website' },
+    twitter: { card: 'summary_large_image', title: t, description },
+    // Personal and thin: keep out of search, but crawlable so link previews work.
+    robots: { index: false, follow: true },
+    // The iOS smart banner opens the challenge in the app.
+    ...(APP_STORE_ID ? { itunes: { appId: APP_STORE_ID, appArgument: challengeUrl(code) } } : {}),
   }
 }
 
