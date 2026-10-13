@@ -59,7 +59,7 @@ const FLOATERS = [
 ]
 
 const SCREENS = [
-  ['1-start', 'Kies je tafels'],
+  ['1-start', 'Kies je tafels, tot 1000'],
   ['2-luisteren', 'De app luistert'],
   ['3-goed', 'Goed: XP en combo'],
   ['4-fout', 'Fout: wat de helly.'],
@@ -155,7 +155,7 @@ function Hero() {
           <ul className="hero-in flex flex-wrap gap-x-5 gap-y-1 text-sm font-bold text-muted" style={{ '--d': '1200ms' } as Vars}>
             <li>Geen account</li>
             <li>Geen reclame</li>
-            <li>Tafels 1 t/m 10</li>
+            <li>Tafels 1 t/m 1000</li>
           </ul>
         </div>
 
@@ -363,7 +363,7 @@ function Ranks() {
         <SectionHead
           kicker="Slim oefenen"
           title="Elke som een rank"
-          text="Van 1×1 tot 10×10 heeft elke som een eigen rank. Snel goed is een rank omhoog. Fout of te laat zakt twee ranks. Gaat de tafel van 7 steeds mis? De app clockt het."
+          text="Van 1×1 tot 10×10 heeft elke som een eigen rank, en eigen tafels zoals die van 17 of 125 krijgen ook een rij. Snel goed is een rank omhoog. Fout of te laat zakt twee ranks. Gaat de tafel van 7 steeds mis? De app clockt het."
         />
         <div data-reveal className="flex flex-wrap gap-2" style={{ '--d': '120ms' } as Vars}>
           {(['B', 'Z', 'G', 'P', 'D'] as const).map((k) => (
