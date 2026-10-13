@@ -46,3 +46,7 @@ google-service-account.json
 credentials.json
 .turbo
 **/.next
+
+# signing material, never in git
+secrets/
+.envrc
