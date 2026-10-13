@@ -61,5 +61,7 @@ describe('dutchNumberWord', () => {
     expect(dutchNumberWord(56)).toBe('zesenvijftig')
     expect(dutchNumberWord(1)).toBe('een')
     expect(dutchNumberWord(100)).toBe('honderd')
+    expect(dutchNumberWord(52)).toBe('tweeënvijftig')
+    expect(dutchNumberWord(43)).toBe('drieënveertig')
   })
 })

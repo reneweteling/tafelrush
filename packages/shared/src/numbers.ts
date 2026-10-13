@@ -91,7 +91,8 @@ export function numberIsComplete(text: string): boolean {
 /** Spoken form, for when the app reads a number aloud in a sentence. */
 export function dutchNumberWord(n: number): string {
   for (const [word, value] of WORDS) {
-    if (value === n && word.length > 1 && word !== 'eenhonderd') return word
+    // Dutch writes a diaeresis where two e's would otherwise merge: tweeënvijftig, drieënveertig.
+    if (value === n && word.length > 1 && word !== 'eenhonderd') return word.replace(/^(twee|drie)en/, '$1ën')
   }
   return String(n)
 }

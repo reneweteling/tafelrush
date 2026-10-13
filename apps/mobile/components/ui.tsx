@@ -102,15 +102,19 @@ export function IconButton({
   icon: Icon,
   label,
   onPress,
+  keyboardFocus = true,
 }: {
   icon: LucideIcon
   label: string
   onPress: () => void
+  /** Off for buttons that must never fire from an Enter press meant for a text field. */
+  keyboardFocus?: boolean
 }) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
+      focusable={keyboardFocus}
       onPress={onPress}
       hitSlop={8}
       style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.6 }]}>
@@ -195,6 +199,7 @@ export const styles = StyleSheet.create({
   },
   bubbleMe: {
     alignSelf: 'flex-end',
+    backgroundColor: colors.bg,
     borderWidth: 2,
     borderColor: colors.line,
     borderRadius: 20,

@@ -26,7 +26,7 @@ import { useKeepAwake } from 'expo-keep-awake'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ArrowRight, Keyboard, Mic, Pause, Play, Square, Volume2, X } from 'lucide-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Keyboard as SoftKeyboard, Pressable, StyleSheet, TextInput, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 
 import { Bubble, Button, Chip, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
@@ -534,7 +534,7 @@ function TopBar({ view, onPause, fg, accent }: { view: View_; onPause: () => voi
   if (timed) {
     return (
       <View style={ui.row}>
-        <IconButton icon={Pause} label="Pauze" onPress={onPause} />
+        <IconButton icon={Pause} label="Pauze" onPress={onPause} keyboardFocus={false} />
         <View style={s.timerTrack}>
           <View style={[s.timerFill, { width: `${Math.round(view.timeLeft * 100)}%`, backgroundColor: accent }]} />
         </View>
@@ -546,7 +546,7 @@ function TopBar({ view, onPause, fg, accent }: { view: View_; onPause: () => voi
   }
   return (
     <View style={ui.row}>
-      <IconButton icon={view.phase === 'pauze' ? X : Pause} label="Pauze" onPress={onPause} />
+      <IconButton icon={view.phase === 'pauze' ? X : Pause} label="Pauze" onPress={onPause} keyboardFocus={false} />
       <View style={s.segments}>
         {view.results.map((r, i) => (
           <View
@@ -694,6 +694,7 @@ function Bottom({
     const submit = () => {
       const n = parseInt(typed, 10)
       setTyped('')
+      SoftKeyboard.dismiss()
       onType(Number.isNaN(n) ? null : n)
     }
     return (
@@ -705,6 +706,7 @@ function Bottom({
           onSubmitEditing={submit}
           keyboardType="number-pad"
           returnKeyType="done"
+          submitBehavior="blurAndSubmit"
           accessibilityLabel="Jouw antwoord"
           placeholder="Antwoord"
           placeholderTextColor={colors.muted}

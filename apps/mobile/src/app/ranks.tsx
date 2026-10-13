@@ -63,8 +63,7 @@ export default function Ranks() {
                     key={b}
                     style={[
                       s.cell,
-                      { backgroundColor: RANK_COLORS[r] },
-                      isBoss(st) && { borderWidth: 2, borderColor: colors.pink },
+                      { backgroundColor: RANK_COLORS[r], borderColor: isBoss(st) ? colors.pink : RANK_COLORS[r] },
                     ]}
                   />
                 )
@@ -112,7 +111,7 @@ function Head({ label }: { label: string }) {
 
 const s = StyleSheet.create({
   row: { flexDirection: 'row', gap: 3 },
-  cell: { flex: 1, aspectRatio: 1, borderRadius: 6 },
+  cell: { flex: 1, aspectRatio: 1, borderRadius: 6, borderWidth: 2 },
   cellHead: { flex: 1, aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
   swatch: { width: 12, height: 12, borderRadius: 3 },
 })

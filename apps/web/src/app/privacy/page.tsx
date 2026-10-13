@@ -41,6 +41,13 @@ export default function Privacy() {
           de instellingen; Google bewaart de gegevens maximaal 14 maanden.
         </p>
 
+        <h2>Kinderen</h2>
+        <p>
+          Tafel Rush is gemaakt voor iedereen vanaf 6 jaar. Er is geen reclame, geen reclame-ID, geen chat en geen account.
+          Statistieken staan standaard uit; een kind onder de 16 hoort daar samen met een ouder ja of nee op te zeggen. In
+          de instellingen kun je de jongerentaal uitzetten met &quot;Gewoon aardig&quot;.
+        </p>
+
         <h2>Uitdagingen</h2>
         <p>
           Een uitdaging is een link met daarin de 10 sommen, de score, de tijd en de naam die je invulde. Die link stuur je
@@ -50,7 +57,11 @@ export default function Privacy() {
 
         <h2>Vragen</h2>
         <p>
-          Neem contact op via{' '}
+          Mail naar{' '}
+          <a href="mailto:info@tafelrush.nl" className="text-fg underline">
+            info@tafelrush.nl
+          </a>
+          . Meer over de maker op{' '}
           <a href={MAKER_URL} className="text-fg underline">
             weteling.com
           </a>
