@@ -9,7 +9,7 @@ Times-tables app for 13-year-olds: the app reads a sum aloud, the player answers
 Rules:
 - Pure logic goes in `packages/shared` or `apps/mobile/lib/*.ts` without React Native imports, with a test next to it.
 - UI copy is Dutch. Slang only from the checked list in `apps/mobile/lib/phrases.ts`, at most one in three lines.
-- No accounts, no analytics, no backend for player data. Everything stays on the phone.
+- No accounts, no ads, no backend for player data. Progress stays on the phone. The only data leaving the phone is opt-in Firebase Analytics (off by default, parent consent under 16); keep it that way.
 - App builds always run locally: `eas build --local`, never in the EAS cloud.
 - Before calling work done: `pnpm typecheck`, `pnpm test`, `pnpm lint`.
 

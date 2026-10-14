@@ -46,6 +46,14 @@ export default function Privacy() {
           de instellingen; Google bewaart de gegevens maximaal 14 maanden.
         </p>
 
+        <h2 id="wissen">Gegevens wissen</h2>
+        <p>
+          Wat op je telefoon staat, wis je in de app via Instellingen, Voortgang wissen. Of verwijder de app, dan is alles
+          weg. Statistieken zet je uit in Instellingen; daarna stuurt de app niks meer. Wat al verstuurd is, hangt aan een
+          willekeurig app-nummer en niet aan jou. Daarom kunnen wij het niet per persoon opzoeken, en wist Google het
+          automatisch na maximaal 14 maanden. Vragen hierover? Mail naar info@tafelrush.nl.
+        </p>
+
         <h2>Kinderen</h2>
         <p>
           Tafel Rush is gemaakt voor iedereen vanaf 6 jaar. Er is geen reclame, geen reclame-ID, geen chat en geen account.
@@ -72,7 +80,7 @@ export default function Privacy() {
           </a>
           .
         </p>
-        <p className="text-sm">Laatst bijgewerkt: 13 oktober 2026.</p>
+        <p className="text-sm">Laatst bijgewerkt: 14 oktober 2026.</p>
       </main>
       <Footer />
     </div>
