@@ -30,8 +30,10 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local env files: values come from Bitwarden, see Makefile
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -49,4 +51,3 @@ credentials.json
 
 # signing material, never in git
 secrets/
-.envrc

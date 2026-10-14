@@ -12,9 +12,9 @@
     "lint": "expo lint",
     "assets": "node scripts/make-sounds.mjs && node scripts/make-icons.mjs",
     "build:android": "npx -y eas-cli@latest build -p android --profile ${PROFILE:-production} --local --non-interactive --output ./build/tafelrush.aab",
-    "build:ios": "node scripts/ios-credentials.mjs && npx -y eas-cli@latest build -p ios --profile ${PROFILE:-production} --local --non-interactive --output ./build/tafelrush.ipa; code=$?; node scripts/ios-credentials.mjs --clean; exit $code",
-    "submit:android": "npx -y eas-cli@latest submit -p android --profile production --non-interactive --path ./build/tafelrush.aab",
-    "submit:ios": "npx -y eas-cli@latest submit -p ios --profile production --non-interactive --path ./build/tafelrush.ipa",
+    "build:ios": "node scripts/secret-files.mjs && npx -y eas-cli@latest build -p ios --profile ${PROFILE:-production} --local --non-interactive --output ./build/tafelrush.ipa; code=$?; node scripts/secret-files.mjs --clean; exit $code",
+    "submit:android": "node scripts/secret-files.mjs && npx -y eas-cli@latest submit -p android --profile production --non-interactive --path ./build/tafelrush.aab; code=$?; node scripts/secret-files.mjs --clean; exit $code",
+    "submit:ios": "node scripts/secret-files.mjs && npx -y eas-cli@latest submit -p ios --profile production --non-interactive --path ./build/tafelrush.ipa; code=$?; node scripts/secret-files.mjs --clean; exit $code",
     "release:android": "pnpm build:android && pnpm submit:android",
     "release:ios": "pnpm build:ios && pnpm submit:ios"
   },

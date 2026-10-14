@@ -40,18 +40,33 @@ Sounds and icons are generated, not recorded: `pnpm --filter mobile assets`.
 - Challenges: the link holds the 10 sums played, score, time and name. No server needed.
 - Player progress stays on the device (AsyncStorage). The only data that leaves the phone is opt-in Firebase Analytics, off by default.
 
+## Secrets and environments
+
+All secrets are environment variables, one file per environment, stored in Bitwarden (item `tafelrush`, one attachment per environment). Files such as certificates and keys are base64 values in that file. `.env.example` lists every key.
+
+| Environment | Local file | Used for |
+|---|---|---|
+| `local` | `.env` | Local builds and store submits. Loaded by direnv. |
+| `production` | `.env.production` | Web app config on Dokku. |
+
+```bash
+bw login                              # once
+export BW_SESSION=$(bw unlock --raw)  # per shell
+make env                              # pull .env (ENV=local is the default)
+make env ENV=production               # pull .env.production
+make get-env ENV=production KEY=ANDROID_CERT_SHA256
+make set-env KEY=ASC_API_KEY_ID VALUE=ABC123
+make set-env KEY=ASC_API_KEY_P8 FILE=AuthKey_ABC123.p8   # stored as base64
+make push-env                         # after editing .env by hand
+make env-example                      # regenerate .env.example
+make dokku-env                        # .env.production to Dokku config
+```
+
+`pnpm build:ios` and `pnpm submit:*` run `apps/mobile/scripts/secret-files.mjs`, which writes the certificate, profile and keys from `.env` to `apps/mobile/build/secrets/` and removes them afterwards.
+
 ## Building and releasing the app
 
 Always local, never in the EAS cloud.
-
-Local secrets live in `secrets/` and `.envrc`, both git-ignored:
-
-| File | Used for |
-|---|---|
-| `secrets/play-service-account.json` | `eas submit` to Google Play |
-| `secrets/AuthKey_*.p8` | `eas submit` and the App Store Connect API |
-| `secrets/*.mobileprovision` | iOS distribution profile |
-| `.envrc` | `APPLE_DIST_CERT_P12` and password; `scripts/ios-credentials.mjs` turns these into a temporary `credentials.json` during `build:ios` |
 
 ```bash
 cd apps/mobile
@@ -71,7 +86,7 @@ One-time server setup:
 dokku apps:create tafelrush
 dokku domains:set tafelrush tafelrush.nl www.tafelrush.nl
 dokku letsencrypt:enable tafelrush
-dokku config:set tafelrush ANDROID_CERT_SHA256="AA:BB:..."
+make dokku-env    # sets ANDROID_CERT_SHA256 and the rest of .env.production
 ```
 
 `ANDROID_CERT_SHA256` is the SHA-256 of the app signing certificate (Play Console > App integrity). It lets `tafelrush.nl/d/...` links open straight in the app.
