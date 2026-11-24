@@ -1,11 +1,15 @@
-// One round of 10 sums, hands-free: the app reads the sum, the mic opens by
-// itself, she answers out loud, the app reacts and goes on. Only pause is a button.
+// One round of 10 sums. Three ways to answer, picked before the round:
+// - praten: hands-free, the app reads the sum, the mic opens by itself, she answers out loud;
+// - typen: no voice at all, the sum shows and the keyboard is ready at once;
+// - kiezen: no voice, six buttons, tap the right one as fast as possible.
+// The clock starts only when the app is ready for her answer (see lib/clock.ts).
 
 import {
   answer,
   applyOutcome,
   decodeChallenge,
   BASE_TABLES,
+  choicesFor,
   dutchNumberWord,
   FAST_MS,
   isBoss,
@@ -25,9 +29,9 @@ import {
 import * as Haptics from 'expo-haptics'
 import { useKeepAwake } from 'expo-keep-awake'
 import { router, useLocalSearchParams } from 'expo-router'
-import { ArrowRight, Keyboard, Mic, Pause, Play, Square, Volume2, X } from 'lucide-react-native'
+import { ArrowRight, Mic, Pause, Play, Square, Volume2, X } from 'lucide-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Keyboard as SoftKeyboard, Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 
 import { Bubble, Button, Chip, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
@@ -35,7 +39,8 @@ import { track } from '@/lib/analytics'
 import { canListen, currentEngine, listenForNumber, ListenError, stopListening } from '@/lib/listen'
 import { fill, pickPhrase, type PhraseKind, type PhraseVars } from '@/lib/phrases'
 import { play } from '@/lib/sfx'
-import { getState, setState, today, updateSettings, type RoundResult } from '@/lib/store'
+import { clockStartsOn, elapsedMs, fractionLeft, freezeClock, newClock, secondsLeft, startClock, timeUp } from '@/lib/clock'
+import { getState, setState, today, updateSettings, type InputMethod, type RoundResult } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
 import { say, stopVoice } from '@/lib/voice'
 
@@ -57,7 +62,9 @@ type View_ = {
   /** 1 = full time left, 0 = time up. */
   timeLeft: number
   secondsLeft: number
-  typing: boolean
+  input: InputMethod
+  /** The six buttons when input is 'kiezen'. */
+  choices: number[]
   given: number | null
   xpGained: number
   rank: [number, number] | null
@@ -89,7 +96,8 @@ export default function Ronde() {
     results: Array(ROUND).fill(null),
     timeLeft: 1,
     secondsLeft: getState().settings.seconds,
-    typing: getState().settings.typing,
+    input: getState().settings.input,
+    choices: [],
     given: null,
     xpGained: 0,
     rank: null,
@@ -118,9 +126,22 @@ export default function Ronde() {
     lastIds: {} as Partial<Record<PhraseKind, string>>,
     lineId: 0,
     challenge: null as ReturnType<typeof decodeChallenge>,
-    typedResolve: null as ((n: number | null) => void) | null,
-    switchToTyping: false,
+    /** Set while a typed or tapped answer is welcome. */
+    typedResolve: null as ((n: number) => void) | null,
+    /** Input method for this round; falls back to typing when the mic fails. */
+    input: getState().settings.input as InputMethod,
   })
+
+  // Typing: lift the screen above the keyboard, or the input and OK sit underneath it.
+  const [keyboard, setKeyboard] = useState(0)
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardWillShow', (e) => setKeyboard(e.endCoordinates.height))
+    const hide = Keyboard.addListener('keyboardWillHide', () => setKeyboard(0))
+    return () => {
+      show.remove()
+      hide.remove()
+    }
+  }, [])
 
   const shake = useSharedValue(0)
   const shakeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: shake.value }] }))
@@ -142,24 +163,13 @@ export default function Ronde() {
     return fill(p.text, vars)
   }, [])
 
-  // ---------- getting an answer ----------
+  /** Reads aloud when talking. Without voice the screen just stays up for `quietMs`. */
+  const speak = useCallback(async (text: string, quietMs = 0) => {
+    if (eng.current.input === 'praten') await say(text)
+    else if (quietMs > 0) await wait(quietMs)
+  }, [])
 
-  const typedAnswer = useCallback(
-    (timeoutMs: number, token: Token) =>
-      new Promise<{ value: number | null; ms: number | null }>((resolve) => {
-        const t0 = Date.now()
-        const timer = setTimeout(() => done(null), timeoutMs)
-        const poll = setInterval(() => token.cancelled && done(null), 100)
-        function done(n: number | null) {
-          clearTimeout(timer)
-          clearInterval(poll)
-          eng.current.typedResolve = null
-          resolve({ value: n, ms: n === null ? null : Date.now() - t0 })
-        }
-        eng.current.typedResolve = done
-      }),
-    [],
-  )
+  // ---------- getting an answer ----------
 
   const getAnswer = useCallback(
     async (
@@ -167,32 +177,46 @@ export default function Ronde() {
       token: Token,
       withTimer: boolean,
       expected: number,
-    ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' }> => {
-      let started = Date.now()
-      // Voice: the clock waits until the mic is really open, and stops once she talks.
-      let ticking = getState().settings.typing || eng.current.switchToTyping
-      let frozen = false
-      patch({ phase: withTimer ? 'luisteren' : 'nazeggen', heard: '', timeLeft: 1, talking: false })
-      let timer: ReturnType<typeof setInterval> | null = null
+    ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' | 'choice' }> => {
+      const e = eng.current
+      const input = e.input
+      const shown = withTimer && getState().settings.seconds > 0
+      let clock = newClock(timeoutMs)
+      if (clockStartsOn(input) === 'shown') clock = startClock(clock, Date.now())
+      patch({ phase: withTimer ? 'luisteren' : 'nazeggen', heard: '', timeLeft: 1, secondsLeft: Math.ceil(timeoutMs / 1000), talking: false })
+
       let nudged = false
-      if (withTimer && getState().settings.seconds > 0) {
-        timer = setInterval(() => {
-          if (!ticking || frozen) return
-          const left = Math.max(0, 1 - (Date.now() - started) / timeoutMs)
-          patch({ timeLeft: left, secondsLeft: Math.ceil((left * timeoutMs) / 1000) })
-          if (!nudged && left < 0.5) {
-            nudged = true
-            const p = phrase('porren', {})
-            if (p) addLine('app', p.shown)
-          }
-        }, 100)
-      }
-      try {
-        if (getState().settings.typing || eng.current.switchToTyping) {
-          patch({ typing: true })
-          return { ...(await typedAnswer(timeoutMs, token)), input: 'typed' }
+      const show = () => {
+        if (!shown) return
+        const now = Date.now()
+        const left = fractionLeft(clock, now)
+        patch({ timeLeft: left, secondsLeft: secondsLeft(clock, now) })
+        if (!nudged && left < 0.5) {
+          nudged = true
+          const p = phrase('porren', {})
+          if (p) addLine('app', p.shown)
         }
-        patch({ typing: false })
+      }
+
+      // Typing and tapping: the answer is welcome from the moment the sum shows.
+      const typedOrTapped = (method: InputMethod) =>
+        new Promise<{ value: number | null; ms: number | null; input: 'typed' | 'choice' }>((resolve) => {
+          const tick = setInterval(() => {
+            if (token.cancelled || timeUp(clock, Date.now())) return done(null)
+            show()
+          }, 100)
+          function done(n: number | null) {
+            clearInterval(tick)
+            e.typedResolve = null
+            resolve({ value: n, ms: n === null ? null : elapsedMs(clock, Date.now()), input: method === 'kiezen' ? 'choice' : 'typed' })
+          }
+          e.typedResolve = done
+        })
+      if (input !== 'praten') return typedOrTapped(input)
+
+      // Talking: the clock waits until the mic is really open, and stops once she talks.
+      const tick = setInterval(show, 100)
+      try {
         const heard = await listenForNumber({
           timeoutMs,
           expected,
@@ -200,41 +224,33 @@ export default function Ronde() {
           onPartial: (t) => patch({ heard: t }),
           onListening: () => {
             play('tick')
-            started = Date.now()
-            ticking = true
+            clock = startClock(clock, Date.now())
           },
           onSpeech: () => {
-            frozen = true
+            clock = freezeClock(clock, Date.now())
             patch({ talking: true })
           },
         })
-        if (eng.current.switchToTyping && heard.value === null && !token.cancelled) {
-          frozen = false
-          ticking = true
-          patch({ typing: true, talking: false })
-          return { ...(await typedAnswer(Math.max(1500, timeoutMs - (Date.now() - started)), token)), input: 'typed' }
-        }
         return { value: heard.value, ms: heard.ms, input: 'voice' }
-      } catch (e) {
-        if (e instanceof ListenError) {
-          track('switch_to_typing', { reason: 'error' })
-          updateSettings({ typing: true })
-          const notice =
-            e.code === 'language-not-supported'
-              ? 'Je telefoon verstaat nog geen Nederlands. Typ je antwoord maar; in de instellingen van Google kun je Nederlands toevoegen.'
-              : 'De microfoon mag niet luisteren. Typ je antwoord maar.'
-          patch({ typing: true, notice, timeLeft: 1, talking: false })
-          started = Date.now()
-          ticking = true
-          frozen = false
-          return { ...(await typedAnswer(timeoutMs, token)), input: 'typed' }
-        }
-        return { value: null, ms: null, input: 'voice' }
+      } catch (err) {
+        if (!(err instanceof ListenError)) return { value: null, ms: null, input: 'voice' }
+        // The mic cannot work at all here: type from now on.
+        track('switch_to_typing', { reason: 'error' })
+        updateSettings({ input: 'typen' })
+        e.input = 'typen'
+        const notice =
+          err.code === 'language-not-supported'
+            ? 'Je telefoon verstaat nog geen Nederlands. Typ je antwoord maar; in de instellingen van Google kun je Nederlands toevoegen.'
+            : 'De microfoon mag niet luisteren. Typ je antwoord maar.'
+        patch({ input: 'typen', notice, talking: false, timeLeft: 1 })
+        clearInterval(tick)
+        clock = startClock(newClock(timeoutMs), Date.now())
+        return typedOrTapped('typen')
       } finally {
-        if (timer) clearInterval(timer)
+        clearInterval(tick)
       }
     },
-    [addLine, patch, phrase, typedAnswer],
+    [addLine, patch, phrase],
   )
 
   // ---------- one sum ----------
@@ -247,12 +263,25 @@ export default function Ronde() {
       const statsBefore = statsOf(getState().progress, s)
       const boss = isBoss(statsBefore)
       const ans = answer(s)
-      e.switchToTyping = false
+      const talking = e.input === 'praten'
 
-      patch({ phase: 'spreken', index: i, sum: s, boss, heard: '', given: null, sixSeven: false, timeLeft: 1, secondsLeft: settings.seconds })
-      addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
-      await say(`${s.a} keer ${s.b}?`)
-      if (token.cancelled) return false
+      patch({
+        phase: talking ? 'spreken' : 'luisteren',
+        index: i,
+        sum: s,
+        boss,
+        heard: '',
+        given: null,
+        sixSeven: false,
+        timeLeft: 1,
+        secondsLeft: settings.seconds,
+        choices: e.input === 'kiezen' ? choicesFor(s, Math.random) : [],
+      })
+      if (talking) {
+        addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
+        await say(`${s.a} keer ${s.b}?`)
+        if (token.cancelled) return false
+      }
 
       const timeoutMs = settings.seconds > 0 ? settings.seconds * 1000 : NO_TIMER_MS
       const { value, ms, input } = await getAnswer(timeoutMs, token, true, s.a * s.b)
@@ -261,7 +290,7 @@ export default function Ronde() {
       e.thinkMs += value === null ? timeoutMs : (ms ?? timeoutMs)
       const outcome: Outcome =
         value === null ? 'telaat' : value !== ans ? 'fout' : (ms ?? timeoutMs) <= FAST_MS ? 'snel' : 'traag'
-      addLine('me', value === null ? '...' : dutchNumberWord(value))
+      addLine('me', value === null ? '...' : talking ? dutchNumberWord(value) : String(value))
       track('answer', { a: s.a, b: s.b, outcome, input, ms: ms ?? timeoutMs, engine: currentEngine() })
 
       // Progress, rank and XP.
@@ -292,10 +321,8 @@ export default function Ronde() {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
         const p = phrase(kind, vars)
         patch({ phase: 'goed', sixSeven, headline: '' })
-        if (p) {
-          addLine('app', p.shown)
-          await say(p.spoken)
-        }
+        if (p) addLine('app', p.shown)
+        await speak(p?.spoken ?? '', 900)
         await wait(350)
         return true
       }
@@ -317,42 +344,41 @@ export default function Ronde() {
         const p = phrase('fout', vars)
         const slangHead = settings.slang && p?.shown.startsWith('Bruh')
         patch({ phase: 'fout', headline: slangHead ? 'BRUH.' : settings.slang && p?.shown.startsWith('Wat de helly') ? 'WAT DE\nHELLY.' : 'MIS.' })
-        if (p) {
-          addLine('app', p.shown)
-          await say(p.spoken)
-        }
+        if (p) addLine('app', p.shown)
+        await speak(p?.spoken ?? '', 1800)
       } else {
         play('buffering')
         const p = phrase('telaat', vars)
         patch({ phase: 'telaat', headline: 'Buffering...' })
-        if (p) {
-          addLine('app', p.shown)
-          await say(p.spoken)
-        }
+        if (p) addLine('app', p.shown)
+        await speak(p?.spoken ?? '', 1800)
       }
       if (token.cancelled) return false
 
-      // Say it once correctly, then it comes back later in the round.
-      if (settings.repeatAfterWrong) {
-        addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
-        await say(`Zeg maar na: ${s.a} keer ${s.b} is`)
+      // Say (or type) it once correctly, then it comes back later in the round.
+      // Not with buttons: the answer is still on screen, tapping it teaches nothing.
+      if (settings.repeatAfterWrong && e.input !== 'kiezen') {
+        if (e.input === 'praten') {
+          addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
+          await say(`Zeg maar na: ${s.a} keer ${s.b} is`)
+        } else {
+          addLine('app', `Typ hem nog een keer: ${s.a} × ${s.b} is...`)
+        }
         if (token.cancelled) return false
         const again = await getAnswer(REPEAT_MS, token, false, s.a * s.b)
         if (token.cancelled) return false
-        if (again.value !== null) addLine('me', dutchNumberWord(again.value))
+        if (again.value !== null) addLine('me', again.input === 'voice' ? dutchNumberWord(again.value) : String(again.value))
         track('repeat_after_wrong', { ok: again.value === ans })
         const p = phrase(again.value === ans ? 'onthouden' : 'nogniet', vars)
         if (again.value === ans) play('goed')
-        if (p) {
-          addLine('app', p.shown)
-          await say(p.spoken)
-        }
+        if (p) addLine('app', p.shown)
+        await speak(p?.spoken ?? '', 900)
       }
       e.plan = reinsert(e.plan, i, s, Math.random)
       await wait(300)
       return true
     },
-    [addLine, getAnswer, patch, phrase, shake],
+    [addLine, getAnswer, patch, phrase, shake, speak],
   )
 
   // ---------- the round ----------
@@ -418,15 +444,17 @@ export default function Ronde() {
       e.plan = planRound(poolFor(tables), progress, Math.random, ROUND)
     }
 
+    e.input = settings.input
     let alive = true
     ;(async () => {
-      if (!settings.typing) {
+      if (e.input === 'praten') {
         const mic = await canListen()
         track('mic', { result: mic })
         if (mic !== 'ok') {
-          updateSettings({ typing: true })
+          updateSettings({ input: 'typen' })
+          e.input = 'typen'
           patch({
-            typing: true,
+            input: 'typen',
             notice:
               mic === 'denied'
                 ? 'Geen toegang tot de microfoon. Je typt nu je antwoorden; aanzetten kan in de instellingen van je telefoon.'
@@ -437,11 +465,12 @@ export default function Ronde() {
       if (!alive) return
       track('round_start', {
         mode: challenge ? 'challenge' : settings.mode,
-        input: getState().settings.typing ? 'typed' : 'voice',
+        input: e.input === 'praten' ? 'voice' : e.input === 'kiezen' ? 'choice' : 'typed',
         timer: settings.seconds,
       })
-      addLine('app', challenge ? `${challenge.name || 'Iemand'} daagt je uit. Daar gaan we.` : 'Daar gaan we.')
-      await say(challenge ? `${challenge.name || 'Iemand'} daagt je uit. Daar gaan we.` : 'Daar gaan we.')
+      const intro = challenge ? `${challenge.name || 'Iemand'} daagt je uit. Daar gaan we.` : 'Daar gaan we.'
+      addLine('app', intro)
+      await speak(intro, 700)
       if (alive) void runFrom(0)
     })()
 
@@ -459,7 +488,6 @@ export default function Ronde() {
     eng.current.token.cancelled = true
     stopVoice()
     stopListening()
-    eng.current.typedResolve?.(null)
     patch({ phase: 'pauze' })
   }
 
@@ -476,12 +504,6 @@ export default function Ronde() {
     router.back()
   }
 
-  function switchToTyping() {
-    track('switch_to_typing', { reason: 'button' })
-    eng.current.switchToTyping = true
-    stopListening()
-  }
-
   // ---------- drawing ----------
 
   const { phase, sum } = view
@@ -494,7 +516,10 @@ export default function Ronde() {
 
   return (
     <Animated.View style={[{ flex: 1 }, shakeStyle]}>
-      <Screen background={background} style={phase === 'luisteren' && getState().settings.seconds > 0 ? { borderWidth: 5, borderColor: accent } : undefined}>
+      <Screen background={background} style={[
+          phase === 'luisteren' && getState().settings.seconds > 0 ? { borderWidth: 5, borderColor: accent } : null,
+          keyboard > 0 ? { paddingBottom: keyboard + space.s } : null,
+        ]}>
         <TopBar view={view} onPause={pause} fg={fg} accent={accent} />
 
         {view.boss && phase !== 'goed' && phase !== 'fout' ? (
@@ -509,15 +534,16 @@ export default function Ronde() {
 
         <View style={s.lines}>
           {view.notice ? <Bubble from="app" text={view.notice} /> : null}
-          {view.lines.map((l, i) => (
-            <Bubble key={l.id} from={l.from} text={l.text} strong={i === view.lines.length - 1} />
+          {view.lines.slice(keyboard > 0 ? -2 : 0).map((l, i, shown) => (
+            <Bubble key={l.id} from={l.from} text={l.text} strong={i === shown.length - 1} />
           ))}
-          {(phase === 'luisteren' || phase === 'nazeggen') && !view.typing ? (
+          {(phase === 'luisteren' || phase === 'nazeggen') && view.input === 'praten' ? (
             <Bubble from="me" text={view.heard || '...'} dashed color={accent} />
           ) : null}
         </View>
 
-        <Bottom view={view} accent={accent} fg={fg} onType={(n) => eng.current.typedResolve?.(n)} onSwitchToTyping={switchToTyping} />
+        {/* Keyed per sum and phase: digits left over from a sum that ran out of time must not carry into the next field. */}
+        <Bottom key={`${view.index}-${view.phase}`} view={view} accent={accent} fg={fg} onAnswer={(n) => eng.current.typedResolve?.(n)} />
       </Screen>
 
       {phase === 'pauze' ? (
@@ -689,24 +715,44 @@ function Bottom({
   view,
   accent,
   fg,
-  onType,
-  onSwitchToTyping,
+  onAnswer,
 }: {
   view: View_
   accent: string
   fg: string
-  onType: (n: number | null) => void
-  onSwitchToTyping: () => void
+  onAnswer: (n: number) => void
 }) {
   const [typed, setTyped] = useState('')
-  const listening = view.phase === 'luisteren' || view.phase === 'nazeggen'
+  const asking = view.phase === 'luisteren' || view.phase === 'nazeggen'
 
-  if (listening && view.typing) {
+  if (view.input === 'kiezen' && view.phase === 'luisteren') {
+    return (
+      <View style={s.choices}>
+        {view.choices.map((n) => (
+          <Pressable
+            key={n}
+            accessibilityRole="button"
+            accessibilityLabel={String(n)}
+            onPress={() => onAnswer(n)}
+            style={({ pressed }) => [s.choice, pressed && { backgroundColor: colors.lime, borderColor: colors.lime }]}>
+            {({ pressed }) => (
+              <Txt style={{ fontFamily: fonts.display, fontSize: fit(30, String(n), 4) }} color={pressed ? colors.ink : colors.text}>
+                {n}
+              </Txt>
+            )}
+          </Pressable>
+        ))}
+      </View>
+    )
+  }
+
+  if (view.input === 'typen' && asking) {
     const submit = () => {
       const n = parseInt(typed, 10)
+      // An empty field is not an answer; keep waiting.
+      if (Number.isNaN(n)) return
       setTyped('')
-      SoftKeyboard.dismiss()
-      onType(Number.isNaN(n) ? null : n)
+      onAnswer(n)
     }
     return (
       <View style={[ui.row, { gap: space.s }]}>
@@ -717,7 +763,7 @@ function Bottom({
           onSubmitEditing={submit}
           keyboardType="number-pad"
           returnKeyType="done"
-          submitBehavior="blurAndSubmit"
+          submitBehavior="submit"
           accessibilityLabel="Jouw antwoord"
           placeholder="Antwoord"
           placeholderTextColor={colors.muted}
@@ -728,7 +774,7 @@ function Bottom({
     )
   }
 
-  if (listening) {
+  if (view.input === 'praten' && asking) {
     return (
       <View style={{ alignItems: 'center', gap: space.s }}>
         <View style={ui.row}>
@@ -739,17 +785,11 @@ function Bottom({
             {view.talking ? 'Ik hoor je...' : view.phase === 'nazeggen' ? 'Zeg het na...' : 'Luistert...'}
           </Txt>
         </View>
-        <Pressable accessibilityRole="button" onPress={onSwitchToTyping} hitSlop={8} style={[ui.row, { minHeight: 44, gap: 6 }]}>
-          <Keyboard size={16} color={colors.muted} />
-          <Txt variant="small" color={colors.muted} style={{ textDecorationLine: 'underline' }}>
-            Verstaat hij je niet? Typ het
-          </Txt>
-        </Pressable>
       </View>
     )
   }
 
-  if (view.phase === 'spreken' || view.phase === 'start') {
+  if (view.input === 'praten' && (view.phase === 'spreken' || view.phase === 'start')) {
     return (
       <View style={{ alignItems: 'center', gap: space.s }}>
         <Volume2 size={36} color={fg} />
@@ -765,6 +805,18 @@ function Bottom({
 
 const s = StyleSheet.create({
   wrap: { flexWrap: 'wrap', justifyContent: 'center' },
+  choices: { flexDirection: 'row', flexWrap: 'wrap', gap: space.s },
+  choice: {
+    width: '31%',
+    flexGrow: 1,
+    minHeight: 72,
+    borderRadius: radius.m,
+    borderWidth: 2,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   lines: { flex: 1, justifyContent: 'flex-end', gap: 10 },
   segments: { flex: 1, flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 8, borderRadius: 4 },

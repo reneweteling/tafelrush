@@ -7,7 +7,7 @@ import {
   weakestTable,
 } from '@tafelrush/shared'
 import { router } from 'expo-router'
-import { ChevronRight, Flame, Mic, Play, Plus, Settings as SettingsIcon, X } from 'lucide-react-native'
+import { ChevronRight, Flame, Keyboard, LayoutGrid, Mic, Play, Plus, Settings as SettingsIcon, X } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
 
@@ -223,19 +223,47 @@ export default function Start() {
       </ScrollView>
 
       <View style={{ gap: space.m }}>
-        <View style={ui.row}>
-          <Mic size={22} color={colors.muted} />
-          <Txt variant="small" color={colors.muted} style={{ flex: 1 }}>
-            {settings.typing
-              ? 'Je typt je antwoorden. Praten zet je aan in de instellingen.'
-              : 'Na het starten hoef je niks meer aan te tikken. Gewoon antwoorden.'}
-          </Txt>
+        <Txt variant="label" color={colors.muted}>
+          Antwoorden via
+        </Txt>
+        <View style={{ flexDirection: 'row', gap: space.s }}>
+          {INPUTS.map(({ value, label, icon: Icon }) => {
+            const on = settings.input === value
+            return (
+              <Pressable
+                key={value}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: on }}
+                onPress={() => updateSettings({ input: value })}
+                style={[s.inputCard, on ? s.inputCardOn : null]}>
+                <Icon size={24} color={on ? colors.ink : colors.text} />
+                <Txt variant="bodyBold" color={on ? colors.ink : colors.text} style={{ fontSize: 15 }}>
+                  {label}
+                </Txt>
+              </Pressable>
+            )
+          })}
         </View>
+        <Txt variant="small" color={colors.muted}>
+          {INPUT_HINTS[settings.input]}
+        </Txt>
         <Button big label="SPELEN" icon={Play} onPress={() => router.push('/ronde')} />
       </View>
     </Screen>
   )
 }
+
+const INPUTS = [
+  { value: 'praten', label: 'Praten', icon: Mic },
+  { value: 'typen', label: 'Typen', icon: Keyboard },
+  { value: 'kiezen', label: 'Meerkeuze', icon: LayoutGrid },
+] as const
+
+const INPUT_HINTS = {
+  praten: 'De app leest voor, jij zegt het antwoord. Na het starten hoef je niks meer aan te tikken.',
+  typen: 'Geen stem. Je typt je antwoord, de tijd loopt zodra de som er staat.',
+  kiezen: 'Zes knoppen, één is goed. Tik zo snel als je kan.',
+} as const
 
 function Pill({ label, on, onPress }: { label: string; on: boolean; onPress: () => void }) {
   return (
@@ -318,4 +346,16 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   pillOn: { backgroundColor: colors.text, borderColor: colors.text },
+  inputCard: {
+    flex: 1,
+    minHeight: 72,
+    gap: 6,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputCardOn: { backgroundColor: colors.lime, borderColor: colors.lime },
 })

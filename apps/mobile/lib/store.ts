@@ -8,6 +8,9 @@ import type { Progress, Sum } from '@tafelrush/shared'
 
 export type TimerSeconds = 3 | 6 | 10 | 0
 
+/** How she answers: out loud, on the keyboard, or by tapping one of six buttons. */
+export type InputMethod = 'praten' | 'typen' | 'kiezen'
+
 export type Settings = {
   /** Thinking time per sum; 0 means no timer. */
   seconds: TimerSeconds
@@ -16,7 +19,8 @@ export type Settings = {
   pitch: number
   sounds: boolean
   shake: boolean
-  typing: boolean
+  /** Last picked input method, the default for the next round. */
+  input: InputMethod
   repeatAfterWrong: boolean
   /** First name on the share card and in challenges. Empty is fine. */
   name: string
@@ -88,7 +92,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pitch: 1.2,
   sounds: true,
   shake: true,
-  typing: false,
+  input: 'praten',
   repeatAfterWrong: true,
   name: '',
   mode: 'slim',
@@ -143,10 +147,12 @@ export async function loadState() {
     const raw = await AsyncStorage.getItem(KEY)
     if (raw) {
       const saved = JSON.parse(raw) as Partial<State>
+      const { typing, ...settings } = (saved.settings ?? {}) as Partial<Settings> & { typing?: boolean }
       state = {
         ...state,
         ...saved,
-        settings: { ...DEFAULT_SETTINGS, ...saved.settings },
+        // Older saves had `typing: boolean` instead of `input`.
+        settings: { ...DEFAULT_SETTINGS, ...(typing && !settings.input ? { input: 'typen' as const } : {}), ...settings },
       }
     }
   } catch {

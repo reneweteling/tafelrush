@@ -37,7 +37,7 @@ function quietly(fn: () => unknown) {
   }
 }
 
-type Input = 'voice' | 'typed'
+type Input = 'voice' | 'typed' | 'choice'
 
 type Events = {
   round_start: { mode: 'slim' | 'alles' | 'eigen' | 'challenge'; input: Input; timer: number }
@@ -47,7 +47,7 @@ type Events = {
   answer: { a: number; b: number; outcome: 'snel' | 'traag' | 'fout' | 'telaat'; input: Input; ms: number; engine: 'device' | 'cloud' }
   repeat_after_wrong: { ok: boolean }
   mic: { result: 'ok' | 'denied' | 'unavailable' }
-  switch_to_typing: { reason: 'button' | 'error' }
+  switch_to_typing: { reason: 'error' }
   phrase_banned: { id: string }
   report_shared: undefined
   challenge_sent: undefined

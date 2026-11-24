@@ -1,4 +1,4 @@
-import { COMPANY, MAKER, MAKER_URL, SITE_URL } from '@tafelrush/shared'
+import { COMPANY, MAKER_URL, SITE_URL } from '@tafelrush/shared'
 import * as Application from 'expo-application'
 import Constants, { ExecutionEnvironment } from 'expo-constants'
 import { router } from 'expo-router'
@@ -50,6 +50,18 @@ export default function Instellingen() {
       </View>
 
       <ScrollView contentContainerStyle={{ gap: space.xxl, paddingBottom: space.xl }} keyboardShouldPersistTaps="handled">
+        <Group title="Antwoorden via">
+          <Segments
+            value={settings.input}
+            options={[
+              ['praten', 'Praten'],
+              ['typen', 'Typen'],
+              ['kiezen', 'Meerkeuze'],
+            ]}
+            onChange={(input) => updateSettings({ input })}
+          />
+        </Group>
+
         <Group title="Bedenktijd">
           <Segments
             value={settings.seconds}
@@ -93,7 +105,9 @@ export default function Instellingen() {
                     <Txt style={{ flex: 1 }} variant={on ? 'bodyBold' : 'body'}>
                       {v.label}
                     </Txt>
-                    {on ? <Check size={20} color={colors.lime} /> : <Volume2 size={18} color={colors.muted} />}
+                    <View style={s.rowIcon}>
+                      {on ? <Check size={20} color={colors.lime} /> : <Volume2 size={18} color={colors.muted} />}
+                    </View>
                   </Pressable>
                 )
               })}
@@ -169,7 +183,6 @@ export default function Instellingen() {
         <View style={s.list}>
           <Toggle label="Geluidseffecten" k="sounds" settings={settings} />
           <Toggle label="Scherm schudt bij fout" k="shake" settings={settings} />
-          <Toggle label="Typen in plaats van praten" k="typing" settings={settings} />
           <Toggle label="Na fout eerst nazeggen" k="repeatAfterWrong" settings={settings} last />
         </View>
 
@@ -187,16 +200,7 @@ export default function Instellingen() {
               onPress={() => void Share.share({ message: `Tafels oefenen door ze hardop te zeggen: ${SITE_URL}` })}
             />
             {analyticsAvailable ? (
-              <View style={[s.row, s.rowLine]}>
-                <Txt style={{ flex: 1 }}>Anonieme statistieken delen</Txt>
-                <Switch
-                  accessibilityLabel="Anonieme statistieken delen"
-                  value={settings.analytics === true}
-                  onValueChange={setAnalyticsEnabled}
-                  trackColor={{ true: colors.lime, false: colors.line }}
-                  thumbColor={colors.text}
-                />
-              </View>
+              <SwitchRow label="Anonieme statistieken delen" value={settings.analytics === true} onChange={setAnalyticsEnabled} />
             ) : null}
             <Row label="Privacy" onPress={() => open(`${SITE_URL}/privacy`)} last />
           </View>
@@ -223,16 +227,13 @@ export default function Instellingen() {
           </Txt>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
             <Txt variant="small" color={colors.muted}>
-              Gemaakt door{' '}
+              Gemaakt door René en Boris Weteling ·{' '}
             </Txt>
             <Pressable accessibilityRole="link" onPress={() => open(MAKER_URL)} hitSlop={{ left: 8, right: 8, top: 8, bottom: 8 }}>
               <Txt variant="small" style={{ textDecorationLine: 'underline' }}>
-                {MAKER}
+                {COMPANY}
               </Txt>
             </Pressable>
-            <Txt variant="small" color={colors.muted}>
-              {' '}· {COMPANY}
-            </Txt>
           </View>
           <Txt variant="small" color={colors.muted} style={{ fontSize: 12 }}>
             versie {Constants.expoConfig?.version ?? ''}
@@ -286,15 +287,24 @@ function Segments<T extends string | number | boolean>({
 type BoolKey = { [K in keyof Settings]: Settings[K] extends boolean ? K : never }[keyof Settings]
 
 function Toggle({ label, k, settings, last }: { label: string; k: BoolKey; settings: Settings; last?: boolean }) {
+  return <SwitchRow label={label} value={settings[k]} onChange={(v) => updateSettings({ [k]: v } as Partial<Settings>)} last={last} />
+}
+
+/**
+ * Label left, switch right. React Native gives the iOS switch `alignSelf: 'flex-start'`
+ * by default, which pins it to the top of the row; `alignSelf: 'center'` undoes that.
+ */
+function SwitchRow({ label, value, onChange, last }: { label: string; value: boolean; onChange: (v: boolean) => void; last?: boolean }) {
   return (
-    <View style={[s.row, !last && s.rowLine]}>
+    <View style={[s.row, s.switchRow, !last && s.rowLine]}>
       <Txt style={{ flex: 1 }}>{label}</Txt>
       <Switch
         accessibilityLabel={label}
-        value={settings[k]}
-        onValueChange={(v) => updateSettings({ [k]: v } as Partial<Settings>)}
+        value={value}
+        onValueChange={onChange}
         trackColor={{ true: colors.lime, false: colors.line }}
         thumbColor={colors.text}
+        style={s.switch}
       />
     </View>
   )
@@ -304,7 +314,9 @@ function Row({ label, onPress, last }: { label: string; onPress: () => void; las
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [s.row, !last && s.rowLine, pressed && { opacity: 0.6 }]}>
       <Txt style={{ flex: 1 }}>{label}</Txt>
-      <ChevronRight size={18} color={colors.muted} />
+      <View style={s.rowIcon}>
+        <ChevronRight size={18} color={colors.muted} />
+      </View>
     </Pressable>
   )
 }
@@ -335,5 +347,8 @@ const s = StyleSheet.create({
   list: { borderRadius: 18, backgroundColor: colors.surface, overflow: 'hidden' },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.m, minHeight: 52, paddingHorizontal: space.l },
   rowLine: { borderBottomWidth: 1, borderBottomColor: colors.line },
+  switchRow: { paddingVertical: space.s },
+  switch: { alignSelf: 'center' },
+  rowIcon: { width: 24, alignItems: 'flex-end', justifyContent: 'center' },
   footer: { alignItems: 'center', gap: 6, paddingTop: space.m },
 })
