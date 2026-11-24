@@ -9,14 +9,18 @@ import {
 import { router } from 'expo-router'
 import { ChevronRight, Flame, Keyboard, LayoutGrid, Mic, Play, Plus, Settings as SettingsIcon, X } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native'
 
 import { Button, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { analyticsAvailable } from '@/lib/analytics'
 import { streak, updateSettings, useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
 
+/** Windows shorter than this (iPhone SE: 667pt) get the compact layout. */
+const COMPACT_HEIGHT = 700
+
 export default function Start() {
+  const compact = useWindowDimensions().height < COMPACT_HEIGHT
   const settings = useStore((s) => s.settings)
   const progress = useStore((s) => s.progress)
   const xp = useStore((s) => s.xp)
@@ -71,7 +75,7 @@ export default function Start() {
   }
 
   return (
-    <Screen>
+    <Screen style={compact ? { gap: space.m } : undefined}>
       <View style={ui.row}>
         <View style={s.level}>
           <Txt style={{ fontFamily: fonts.display, fontSize: 16 }} color={colors.ink}>
@@ -102,13 +106,21 @@ export default function Start() {
         <IconButton icon={SettingsIcon} label="Instellingen" onPress={() => router.push('/instellingen')} />
       </View>
 
-      <ScrollView contentContainerStyle={{ gap: space.xl, paddingBottom: space.l }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ gap: compact ? space.m : space.xl, paddingBottom: compact ? space.s : space.l }} showsVerticalScrollIndicator={false}>
         <View>
-          <Txt variant="hero">TAFEL</Txt>
-          <Txt variant="hero" color={colors.lime}>
-            RUSH
-          </Txt>
-          <Txt variant="body" color={colors.muted} style={{ marginTop: 10 }}>
+          {compact ? (
+            <Txt variant="hero" style={{ fontSize: 40, lineHeight: 42 }} numberOfLines={1} adjustsFontSizeToFit>
+              TAFEL <Txt variant="hero" color={colors.lime} style={{ fontSize: 40, lineHeight: 42 }}>RUSH</Txt>
+            </Txt>
+          ) : (
+            <>
+              <Txt variant="hero">TAFEL</Txt>
+              <Txt variant="hero" color={colors.lime}>
+                RUSH
+              </Txt>
+            </>
+          )}
+          <Txt variant={compact ? 'small' : 'body'} color={colors.muted} style={{ marginTop: compact ? 4 : 10 }}>
             {best ? `Record: ${best.score}/10 in ${best.seconds} sec.` : 'Nog geen record. Tijd om er een neer te zetten.'}
           </Txt>
         </View>
@@ -139,11 +151,11 @@ export default function Start() {
           </Pressable>
         ) : null}
 
-        <View style={{ gap: 10 }}>
+        <View style={{ gap: compact ? space.s : 10 }}>
           <Txt variant="label" color={colors.muted}>
             Tafels
           </Txt>
-          <View style={s.grid}>
+          <View style={[s.grid, compact && { gap: 6 }]}>
             {BASE_TABLES.map((t) => {
               const on = picked.includes(t)
               return (
@@ -153,7 +165,7 @@ export default function Start() {
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={`Tafel van ${t}`}
                   onPress={() => toggle(t)}
-                  style={[s.table, on ? s.tableOn : null]}>
+                  style={[s.table, compact && { height: 44 }, on ? s.tableOn : null]}>
                   <Txt style={{ fontFamily: fonts.displayBold, fontSize: 18 }} color={on ? colors.ink : colors.text}>
                     {t}
                   </Txt>
@@ -161,7 +173,7 @@ export default function Start() {
               )
             })}
           </View>
-          <View style={s.own}>
+          <View style={[s.own, compact && { gap: 6 }]}>
             {own.map((t) => {
               const on = picked.includes(t)
               return (
@@ -222,7 +234,7 @@ export default function Start() {
         </View>
       </ScrollView>
 
-      <View style={{ gap: space.m }}>
+      <View style={{ gap: compact ? space.s : space.m }}>
         <Txt variant="label" color={colors.muted}>
           Antwoorden via
         </Txt>
@@ -235,19 +247,22 @@ export default function Start() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: on }}
                 onPress={() => updateSettings({ input: value })}
-                style={[s.inputCard, on ? s.inputCardOn : null]}>
-                <Icon size={24} color={on ? colors.ink : colors.text} />
-                <Txt variant="bodyBold" color={on ? colors.ink : colors.text} style={{ fontSize: 15 }}>
+                accessibilityHint={INPUT_HINTS[value]}
+                style={[s.inputCard, compact && s.inputCardCompact, on ? s.inputCardOn : null]}>
+                <Icon size={compact ? 18 : 24} color={on ? colors.ink : colors.text} />
+                <Txt variant="bodyBold" color={on ? colors.ink : colors.text} style={{ fontSize: compact ? 14 : 15 }}>
                   {label}
                 </Txt>
               </Pressable>
             )
           })}
         </View>
-        <Txt variant="small" color={colors.muted}>
-          {INPUT_HINTS[settings.input]}
-        </Txt>
-        <Button big label="SPELEN" icon={Play} onPress={() => router.push('/ronde')} />
+        {compact ? null : (
+          <Txt variant="small" color={colors.muted}>
+            {INPUT_HINTS[settings.input]}
+          </Txt>
+        )}
+        <Button big style={compact ? { minHeight: 60 } : undefined} label="SPELEN" icon={Play} onPress={() => router.push('/ronde')} />
       </View>
     </Screen>
   )
@@ -357,5 +372,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  inputCardCompact: { flexDirection: 'row', minHeight: 48, gap: 4, paddingHorizontal: 4 },
   inputCardOn: { backgroundColor: colors.lime, borderColor: colors.lime },
 })
