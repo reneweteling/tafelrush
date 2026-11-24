@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "next dev -p 3070",
     "build": "next build",
+    "spelen": "pnpm --filter mobile export:web && node scripts/spelen.mjs",
     "start": "next start -p ${PORT:-3000}",
     "check-types": "next typegen && tsc --noEmit"
   },

@@ -53,3 +53,6 @@ credentials.json
 secrets/
 
 .claude/worktrees/
+
+# browser game, copied in at build time (apps/web/scripts/spelen.mjs)
+apps/web/public/spelen/

@@ -63,12 +63,21 @@ export default async function ChallengePage({ params }: Props) {
               </p>
             </div>
             <a
+              href={`/spelen/d/${encodeURIComponent(code)}`}
+              className="btn-press inline-flex min-h-14 items-center rounded-2xl bg-lime px-6 font-bold text-ink"
+            >
+              Speel in de browser
+            </a>
+            <a
               href={`${APP_SCHEME}://d/${encodeURIComponent(code)}`}
               className="inline-flex min-h-14 items-center rounded-2xl border-2 border-line px-6 font-bold"
             >
               Heb je de app al? Open de uitdaging
             </a>
-            <p className="text-muted">Nog niet? Download Tafel Rush en open deze link daarna nog een keer.</p>
+            <p className="text-muted">
+              Nog geen app? Speel de uitdaging hierboven in je browser, of download Tafel Rush en open deze link daarna nog
+              een keer.
+            </p>
             <StoreButtons />
           </>
         ) : (

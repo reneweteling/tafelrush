@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 
 import { PromoVideo, Reveal } from '@/components/motion'
-import { Footer, Header, Mark, StoreButtons } from '@/components/site'
+import { Footer, Header, Mark, PlayInBrowser, StoreButtons } from '@/components/site'
 import { DESCRIPTION, FAQ, homeJsonLd, ldJson, NAME, pageMetadata, SCREENS, TAGLINE } from '@/lib/seo'
 
 export const metadata: Metadata = pageMetadata({ title: `${NAME}: ${TAGLINE.toLowerCase()}`, description: DESCRIPTION, path: '/' })
@@ -146,8 +146,9 @@ function Hero() {
             jij zegt het antwoord. Niks tikken.
           </p>
 
-          <div className="hero-in" style={{ '--d': '1050ms' } as Vars}>
+          <div className="hero-in flex flex-col items-start gap-4" style={{ '--d': '1050ms' } as Vars}>
             <StoreButtons />
+            <PlayInBrowser />
           </div>
 
           <ul className="hero-in flex flex-wrap gap-x-5 gap-y-1 text-sm font-bold text-muted" style={{ '--d': '1200ms' } as Vars}>
@@ -540,8 +541,9 @@ function FinalCta() {
         <p data-reveal className="text-lg text-muted" style={{ '--d': '100ms' } as Vars}>
           Gratis voor iPhone en Android. Geen account. Gewoon beginnen.
         </p>
-        <div data-reveal style={{ '--d': '200ms' } as Vars} className="flex justify-center">
+        <div data-reveal style={{ '--d': '200ms' } as Vars} className="flex flex-col items-center gap-4">
           <StoreButtons className="justify-center" />
+          <PlayInBrowser />
         </div>
       </div>
     </section>

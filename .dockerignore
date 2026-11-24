@@ -3,7 +3,14 @@ node_modules
 .git
 .turbo
 **/.turbo
-apps/mobile
+# The app sources are needed for the browser game (/spelen); its builds and store art are not.
+apps/mobile/build
+apps/mobile/dist
+apps/mobile/store
+apps/mobile/ios
+apps/mobile/android
+apps/mobile/.expo
+apps/web/public/spelen
 *.log
 .env
 .env.*

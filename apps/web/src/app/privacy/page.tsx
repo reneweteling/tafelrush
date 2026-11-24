@@ -46,6 +46,15 @@ export default function Privacy() {
           de instellingen; Google bewaart de gegevens maximaal 14 maanden.
         </p>
 
+        <h2 id="browser">Spelen in de browser</h2>
+        <p>
+          Op tafelrush.nl/spelen speel je zonder app. Je voortgang en instellingen staan dan alleen in die browser, op dat
+          apparaat. Wissen kan via Instellingen, Voortgang wissen, of door de sitegegevens van tafelrush.nl in je browser te
+          wissen. Praten gebruikt de spraakherkenning van je browser: in Chrome die van Google, in Edge die van Microsoft,
+          in Safari die van Apple, onder hun eigen privacyvoorwaarden. Wij ontvangen geen geluid. In de browser zijn er geen
+          statistieken, ook niet als je ze in de app wel aan hebt staan.
+        </p>
+
         <h2 id="wissen">Gegevens wissen</h2>
         <p>
           Wat op je telefoon staat, wis je in de app via Instellingen, Voortgang wissen. Of verwijder de app, dan is alles

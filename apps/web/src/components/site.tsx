@@ -55,6 +55,18 @@ export function StoreButtons({ className = '' }: { className?: string }) {
   )
 }
 
+/**
+ * Link to the browser version at /spelen (the Expo app exported for the web, see
+ * scripts/spelen.mjs). A plain <a>: it is not a Next.js route, so no client-side navigation.
+ */
+export function PlayInBrowser({ path = '', className = '' }: { path?: string; className?: string }) {
+  return (
+    <a href={`/spelen${path}`} className={`font-bold underline decoration-2 underline-offset-4 ${className}`}>
+      Of speel meteen in je browser
+    </a>
+  )
+}
+
 export function Header() {
   return (
     <header className="flex items-center justify-between py-6">
