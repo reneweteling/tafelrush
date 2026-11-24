@@ -21,8 +21,8 @@ RUN pnpm --filter mobile export:web
 FROM base
 COPY . .
 RUN pnpm install --frozen-lockfile --filter web...
-COPY --from=spelen /app/apps/mobile/dist /app/apps/mobile/dist
-RUN node apps/web/scripts/spelen.mjs
+# Same result as scripts/spelen.mjs, without a second copy of the export in the image.
+COPY --from=spelen /app/apps/mobile/dist /app/apps/web/public/spelen
 RUN pnpm --filter web build
 
 ENV NODE_ENV=production

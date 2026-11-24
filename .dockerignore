@@ -3,16 +3,24 @@ node_modules
 .git
 .turbo
 **/.turbo
-# The app sources are needed for the browser game (/spelen); its builds and store art are not.
+.claude
+# Signing material and env files never go into the image.
+secrets
+**/secrets
+.env
+.env.*
+**/.env
+**/.env.*
+# The app sources are needed for the browser game (/spelen); its builds, native folders,
+# Firebase config and store art are not.
 apps/mobile/build
 apps/mobile/dist
 apps/mobile/store
 apps/mobile/ios
 apps/mobile/android
 apps/mobile/.expo
+apps/mobile/firebase
 apps/web/public/spelen
 *.log
-.env
-.env.*
 .DS_Store
 **/.next

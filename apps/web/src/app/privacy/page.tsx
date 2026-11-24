@@ -51,7 +51,8 @@ export default function Privacy() {
           Op tafelrush.nl/spelen speel je zonder app. Je voortgang en instellingen staan dan alleen in die browser, op dat
           apparaat. Wissen kan via Instellingen, Voortgang wissen, of door de sitegegevens van tafelrush.nl in je browser te
           wissen. Praten gebruikt de spraakherkenning van je browser: in Chrome die van Google, in Edge die van Microsoft,
-          in Safari die van Apple, onder hun eigen privacyvoorwaarden. Wij ontvangen geen geluid. In de browser zijn er geen
+          in Safari die van Apple, onder hun eigen privacyvoorwaarden. Wij ontvangen geen geluid. Voorlezen doet een stem van je
+          browser; een online stem, zoals Google Nederlands in Chrome, krijgt daarvoor de tekst van de som. In de browser zijn er geen
           statistieken, ook niet als je ze in de app wel aan hebt staan.
         </p>
 

@@ -14,8 +14,9 @@ export async function shareText(message: string): Promise<Shared> {
       if ((e as { name?: string }).name === 'AbortError') return 'failed'
     }
   }
+  if (!nav?.clipboard) return 'failed'
   try {
-    await nav?.clipboard?.writeText(message)
+    await nav.clipboard.writeText(message)
     window.alert('Gekopieerd. Plak het in een berichtje.')
     return 'copied'
   } catch {
