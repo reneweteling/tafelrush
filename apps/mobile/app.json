@@ -63,7 +63,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "single",
+      "name": "Tafel Rush",
+      "shortName": "Tafel Rush",
+      "lang": "nl",
+      "themeColor": "#101018",
+      "backgroundColor": "#101018"
     },
     "plugins": [
       "expo-router",

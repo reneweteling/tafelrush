@@ -6,11 +6,12 @@ import * as Clipboard from 'expo-clipboard'
 import { router } from 'expo-router'
 import { ChevronLeft, Send } from 'lucide-react-native'
 import { useState } from 'react'
-import { ScrollView, Share, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
 
 import { Button, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { track } from '@/lib/analytics'
+import { shareText } from '@/lib/share'
 import { useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
 
@@ -69,9 +70,9 @@ export default function Uitdagen() {
                 icon={Send}
                 onPress={() => {
                   track('challenge_sent')
-                  void Share.share({
-                    message: `${name.trim() || 'Ik'} daag${name.trim() ? 't' : ''} je uit bij Tafel Rush: ${last.score}/10 in ${last.seconds} sec. Kun jij het beter? ${url}`,
-                  })
+                  void shareText(
+                    `${name.trim() || 'Ik'} daag${name.trim() ? 't' : ''} je uit bij Tafel Rush: ${last.score}/10 in ${last.seconds} sec. Kun jij het beter? ${url}`,
+                  )
                 }}
               />
               <Button

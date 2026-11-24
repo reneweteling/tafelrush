@@ -26,17 +26,19 @@ import {
   type Outcome,
   type Sum,
 } from '@tafelrush/shared'
-import * as Haptics from 'expo-haptics'
-import { useKeepAwake } from 'expo-keep-awake'
 import { router, useLocalSearchParams } from 'expo-router'
 import { ArrowRight, Mic, Pause, Play, Square, Volume2, X } from 'lucide-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Keyboard, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 
 import { Bubble, Button, Chip, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { track } from '@/lib/analytics'
+import { useScreenAwake } from '@/lib/awake'
+import { buzz } from '@/lib/buzz'
+import { hasKeyboard, useKeys } from '@/lib/keys'
 import { canListen, currentEngine, listenForNumber, ListenError, stopListening } from '@/lib/listen'
+import { choiceForKey } from '@/lib/webspeech'
 import { fill, pickPhrase, type PhraseKind, type PhraseVars } from '@/lib/phrases'
 import { play } from '@/lib/sfx'
 import { clockStartsOn, elapsedMs, fractionLeft, freezeClock, newClock, secondsLeft, startClock, timeUp } from '@/lib/clock'
@@ -75,13 +77,16 @@ type View_ = {
 }
 
 const ROUND = 10
+const WEB = Platform.OS === 'web'
+/** Show 1 to 6 on the multiple-choice buttons (browser with a physical keyboard). */
+const KEY_HINTS = hasKeyboard()
 const NO_TIMER_MS = 30_000
 const REPEAT_MS = 8_000
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 export default function Ronde() {
-  useKeepAwake()
+  useScreenAwake()
   const { code } = useLocalSearchParams<{ code?: string }>()
 
   const [view, setView] = useState<View_>(() => ({
@@ -240,7 +245,9 @@ export default function Ronde() {
         e.input = 'typen'
         const notice =
           err.code === 'language-not-supported'
-            ? 'Je telefoon verstaat nog geen Nederlands. Typ je antwoord maar; in de instellingen van Google kun je Nederlands toevoegen.'
+            ? WEB
+              ? 'Deze browser verstaat geen Nederlands. Typ je antwoord maar.'
+              : 'Je telefoon verstaat nog geen Nederlands. Typ je antwoord maar; in de instellingen van Google kun je Nederlands toevoegen.'
             : 'De microfoon mag niet luisteren. Typ je antwoord maar.'
         patch({ input: 'typen', notice, talking: false, timeLeft: 1 })
         clearInterval(tick)
@@ -318,7 +325,7 @@ export default function Ronde() {
         const sixSeven = settings.slang && ((s.a === 6 && s.b === 7) || (s.a === 7 && s.b === 6))
         const kind: PhraseKind = sixSeven ? 'sixseven' : boss ? 'boss' : e.combo >= 3 && e.combo % 2 === 1 ? 'combo' : 'goed'
         play(sixSeven ? 'sixseven' : boss || e.combo === 5 || e.combo === 10 ? 'airhorn' : e.combo >= 3 ? 'combo' : 'goed')
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+        buzz('goed')
         const p = phrase(kind, vars)
         patch({ phase: 'goed', sixSeven, headline: '' })
         if (p) addLine('app', p.shown)
@@ -329,7 +336,7 @@ export default function Ronde() {
 
       if (outcome === 'fout') {
         play('boom')
-        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        buzz('fout')
         if (settings.shake) {
           shake.set(
             withSequence(
@@ -457,8 +464,8 @@ export default function Ronde() {
             input: 'typen',
             notice:
               mic === 'denied'
-                ? 'Geen toegang tot de microfoon. Je typt nu je antwoorden; aanzetten kan in de instellingen van je telefoon.'
-                : 'Spraakherkenning werkt niet op dit toestel. Je typt nu je antwoorden.',
+                ? `Geen toegang tot de microfoon. Je typt nu je antwoorden; aanzetten kan in de instellingen van je ${WEB ? 'browser' : 'telefoon'}.`
+                : `Spraakherkenning werkt niet ${WEB ? 'in deze browser' : 'op dit toestel'}. Je typt nu je antwoorden.`,
           })
         }
       }
@@ -704,7 +711,7 @@ function Center({ view, sum, fg }: { view: View_; sum: Sum; fg: string }) {
   const asking = view.phase === 'luisteren'
   return (
     <View style={[ui.row, { gap: space.m }]}>
-      <Txt style={{ fontFamily: fonts.display, fontSize: asking ? fit(72, `${label} =`, 6) : fit(96, label, 6), letterSpacing: -3 }} color={fg}>
+      <Txt style={{ fontFamily: fonts.display, fontSize: asking ? fit(72, `${label} =`, 5) : fit(96, label, 6), letterSpacing: -3 }} color={fg}>
         {label}
         {asking ? ' =' : ''}
       </Txt>
@@ -732,11 +739,24 @@ function Bottom({
 }) {
   const [typed, setTyped] = useState('')
   const asking = view.phase === 'luisteren' || view.phase === 'nazeggen'
+  const choosing = view.input === 'kiezen' && view.phase === 'luisteren'
 
-  if (view.input === 'kiezen' && view.phase === 'luisteren') {
+  // Physical keyboard: 1 to 6 pick a button (only does something in the browser).
+  useKeys(
+    choosing
+      ? (key) => {
+          const n = choiceForKey(key, view.choices)
+          if (n === null) return false
+          onAnswer(n)
+          return true
+        }
+      : null,
+  )
+
+  if (choosing) {
     return (
       <View style={s.choices}>
-        {view.choices.map((n) => (
+        {view.choices.map((n, i) => (
           <Pressable
             key={n}
             accessibilityRole="button"
@@ -744,9 +764,16 @@ function Bottom({
             onPress={() => onAnswer(n)}
             style={({ pressed }) => [s.choice, pressed && { backgroundColor: colors.lime, borderColor: colors.lime }]}>
             {({ pressed }) => (
-              <Txt style={{ fontFamily: fonts.display, fontSize: fit(30, String(n), 4) }} color={pressed ? colors.ink : colors.text}>
-                {n}
-              </Txt>
+              <>
+                {KEY_HINTS ? (
+                  <Txt variant="small" color={pressed ? colors.ink : colors.muted} style={s.choiceKey}>
+                    {i + 1}
+                  </Txt>
+                ) : null}
+                <Txt style={{ fontFamily: fonts.display, fontSize: fit(30, String(n), 4) }} color={pressed ? colors.ink : colors.text}>
+                  {n}
+                </Txt>
+              </>
             )}
           </Pressable>
         ))}
@@ -825,6 +852,8 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  /** The keyboard shortcut, small in the corner (browser only). */
+  choiceKey: { position: 'absolute', top: 6, left: 10, fontSize: 12, lineHeight: 14 },
   lines: { flex: 1, justifyContent: 'flex-end', gap: 10 },
   segments: { flex: 1, flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 8, borderRadius: 4 },
@@ -843,6 +872,8 @@ const s = StyleSheet.create({
   mic: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
   input: {
     flex: 1,
+    // Without this a browser keeps the field at its default width and pushes OK off screen.
+    minWidth: 0,
     minHeight: 56,
     borderRadius: radius.m,
     borderWidth: 2,

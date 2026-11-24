@@ -42,6 +42,14 @@ let onDevice: boolean | null = null
 
 export type Engine = 'device' | 'cloud'
 
+/** Phones always offer Praten; a missing recogniser shows up in canListen(). Browsers differ, see listen.web.ts. */
+export function listeningPossible(): boolean {
+  return true
+}
+
+/** Shown where Praten is off because listeningPossible() is false; never on a phone. */
+export const NO_LISTENING_HINT = ''
+
 export function currentEngine(): Engine {
   return onDevice ? 'device' : 'cloud'
 }

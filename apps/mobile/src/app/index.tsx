@@ -13,8 +13,10 @@ import { Pressable, ScrollView, StyleSheet, TextInput, useWindowDimensions, View
 
 import { Button, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { analyticsAvailable } from '@/lib/analytics'
+import { listeningPossible, NO_LISTENING_HINT } from '@/lib/listen'
 import { streak, updateSettings, useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
+import { unlockVoice } from '@/lib/voice'
 
 /** Windows shorter than this (iPhone SE: 667pt) get the compact layout. */
 const COMPACT_HEIGHT = 700
@@ -241,14 +243,18 @@ export default function Start() {
         <View style={{ flexDirection: 'row', gap: space.s }}>
           {INPUTS.map(({ value, label, icon: Icon }) => {
             const on = settings.input === value
+            // Some browsers (Firefox) cannot recognise speech: Praten stays visible but off.
+            const off = value === 'praten' && !canTalk
             return (
               <Pressable
                 key={value}
                 accessibilityRole="radio"
-                accessibilityState={{ checked: on }}
+                aria-checked={on}
+                aria-disabled={off}
+                disabled={off}
                 onPress={() => updateSettings({ input: value })}
                 accessibilityHint={INPUT_HINTS[value]}
-                style={[s.inputCard, compact && s.inputCardCompact, on ? s.inputCardOn : null]}>
+                style={[s.inputCard, compact && s.inputCardCompact, on ? s.inputCardOn : null, off ? { opacity: 0.4 } : null]}>
                 <Icon size={compact ? 18 : 24} color={on ? colors.ink : colors.text} />
                 <Txt variant="bodyBold" color={on ? colors.ink : colors.text} style={{ fontSize: compact ? 14 : 15 }}>
                   {label}
@@ -257,16 +263,33 @@ export default function Start() {
             )
           })}
         </View>
-        {compact ? null : (
+        {compact ? (
+          canTalk ? null : (
+            <Txt variant="small" color={colors.muted}>
+              {NO_LISTENING_HINT}
+            </Txt>
+          )
+        ) : (
           <Txt variant="small" color={colors.muted}>
-            {INPUT_HINTS[settings.input]}
+            {canTalk ? INPUT_HINTS[settings.input] : `${NO_LISTENING_HINT} ${INPUT_HINTS[settings.input]}`}
           </Txt>
         )}
-        <Button big style={compact ? { minHeight: 60 } : undefined} label="SPELEN" icon={Play} onPress={() => router.push('/ronde')} />
+        <Button
+          big
+          style={compact ? { minHeight: 60 } : undefined}
+          label="SPELEN"
+          icon={Play}
+          onPress={() => {
+            if (settings.input === 'praten') unlockVoice()
+            router.push('/ronde')
+          }}
+        />
       </View>
     </Screen>
   )
 }
+
+const canTalk = listeningPossible()
 
 const INPUTS = [
   { value: 'praten', label: 'Praten', icon: Mic },

@@ -2,11 +2,12 @@ import { challengeUrl, decodeChallenge, encodeChallenge, parseKey, RANKS, RANK_C
 import { router } from 'expo-router'
 import { ThumbsDown } from 'lucide-react-native'
 import { useEffect, useMemo, useState } from 'react'
-import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native'
 
 import { Button, Chip, Screen, styles as ui, Txt } from '@/components/ui'
 import { endKind, fill, PHRASES, pickPhrase } from '@/lib/phrases'
 import { track } from '@/lib/analytics'
+import { shareText } from '@/lib/share'
 import { play } from '@/lib/sfx'
 import { getState, setState, useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
@@ -162,9 +163,7 @@ function ReplyButton({ code, score, seconds }: { code: string; score: number; se
     <Button
       label={won ? `Je wint van ${c.name || 'haar'}. Stuur je score terug` : 'Stuur je score terug'}
       onPress={() =>
-        void Share.share({
-          message: `${name.trim() || 'Ik'}: ${score}/10 in ${seconds} sec op jouw sommen. ${challengeUrl(reply)}`,
-        })
+        void shareText(`${name.trim() || 'Ik'}: ${score}/10 in ${seconds} sec op jouw sommen. ${challengeUrl(reply)}`)
       }
     />
   )

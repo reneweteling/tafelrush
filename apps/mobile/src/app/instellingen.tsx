@@ -6,14 +6,24 @@ import * as StoreReview from 'expo-store-review'
 import * as WebBrowser from 'expo-web-browser'
 import { Check, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
-import { Linking, Pressable, ScrollView, Share, StyleSheet, Switch, TextInput, View } from 'react-native'
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native'
 
 import { Button, IconButton, Mark, Screen, styles as ui, Txt } from '@/components/ui'
 import { analyticsAvailable, setAnalyticsEnabled, track } from '@/lib/analytics'
 import { resetProgress, updateSettings as saveSettings, useStore, type Settings } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
-import { downloadDutchModel, onDeviceStatus } from '@/lib/listen'
+import { downloadDutchModel, listeningPossible, NO_LISTENING_HINT, onDeviceStatus } from '@/lib/listen'
+import { shareText } from '@/lib/share'
 import { dutchVoices, say, type DutchVoice } from '@/lib/voice'
+
+const WEB = Platform.OS === 'web'
+
+// Browsers without speech recognition (Firefox) get no Praten.
+const INPUT_OPTIONS: [Settings['input'], string][] = [
+  ...(listeningPossible() ? [['praten', 'Praten'] as [Settings['input'], string]] : []),
+  ['typen', 'Typen'],
+  ['kiezen', 'Meerkeuze'],
+]
 
 // Expo Go has its own build number; leave it out there.
 const buildNumber =
@@ -53,13 +63,14 @@ export default function Instellingen() {
         <Group title="Antwoorden via">
           <Segments
             value={settings.input}
-            options={[
-              ['praten', 'Praten'],
-              ['typen', 'Typen'],
-              ['kiezen', 'Meerkeuze'],
-            ]}
+            options={INPUT_OPTIONS}
             onChange={(input) => updateSettings({ input })}
           />
+          {listeningPossible() ? null : (
+            <Txt variant="small" color={colors.muted}>
+              {NO_LISTENING_HINT}
+            </Txt>
+          )}
         </Group>
 
         <Group title="Bedenktijd">
@@ -95,7 +106,7 @@ export default function Instellingen() {
                   <Pressable
                     key={v.id}
                     accessibilityRole="radio"
-                    accessibilityState={{ checked: on }}
+                    aria-checked={on}
                     onPress={() => {
                       saveSettings({ voice: v.id })
                       track('setting_changed', { key: 'voice', value: String(i + 1) })
@@ -190,14 +201,16 @@ export default function Instellingen() {
           <View style={s.list}>
             <Row label="Deel Tafel Rush met een vriendin" onPress={() => router.push('/uitdagen')} />
             <Row
-              label="Geef een beoordeling"
+              // In the browser there is no store to rate in; point to the app instead.
+              label={WEB ? 'Download de app' : 'Geef een beoordeling'}
               onPress={() => {
+                if (WEB) return open(SITE_URL)
                 void StoreReview.hasAction().then((ok) => (ok ? StoreReview.requestReview() : open(SITE_URL)))
               }}
             />
             <Row
               label="Vertel het verder"
-              onPress={() => void Share.share({ message: `Tafels oefenen door ze hardop te zeggen: ${SITE_URL}` })}
+              onPress={() => void shareText(`Tafels oefenen door ze hardop te zeggen: ${SITE_URL}`)}
             />
             {analyticsAvailable ? (
               <SwitchRow label="Anonieme statistieken delen" value={settings.analytics === true} onChange={setAnalyticsEnabled} />
@@ -205,7 +218,9 @@ export default function Instellingen() {
             <Row label="Privacy" onPress={() => open(`${SITE_URL}/privacy`)} last />
           </View>
           <Txt variant="small" color={colors.muted}>
-            Je voortgang blijft op dit toestel. Geen account, geen reclame. Statistieken zijn anoniem en alleen als je dat wilt.
+            {WEB
+              ? 'Je voortgang blijft in deze browser. Geen account, geen reclame, geen statistieken.'
+              : 'Je voortgang blijft op dit toestel. Geen account, geen reclame. Statistieken zijn anoniem en alleen als je dat wilt.'}
           </Txt>
         </Group>
 
@@ -270,8 +285,8 @@ function Segments<T extends string | number | boolean>({
         return (
           <Pressable
             key={String(v)}
-            accessibilityRole="button"
-            accessibilityState={{ selected: on }}
+            accessibilityRole="radio"
+            aria-checked={on}
             onPress={() => onChange(v)}
             style={[s.segment, on && { backgroundColor: colors.lime, borderColor: colors.lime }]}>
             <Txt variant="bodyBold" color={on ? colors.ink : colors.text} style={{ fontSize: 15, textAlign: 'center' }}>

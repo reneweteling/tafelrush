@@ -5,11 +5,12 @@ import { router } from 'expo-router'
 import * as Sharing from 'expo-sharing'
 import { ChevronLeft, Share2 } from 'lucide-react-native'
 import { useRef, useState } from 'react'
-import { Share, StyleSheet, View } from 'react-native'
+import { Platform, Share, StyleSheet, View } from 'react-native'
 import { captureRef } from 'react-native-view-shot'
 
 import { Button, IconButton, Screen, styles as ui, Txt } from '@/components/ui'
 import { track } from '@/lib/analytics'
+import { shareText } from '@/lib/share'
 import { useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
 
@@ -48,6 +49,11 @@ export default function Delen() {
   async function share() {
     setBusy(true)
     try {
+      // A browser cannot share the card as a picture everywhere; share the line instead.
+      if (Platform.OS === 'web') {
+        await shareText(`${who} deed deze week ${sums} sommen in Tafel Rush. ${SITE_URL}`)
+        return
+      }
       const uri = await captureRef(card, { format: 'png', quality: 1, result: 'tmpfile' })
       track('report_shared')
       if (await Sharing.isAvailableAsync()) {

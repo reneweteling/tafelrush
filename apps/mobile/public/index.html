@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="%LANG_ISO_CODE%">
+  <head>
+    <!-- Page template for the browser version (tafelrush.nl/spelen). Expo adds the script tags. -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>%WEB_TITLE%</title>
+    <meta name="description" content="Tafel Rush in je browser: tafels oefenen door ze hardop te zeggen, te typen of te kiezen." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- The react-native-web style reset, plus the app background outside the phone-sized column. -->
+    <style id="expo-reset">
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background-color: #101018;
+        color-scheme: dark;
+      }
+      body {
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+      /* Browsers draw a focus ring around text fields; the app has its own border. */
+      input:focus {
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>Tafel Rush heeft JavaScript nodig.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

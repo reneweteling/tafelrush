@@ -104,3 +104,6 @@ export async function say(
 export function stopVoice() {
   void Speech.stop()
 }
+
+/** Only needed in the browser (see voice.web.ts); the phone may always speak. */
+export function unlockVoice() {}
