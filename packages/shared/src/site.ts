@@ -11,6 +11,8 @@ export const APP_STORE_URL: string | null = 'https://apps.apple.com/app/id682224
 export const MAKER_URL = 'https://www.weteling.com'
 export const COMPANY = 'Felobo B.V.'
 export const MAKER = 'René Weteling'
+/** Credit line for the footer. MAKER stays the author/legal name (metadata, JSON-LD, privacy). */
+export const MAKERS = 'René en Boris Weteling'
 
 export function challengeUrl(code: string): string {
   return `${SITE_URL}/d/${code}`

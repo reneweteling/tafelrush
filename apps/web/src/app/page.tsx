@@ -80,6 +80,7 @@ export default function Home() {
         <Challenge />
         <Faq />
         <FinalCta />
+        <Maker />
       </main>
 
       <div className="mx-auto max-w-6xl px-5">
@@ -541,6 +542,90 @@ function FinalCta() {
         </p>
         <div data-reveal style={{ '--d': '200ms' } as Vars} className="flex justify-center">
           <StoreButtons className="justify-center" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const MAKER_APPS = [
+  ['HeadsUp', 'https://headsup-app.com', 'Twaalf groepsapps. Eén lijstje.'],
+  ['WijnVinder', 'https://wijnvinder.nl', 'Wijnprijzen vergelijken, met een AI-sommelier erbij.'],
+  ['FooterManager', 'https://footermanager.com', 'E-mailhandtekeningen die zichzelf regelen.'],
+  ['Alle apps', 'https://www.weteling.com/#apps', 'De rest van de plank op weteling.com.'],
+] as const
+
+function Maker() {
+  const card =
+    'lift flex flex-col gap-1 rounded-2xl border-2 border-line bg-surface p-4 transition-colors hover:border-lime'
+  return (
+    <section aria-labelledby="maker-title" className="mx-auto mt-16 max-w-6xl border-t border-line px-5 py-16 md:py-24">
+      <div className="grid items-center gap-10 md:grid-cols-[minmax(240px,360px)_1fr] md:gap-16">
+        <figure data-reveal className="relative mx-auto w-full max-w-xs md:mx-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/rene.jpg"
+            alt="René Weteling"
+            width={720}
+            height={720}
+            loading="lazy"
+            decoding="async"
+            className="block aspect-square h-auto w-full rounded-3xl object-cover"
+          />
+          <figcaption className="absolute bottom-3 left-3 rounded-xl bg-bg/80 px-3 py-2 text-sm leading-snug backdrop-blur">
+            René Weteling
+            <br />
+            <span className="text-lime">Agentic Developer</span>
+          </figcaption>
+        </figure>
+
+        <div data-reveal className="flex min-w-0 flex-col gap-5">
+          <span className="text-sm font-bold tracking-widest text-lime uppercase">Wie maakte dit</span>
+          <h2 id="maker-title" className="font-display text-3xl leading-[1] font-black sm:text-4xl">
+            Eén developer.
+            <br />
+            Een vloot agents.
+          </h2>
+          <p className="max-w-[54ch] text-lg text-muted">
+            Ik ben René Weteling. Ik stuur AI-agents aan die ontwerpen, bouwen, testen en opleveren, en ik bewaak de
+            engineering zodat het klopt. Tafel Rush is zo gebouwd, net als alles wat ik maak. Dit maakte ik samen met Boris Weteling.
+          </p>
+          <p className="max-w-[54ch] text-lg text-muted">
+            Wil je die snelheid voor je eigen product? Van idee tot productie, CTO as a service, of een senior om mee te
+            sparren.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="https://www.weteling.com/#contact"
+              target="_blank"
+              rel="noopener"
+              className="btn-press inline-flex min-h-12 items-center rounded-full bg-lime px-6 font-bold text-ink"
+            >
+              Start een project
+            </a>
+            <a
+              href="https://www.weteling.com"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex min-h-12 items-center rounded-full border-2 border-line px-6 font-bold hover:border-fg"
+            >
+              weteling.com
+            </a>
+          </div>
+
+          <div className="mt-6">
+            <p className="mb-3 text-xs font-bold tracking-widest text-muted uppercase">Meer apps van René</p>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {MAKER_APPS.map(([name, href, text]) => (
+                <li key={name}>
+                  <a href={href} target="_blank" rel="noopener" className={card}>
+                    <b className="font-display text-base font-black">{name}</b>
+                    <span className="text-sm text-muted">{text}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>

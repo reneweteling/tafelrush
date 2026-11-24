@@ -1,4 +1,4 @@
-import { APP_STORE_URL, COMPANY, MAKER, MAKER_URL, PLAY_STORE_URL } from '@tafelrush/shared'
+import { APP_STORE_URL, COMPANY, MAKERS, MAKER_URL, PLAY_STORE_URL } from '@tafelrush/shared'
 import Link from 'next/link'
 
 /** The × mark: lime with a pink glitch shadow. */
@@ -73,7 +73,7 @@ export function Footer() {
       <p>
         Gemaakt door{' '}
         <a href={MAKER_URL} className="text-fg underline">
-          {MAKER}
+          {MAKERS}
         </a>{' '}
         · {COMPANY}
       </p>
