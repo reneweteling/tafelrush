@@ -91,7 +91,7 @@ make dokku-env    # sets ANDROID_CERT_SHA256 and the rest of .env.production
 
 `ANDROID_CERT_SHA256` is the SHA-256 of the app signing certificate (Play Console > App integrity). It lets `tafelrush.nl/d/...` links open straight in the app.
 
-Every push to `main` runs typecheck and tests, then deploys via `.github/workflows/web.yml`. That needs the repository secret `DOKKU_SSH_PRIVATE_KEY`. Manual deploy:
+Deploy by pushing from your machine, there is no CI. Run `pnpm typecheck`, `pnpm test` and `pnpm lint` first:
 
 ```bash
 git push dokku@weteling.com:tafelrush HEAD:refs/heads/main
