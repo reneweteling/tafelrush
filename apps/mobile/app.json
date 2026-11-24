@@ -3,7 +3,7 @@
     "name": "Tafel Rush",
     "slug": "tafel-rush",
     "scheme": "tafelrush",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
