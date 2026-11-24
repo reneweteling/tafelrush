@@ -514,6 +514,11 @@ export default function Ronde() {
   const onColor = phase === 'goed' || phase === 'fout'
   const fg = onColor ? colors.ink : colors.text
 
+  const choiceNow = view.input === 'kiezen' && phase === 'luisteren'
+  const bottom = (
+    <Bottom key={`${view.index}-${view.phase}`} view={view} accent={accent} fg={fg} onAnswer={(n) => eng.current.typedResolve?.(n)} />
+  )
+
   return (
     <Animated.View style={[{ flex: 1 }, shakeStyle]}>
       <Screen background={background} style={[
@@ -532,6 +537,9 @@ export default function Ronde() {
           {sum ? <Center view={view} sum={sum} fg={fg} /> : <Txt variant="title">Klaar?</Txt>}
         </View>
 
+        {/* Multiple choice: the buttons sit right under the sum, the chat lines fill the space below. */}
+        {choiceNow ? bottom : null}
+
         <View style={s.lines}>
           {view.notice ? <Bubble from="app" text={view.notice} /> : null}
           {view.lines.slice(keyboard > 0 ? -2 : 0).map((l, i, shown) => (
@@ -543,7 +551,7 @@ export default function Ronde() {
         </View>
 
         {/* Keyed per sum and phase: digits left over from a sum that ran out of time must not carry into the next field. */}
-        <Bottom key={`${view.index}-${view.phase}`} view={view} accent={accent} fg={fg} onAnswer={(n) => eng.current.typedResolve?.(n)} />
+        {choiceNow ? null : bottom}
       </Screen>
 
       {phase === 'pauze' ? (

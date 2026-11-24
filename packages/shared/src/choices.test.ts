@@ -48,3 +48,30 @@ describe('distractors', () => {
     }
   })
 })
+
+describe('plausible distractors', () => {
+  it('does not offer 7 for 10×7 (digit swap of 70)', () => {
+    for (let seed = 1; seed <= 100; seed++) {
+      expect(choicesFor({ a: 10, b: 7 }, seeded(seed))).not.toContain(7)
+    }
+  })
+
+  it('does not offer 2 for 4×3 (12 - 10)', () => {
+    for (let seed = 1; seed <= 100; seed++) {
+      expect(choicesFor({ a: 4, b: 3 }, seeded(seed))).not.toContain(2)
+    }
+  })
+
+  it('keeps every option within a sensible range for tables 1 to 10', () => {
+    const rng = seeded(5)
+    for (const s of poolFor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])) {
+      const ans = answer(s)
+      for (const n of distractors(s, rng)) {
+        if (ans >= 10) expect(n).toBeGreaterThanOrEqual(Math.min(ans / 2, ans - 3))
+        expect(n).toBeLessThanOrEqual(ans * 1.5 + 10)
+        if (ans >= 10) expect(n).toBeGreaterThanOrEqual(2)
+      }
+    }
+  })
+})
+

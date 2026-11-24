@@ -13,6 +13,7 @@ export type PhraseKind =
   | 'onthouden'
   | 'nogniet'
   | 'einde'
+  | 'eindeLaag'
   | 'perfect'
   | 'zwak'
   | 'sixseven'
@@ -74,6 +75,11 @@ export const PHRASES: Phrase[] = [
   { id: 'e-klaar', kind: 'einde', text: 'Ronde klaar.' },
   { id: 'e-volgende', kind: 'einde', text: 'Op naar de volgende.' },
 
+  { id: 'el-nog', kind: 'eindeLaag', text: 'Dit was een lastige. Nog een keer.' },
+  { id: 'el-oefen', kind: 'eindeLaag', text: 'Oefenen helpt. Probeer het nog eens.' },
+  { id: 'el-begin', kind: 'eindeLaag', text: 'Iedereen begint ergens. Nog een ronde?' },
+  { id: 'el-volgende', kind: 'eindeLaag', text: 'Volgende ronde gaat beter.' },
+
   { id: 'x-clock', kind: 'perfect', text: 'Tien uit tien. Clock it.', slang: true },
   { id: 'x-alles', kind: 'perfect', text: 'Alles goed. Echt alles.' },
 
@@ -82,6 +88,13 @@ export const PHRASES: Phrase[] = [
 
   { id: 's-67', kind: 'sixseven', text: 'Six seven!', slang: true },
 ]
+
+/** Which end-of-round line fits the score: praise only from half right. */
+export function endKind(score: number, total: number): PhraseKind {
+  if (total > 0 && score === total) return 'perfect'
+  if (total > 0 && score / total < 0.5) return 'eindeLaag'
+  return 'einde'
+}
 
 export type PhraseVars = { a?: number; b?: number; antwoord?: number; combo?: number; tafel?: number }
 

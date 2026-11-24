@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Pressable, ScrollView, Share, StyleSheet, View } from 'react-native'
 
 import { Button, Chip, Screen, styles as ui, Txt } from '@/components/ui'
-import { fill, PHRASES, pickPhrase } from '@/lib/phrases'
+import { endKind, fill, PHRASES, pickPhrase } from '@/lib/phrases'
 import { track } from '@/lib/analytics'
 import { play } from '@/lib/sfx'
 import { getState, setState, useStore } from '@/lib/store'
@@ -22,7 +22,7 @@ export default function Einde() {
   const line = useMemo(() => {
     if (!result) return null
     const { settings } = getState()
-    const p = pickPhrase(result.score === result.total ? 'perfect' : 'einde', { slang: settings.slang, banned: getState().banned })
+    const p = pickPhrase(endKind(result.score, result.total), { slang: settings.slang, banned: getState().banned })
     return p ? fill(p.text, {}) : null
   }, [result])
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { fill, PHRASES, pickPhrase } from './phrases'
+import { endKind, fill, PHRASES, pickPhrase } from './phrases'
 
 describe('pickPhrase', () => {
   it('never repeats the last line of a kind', () => {
@@ -37,5 +37,21 @@ describe('fill', () => {
       spoken: '7 keer 8 is cooked.',
     })
     expect(fill('Het is {antwoord}.', { antwoord: 56 }).spoken).toBe('Het is 56.')
+  })
+})
+
+describe('endKind', () => {
+  it('only praises from half right', () => {
+    expect(endKind(0, 10)).toBe('eindeLaag')
+    expect(endKind(4, 10)).toBe('eindeLaag')
+    expect(endKind(5, 10)).toBe('einde')
+    expect(endKind(9, 10)).toBe('einde')
+    expect(endKind(10, 10)).toBe('perfect')
+  })
+
+  it('has non-slang lines for every end kind', () => {
+    for (const k of ['einde', 'eindeLaag', 'perfect'] as const) {
+      expect(PHRASES.some((p) => p.kind === k && !p.slang)).toBe(true)
+    }
   })
 })

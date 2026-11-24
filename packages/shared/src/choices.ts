@@ -36,14 +36,21 @@ export function distractors(s: Sum, rng: Rng, count = CHOICES - 1): number[] {
 
   const out: number[] = []
   const ok = (n: number) => Number.isInteger(n) && n > 0 && n !== ans && !out.includes(n)
+  // Plausible: not silly small (7 for 10×7) and not far above the answer.
+  const low = Math.ceil(ans / 2)
+  const high = Math.floor(ans * 1.5 + 10)
+  const plausible = (n: number) => n >= low && n <= high && !(ans >= 10 && n < 2)
+  const swapped = swapDigits(ans)
+  const swapOk = (n: number) => n !== swapped || (String(ans).endsWith('0') ? false : String(swapped).length === String(ans).length)
   for (const n of ordered) {
     if (out.length === count) break
-    if (ok(n)) out.push(n)
+    if (ok(n) && plausible(n) && swapOk(n)) out.push(n)
   }
   // Tiny sums (1×1) run out of ideas: fill up with numbers close by.
   for (let d = 2; out.length < count; d++) {
-    if (ok(ans + d)) out.push(ans + d)
-    if (out.length < count && ok(ans - d)) out.push(ans - d)
+    const range = d > ans + 20 ? () => true : plausible
+    if (ok(ans + d) && range(ans + d)) out.push(ans + d)
+    if (out.length < count && ok(ans - d) && range(ans - d)) out.push(ans - d)
   }
   return out
 }
