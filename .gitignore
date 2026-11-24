@@ -51,3 +51,5 @@ credentials.json
 
 # signing material, never in git
 secrets/
+
+.claude/worktrees/
