@@ -1,0 +1,4359 @@
+{
+ "voice": "nl-NL-MaartenNeural",
+ "prosody": {
+  "rate": "+5%",
+  "pitch": "+5%"
+ },
+ "clips": {
+  "combo-1": {
+   "hash": "17d7atpw85o",
+   "ms": 710,
+   "chars": 8
+  },
+  "combo-10": {
+   "hash": "2g5ju36wwxz",
+   "ms": 660,
+   "chars": 9
+  },
+  "combo-2": {
+   "hash": "1ek7kuhlh02",
+   "ms": 780,
+   "chars": 8
+  },
+  "combo-3": {
+   "hash": "at69i8ib5t",
+   "ms": 700,
+   "chars": 8
+  },
+  "combo-4": {
+   "hash": "1af68eib3vg",
+   "ms": 790,
+   "chars": 8
+  },
+  "combo-5": {
+   "hash": "1s2hgl1luwr",
+   "ms": 800,
+   "chars": 8
+  },
+  "combo-6": {
+   "hash": "n3vxb2fzni",
+   "ms": 830,
+   "chars": 8
+  },
+  "combo-7": {
+   "hash": "l3faau2tx2",
+   "ms": 870,
+   "chars": 8
+  },
+  "combo-8": {
+   "hash": "2e8a0a3xuxp",
+   "ms": 720,
+   "chars": 8
+  },
+  "combo-9": {
+   "hash": "oemisj2hmf",
+   "ms": 800,
+   "chars": 8
+  },
+  "cooked-10x1": {
+   "hash": "bctkokvmuj",
+   "ms": 1280,
+   "chars": 20
+  },
+  "cooked-10x10": {
+   "hash": "1ue0tozl6g8",
+   "ms": 1410,
+   "chars": 21
+  },
+  "cooked-10x2": {
+   "hash": "1vfmy0k9r86",
+   "ms": 1460,
+   "chars": 20
+  },
+  "cooked-10x3": {
+   "hash": "dwbbc4pzkp",
+   "ms": 1440,
+   "chars": 20
+  },
+  "cooked-10x4": {
+   "hash": "qeirj3q5fs",
+   "ms": 1340,
+   "chars": 20
+  },
+  "cooked-10x5": {
+   "hash": "d0k90ekqj8",
+   "ms": 1390,
+   "chars": 20
+  },
+  "cooked-10x6": {
+   "hash": "2e0s471at7z",
+   "ms": 1420,
+   "chars": 20
+  },
+  "cooked-10x7": {
+   "hash": "kqdl666ip6",
+   "ms": 1490,
+   "chars": 20
+  },
+  "cooked-10x8": {
+   "hash": "1rn09z3g89v",
+   "ms": 1210,
+   "chars": 20
+  },
+  "cooked-10x9": {
+   "hash": "ebxizarrcv",
+   "ms": 1480,
+   "chars": 20
+  },
+  "cooked-1x1": {
+   "hash": "16gyj093t15",
+   "ms": 1300,
+   "chars": 19
+  },
+  "cooked-1x10": {
+   "hash": "apld4wefu3",
+   "ms": 1430,
+   "chars": 20
+  },
+  "cooked-1x2": {
+   "hash": "jlx7m1b9nk",
+   "ms": 1440,
+   "chars": 19
+  },
+  "cooked-1x3": {
+   "hash": "6bqx1phdhv",
+   "ms": 1450,
+   "chars": 19
+  },
+  "cooked-1x4": {
+   "hash": "48avzzx1n4",
+   "ms": 1280,
+   "chars": 19
+  },
+  "cooked-1x5": {
+   "hash": "1fj16cksso4",
+   "ms": 1380,
+   "chars": 19
+  },
+  "cooked-1x6": {
+   "hash": "2evdo9wlmam",
+   "ms": 1440,
+   "chars": 19
+  },
+  "cooked-1x7": {
+   "hash": "t7dm7680ir",
+   "ms": 1500,
+   "chars": 19
+  },
+  "cooked-1x8": {
+   "hash": "1z6mnccpxic",
+   "ms": 1260,
+   "chars": 19
+  },
+  "cooked-1x9": {
+   "hash": "1acgalmvecg",
+   "ms": 1530,
+   "chars": 19
+  },
+  "cooked-2x1": {
+   "hash": "1691d1a7c8h",
+   "ms": 1290,
+   "chars": 19
+  },
+  "cooked-2x10": {
+   "hash": "2bbs8wupens",
+   "ms": 1440,
+   "chars": 20
+  },
+  "cooked-2x2": {
+   "hash": "vhopmun8ek",
+   "ms": 1480,
+   "chars": 19
+  },
+  "cooked-2x3": {
+   "hash": "2cerah7hk6j",
+   "ms": 1470,
+   "chars": 19
+  },
+  "cooked-2x4": {
+   "hash": "1dcivjeo654",
+   "ms": 1290,
+   "chars": 19
+  },
+  "cooked-2x5": {
+   "hash": "22v6zizyf2t",
+   "ms": 1400,
+   "chars": 19
+  },
+  "cooked-2x6": {
+   "hash": "6cl6uiu6ms",
+   "ms": 1470,
+   "chars": 19
+  },
+  "cooked-2x7": {
+   "hash": "1a8he8vw17f",
+   "ms": 1540,
+   "chars": 19
+  },
+  "cooked-2x8": {
+   "hash": "2fuz9oesgri",
+   "ms": 1260,
+   "chars": 19
+  },
+  "cooked-2x9": {
+   "hash": "1wfabya3voo",
+   "ms": 1520,
+   "chars": 19
+  },
+  "cooked-3x1": {
+   "hash": "1ez9411k1bm",
+   "ms": 1340,
+   "chars": 19
+  },
+  "cooked-3x10": {
+   "hash": "1xxtt6ae5mm",
+   "ms": 1480,
+   "chars": 20
+  },
+  "cooked-3x2": {
+   "hash": "1rhr21m1ue7",
+   "ms": 1500,
+   "chars": 19
+  },
+  "cooked-3x3": {
+   "hash": "3m7mvclx7m",
+   "ms": 1460,
+   "chars": 19
+  },
+  "cooked-3x4": {
+   "hash": "153h3d8guwc",
+   "ms": 1330,
+   "chars": 19
+  },
+  "cooked-3x5": {
+   "hash": "1a9hnr61yj3",
+   "ms": 1440,
+   "chars": 19
+  },
+  "cooked-3x6": {
+   "hash": "1tfu1cgwxws",
+   "ms": 1480,
+   "chars": 19
+  },
+  "cooked-3x7": {
+   "hash": "2am0lxx1e8q",
+   "ms": 1600,
+   "chars": 19
+  },
+  "cooked-3x8": {
+   "hash": "1mgkbwqw63n",
+   "ms": 1270,
+   "chars": 19
+  },
+  "cooked-3x9": {
+   "hash": "gfbfyp54ad",
+   "ms": 1550,
+   "chars": 19
+  },
+  "cooked-4x1": {
+   "hash": "ld5i4cahx9",
+   "ms": 1400,
+   "chars": 19
+  },
+  "cooked-4x10": {
+   "hash": "19ye1auuidn",
+   "ms": 1520,
+   "chars": 20
+  },
+  "cooked-4x2": {
+   "hash": "1vp1ay3jdad",
+   "ms": 1570,
+   "chars": 19
+  },
+  "cooked-4x3": {
+   "hash": "2df0pxzehqp",
+   "ms": 1560,
+   "chars": 19
+  },
+  "cooked-4x4": {
+   "hash": "t1s60etpgq",
+   "ms": 1410,
+   "chars": 19
+  },
+  "cooked-4x5": {
+   "hash": "qwrmqmtb1z",
+   "ms": 1500,
+   "chars": 19
+  },
+  "cooked-4x6": {
+   "hash": "ugctsqmmqy",
+   "ms": 1540,
+   "chars": 19
+  },
+  "cooked-4x7": {
+   "hash": "2c9ijz71nu7",
+   "ms": 1600,
+   "chars": 19
+  },
+  "cooked-4x8": {
+   "hash": "alaro5oufd",
+   "ms": 1360,
+   "chars": 19
+  },
+  "cooked-4x9": {
+   "hash": "13anhjgc962",
+   "ms": 1580,
+   "chars": 19
+  },
+  "cooked-5x1": {
+   "hash": "1o6e8sqhwgp",
+   "ms": 1450,
+   "chars": 19
+  },
+  "cooked-5x10": {
+   "hash": "2c85ium69en",
+   "ms": 1510,
+   "chars": 20
+  },
+  "cooked-5x2": {
+   "hash": "4wvijevf4p",
+   "ms": 1620,
+   "chars": 19
+  },
+  "cooked-5x3": {
+   "hash": "20p10lf17uw",
+   "ms": 1570,
+   "chars": 19
+  },
+  "cooked-5x4": {
+   "hash": "2fz6eespfs9",
+   "ms": 1470,
+   "chars": 19
+  },
+  "cooked-5x5": {
+   "hash": "wwe2t63k6s",
+   "ms": 1510,
+   "chars": 19
+  },
+  "cooked-5x6": {
+   "hash": "1a4no0wvcvi",
+   "ms": 1520,
+   "chars": 19
+  },
+  "cooked-5x7": {
+   "hash": "1ujymwefpxi",
+   "ms": 1630,
+   "chars": 19
+  },
+  "cooked-5x8": {
+   "hash": "1023hbhkcer",
+   "ms": 1360,
+   "chars": 19
+  },
+  "cooked-5x9": {
+   "hash": "1ek17wnwb9r",
+   "ms": 1630,
+   "chars": 19
+  },
+  "cooked-6x1": {
+   "hash": "1210m0716an",
+   "ms": 1500,
+   "chars": 19
+  },
+  "cooked-6x10": {
+   "hash": "8glemd5shq",
+   "ms": 1550,
+   "chars": 20
+  },
+  "cooked-6x2": {
+   "hash": "gl4tr185da",
+   "ms": 1610,
+   "chars": 19
+  },
+  "cooked-6x3": {
+   "hash": "gmoo749tn3",
+   "ms": 1590,
+   "chars": 19
+  },
+  "cooked-6x4": {
+   "hash": "1qft7zrrt8c",
+   "ms": 1440,
+   "chars": 19
+  },
+  "cooked-6x5": {
+   "hash": "1fcj4tfcs6f",
+   "ms": 1490,
+   "chars": 19
+  },
+  "cooked-6x6": {
+   "hash": "20xw5f5n13d",
+   "ms": 1550,
+   "chars": 19
+  },
+  "cooked-6x7": {
+   "hash": "qc6z0betle",
+   "ms": 1620,
+   "chars": 19
+  },
+  "cooked-6x8": {
+   "hash": "pep5ge1o3a",
+   "ms": 1400,
+   "chars": 19
+  },
+  "cooked-6x9": {
+   "hash": "q0f4oue91j",
+   "ms": 1630,
+   "chars": 19
+  },
+  "cooked-7x1": {
+   "hash": "1sni7upxppu",
+   "ms": 1610,
+   "chars": 19
+  },
+  "cooked-7x10": {
+   "hash": "2ayt7y0tcnm",
+   "ms": 1670,
+   "chars": 20
+  },
+  "cooked-7x2": {
+   "hash": "265b139jwp4",
+   "ms": 1730,
+   "chars": 19
+  },
+  "cooked-7x3": {
+   "hash": "2bnx4ian4jg",
+   "ms": 1660,
+   "chars": 19
+  },
+  "cooked-7x4": {
+   "hash": "2c4qzlz1ogj",
+   "ms": 1540,
+   "chars": 19
+  },
+  "cooked-7x5": {
+   "hash": "2r6tmclt4j",
+   "ms": 1640,
+   "chars": 19
+  },
+  "cooked-7x6": {
+   "hash": "1j5thgzmjjj",
+   "ms": 1680,
+   "chars": 19
+  },
+  "cooked-7x7": {
+   "hash": "2dfisbw2vso",
+   "ms": 1750,
+   "chars": 19
+  },
+  "cooked-7x8": {
+   "hash": "o7y7w06wma",
+   "ms": 1520,
+   "chars": 19
+  },
+  "cooked-7x9": {
+   "hash": "5dwywxm87f",
+   "ms": 1760,
+   "chars": 19
+  },
+  "cooked-8x1": {
+   "hash": "1urqfv7kc33",
+   "ms": 1370,
+   "chars": 19
+  },
+  "cooked-8x10": {
+   "hash": "e0dtf0xmnu",
+   "ms": 1460,
+   "chars": 20
+  },
+  "cooked-8x2": {
+   "hash": "1nedtju6e4c",
+   "ms": 1510,
+   "chars": 19
+  },
+  "cooked-8x3": {
+   "hash": "1lb69v3vyd7",
+   "ms": 1500,
+   "chars": 19
+  },
+  "cooked-8x4": {
+   "hash": "1z5ds68q3df",
+   "ms": 1350,
+   "chars": 19
+  },
+  "cooked-8x5": {
+   "hash": "tk6eepkp4e",
+   "ms": 1440,
+   "chars": 19
+  },
+  "cooked-8x6": {
+   "hash": "1uickns2jh9",
+   "ms": 1470,
+   "chars": 19
+  },
+  "cooked-8x7": {
+   "hash": "27d0eea9j9c",
+   "ms": 1520,
+   "chars": 19
+  },
+  "cooked-8x8": {
+   "hash": "1bu2j8f6e6i",
+   "ms": 1290,
+   "chars": 19
+  },
+  "cooked-8x9": {
+   "hash": "lw2zy4yp54",
+   "ms": 1550,
+   "chars": 19
+  },
+  "cooked-9x1": {
+   "hash": "yrwjpk9t40",
+   "ms": 1580,
+   "chars": 19
+  },
+  "cooked-9x10": {
+   "hash": "17spl4qr4lt",
+   "ms": 1640,
+   "chars": 20
+  },
+  "cooked-9x2": {
+   "hash": "2823v6xzk0i",
+   "ms": 1700,
+   "chars": 19
+  },
+  "cooked-9x3": {
+   "hash": "1wubjy093es",
+   "ms": 1670,
+   "chars": 19
+  },
+  "cooked-9x4": {
+   "hash": "1jbrtxcfnlw",
+   "ms": 1540,
+   "chars": 19
+  },
+  "cooked-9x5": {
+   "hash": "9efye91wz5",
+   "ms": 1620,
+   "chars": 19
+  },
+  "cooked-9x6": {
+   "hash": "1ntcsesmsmh",
+   "ms": 1640,
+   "chars": 19
+  },
+  "cooked-9x7": {
+   "hash": "s41hhlffkw",
+   "ms": 1730,
+   "chars": 19
+  },
+  "cooked-9x8": {
+   "hash": "1jqtsl3hi3a",
+   "ms": 1460,
+   "chars": 19
+  },
+  "cooked-9x9": {
+   "hash": "g0q56o21zy",
+   "ms": 1730,
+   "chars": 19
+  },
+  "hetis-1": {
+   "hash": "t1qmle0zd7",
+   "ms": 770,
+   "chars": 9
+  },
+  "hetis-10": {
+   "hash": "8en4n2kw4a",
+   "ms": 830,
+   "chars": 10
+  },
+  "hetis-100": {
+   "hash": "77dvvxc706",
+   "ms": 920,
+   "chars": 11
+  },
+  "hetis-12": {
+   "hash": "2cfjedcu0lu",
+   "ms": 960,
+   "chars": 10
+  },
+  "hetis-14": {
+   "hash": "1rz6fn2tv3g",
+   "ms": 1120,
+   "chars": 10
+  },
+  "hetis-15": {
+   "hash": "1dgiz5x93bt",
+   "ms": 1130,
+   "chars": 10
+  },
+  "hetis-16": {
+   "hash": "17mzplykr87",
+   "ms": 1100,
+   "chars": 10
+  },
+  "hetis-18": {
+   "hash": "20xtkri7nrq",
+   "ms": 950,
+   "chars": 10
+  },
+  "hetis-2": {
+   "hash": "oane9tnygk",
+   "ms": 880,
+   "chars": 9
+  },
+  "hetis-20": {
+   "hash": "mqs1izl2bb",
+   "ms": 990,
+   "chars": 10
+  },
+  "hetis-21": {
+   "hash": "2bgnqprr70i",
+   "ms": 1190,
+   "chars": 10
+  },
+  "hetis-24": {
+   "hash": "20t1nujx23s",
+   "ms": 1330,
+   "chars": 10
+  },
+  "hetis-25": {
+   "hash": "2cfp1wonlm6",
+   "ms": 1360,
+   "chars": 10
+  },
+  "hetis-27": {
+   "hash": "10owealgvcj",
+   "ms": 1460,
+   "chars": 10
+  },
+  "hetis-28": {
+   "hash": "pfprlpebyt",
+   "ms": 1300,
+   "chars": 10
+  },
+  "hetis-3": {
+   "hash": "1qr28gkjkrm",
+   "ms": 800,
+   "chars": 9
+  },
+  "hetis-30": {
+   "hash": "15pgowhquw0",
+   "ms": 970,
+   "chars": 10
+  },
+  "hetis-32": {
+   "hash": "15opbpe9qti",
+   "ms": 1220,
+   "chars": 10
+  },
+  "hetis-35": {
+   "hash": "f80datikuf",
+   "ms": 1320,
+   "chars": 10
+  },
+  "hetis-36": {
+   "hash": "1wlc0t1i9ah",
+   "ms": 1260,
+   "chars": 10
+  },
+  "hetis-4": {
+   "hash": "18ajfuv2fnb",
+   "ms": 810,
+   "chars": 9
+  },
+  "hetis-40": {
+   "hash": "21qbvuttyg7",
+   "ms": 1090,
+   "chars": 10
+  },
+  "hetis-42": {
+   "hash": "4t3oje8wxr",
+   "ms": 1300,
+   "chars": 10
+  },
+  "hetis-45": {
+   "hash": "oc0g3wbrzm",
+   "ms": 1410,
+   "chars": 10
+  },
+  "hetis-48": {
+   "hash": "227tp9xvrt4",
+   "ms": 1300,
+   "chars": 10
+  },
+  "hetis-49": {
+   "hash": "9s5hnhxy1k",
+   "ms": 1400,
+   "chars": 10
+  },
+  "hetis-5": {
+   "hash": "1x25uxahsn9",
+   "ms": 950,
+   "chars": 9
+  },
+  "hetis-50": {
+   "hash": "1my4vs6ka2i",
+   "ms": 1150,
+   "chars": 10
+  },
+  "hetis-54": {
+   "hash": "1lnmoxjiqi9",
+   "ms": 1400,
+   "chars": 10
+  },
+  "hetis-56": {
+   "hash": "2cc71peywfg",
+   "ms": 1400,
+   "chars": 10
+  },
+  "hetis-6": {
+   "hash": "1mw8yckss67",
+   "ms": 960,
+   "chars": 9
+  },
+  "hetis-60": {
+   "hash": "1erfqgvhsqm",
+   "ms": 1070,
+   "chars": 10
+  },
+  "hetis-63": {
+   "hash": "17x5xf60q9l",
+   "ms": 1280,
+   "chars": 10
+  },
+  "hetis-64": {
+   "hash": "2bzaewulvjh",
+   "ms": 1320,
+   "chars": 10
+  },
+  "hetis-7": {
+   "hash": "1ya3dg9s2os",
+   "ms": 1010,
+   "chars": 9
+  },
+  "hetis-70": {
+   "hash": "12ntg8sfdbc",
+   "ms": 1150,
+   "chars": 10
+  },
+  "hetis-72": {
+   "hash": "1al3m9rpevt",
+   "ms": 1420,
+   "chars": 10
+  },
+  "hetis-8": {
+   "hash": "1bqayhf17c3",
+   "ms": 850,
+   "chars": 9
+  },
+  "hetis-80": {
+   "hash": "1z6od1gh9w5",
+   "ms": 990,
+   "chars": 10
+  },
+  "hetis-81": {
+   "hash": "1thx8hlvy6d",
+   "ms": 1150,
+   "chars": 10
+  },
+  "hetis-9": {
+   "hash": "1cbj4149nvm",
+   "ms": 870,
+   "chars": 9
+  },
+  "hetis-90": {
+   "hash": "xyfk2yw29y",
+   "ms": 1030,
+   "chars": 10
+  },
+  "intro": {
+   "hash": "1rhe9owqlzk",
+   "ms": 800,
+   "chars": 13
+  },
+  "intro-uitdaging": {
+   "hash": "21moch5bzzf",
+   "ms": 2510,
+   "chars": 33
+  },
+  "n-end-0": {
+   "hash": "59ydj985km",
+   "ms": 400,
+   "chars": 9
+  },
+  "n-end-1": {
+   "hash": "22kyvzd2ep9",
+   "ms": 370,
+   "chars": 9
+  },
+  "n-end-10": {
+   "hash": "nbgle8gc6u",
+   "ms": 350,
+   "chars": 10
+  },
+  "n-end-100": {
+   "hash": "2cd0jsxlokd",
+   "ms": 500,
+   "chars": 11
+  },
+  "n-end-1000": {
+   "hash": "1rqknda6ufy",
+   "ms": 570,
+   "chars": 12
+  },
+  "n-end-10000": {
+   "hash": "6ijaloxra2",
+   "ms": 770,
+   "chars": 13
+  },
+  "n-end-1000000": {
+   "hash": "9n8ofhmyf1",
+   "ms": 760,
+   "chars": 15
+  },
+  "n-end-11": {
+   "hash": "1g5rxl62l1h",
+   "ms": 390,
+   "chars": 10
+  },
+  "n-end-12": {
+   "hash": "2ethq61vj1d",
+   "ms": 470,
+   "chars": 10
+  },
+  "n-end-13": {
+   "hash": "giyoyhxh3h",
+   "ms": 550,
+   "chars": 10
+  },
+  "n-end-14": {
+   "hash": "jsbqs3p025",
+   "ms": 660,
+   "chars": 10
+  },
+  "n-end-15": {
+   "hash": "jic5irwfnq",
+   "ms": 670,
+   "chars": 10
+  },
+  "n-end-16": {
+   "hash": "1mditjoepip",
+   "ms": 620,
+   "chars": 10
+  },
+  "n-end-17": {
+   "hash": "og9zsmhuwt",
+   "ms": 750,
+   "chars": 10
+  },
+  "n-end-18": {
+   "hash": "zmv4lzcstd",
+   "ms": 540,
+   "chars": 10
+  },
+  "n-end-19": {
+   "hash": "15l3ffx8ns",
+   "ms": 650,
+   "chars": 10
+  },
+  "n-end-2": {
+   "hash": "1j4tnpn1h60",
+   "ms": 410,
+   "chars": 9
+  },
+  "n-end-20": {
+   "hash": "24rrowv8i1z",
+   "ms": 510,
+   "chars": 10
+  },
+  "n-end-200": {
+   "hash": "197d07lecai",
+   "ms": 690,
+   "chars": 11
+  },
+  "n-end-2000": {
+   "hash": "g4oycumyyt",
+   "ms": 780,
+   "chars": 12
+  },
+  "n-end-21": {
+   "hash": "svbbdkbiy7",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-22": {
+   "hash": "huenlgrhe7",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-23": {
+   "hash": "1o7ibami2cj",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-end-24": {
+   "hash": "19q3o4b0z1d",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-end-25": {
+   "hash": "y7fcrliufa",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-end-26": {
+   "hash": "2bsc7m2orb",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-end-27": {
+   "hash": "1f6wsbragkm",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-end-28": {
+   "hash": "1r0txche31k",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-end-29": {
+   "hash": "1obmp71ve31",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-end-3": {
+   "hash": "5cy41lhyia",
+   "ms": 370,
+   "chars": 9
+  },
+  "n-end-30": {
+   "hash": "3bee2hyj73",
+   "ms": 520,
+   "chars": 10
+  },
+  "n-end-300": {
+   "hash": "1ome6c5745f",
+   "ms": 710,
+   "chars": 11
+  },
+  "n-end-3000": {
+   "hash": "d3317mb64j",
+   "ms": 820,
+   "chars": 12
+  },
+  "n-end-31": {
+   "hash": "12lhgck3vc9",
+   "ms": 770,
+   "chars": 10
+  },
+  "n-end-32": {
+   "hash": "29p4bleo0l6",
+   "ms": 810,
+   "chars": 10
+  },
+  "n-end-33": {
+   "hash": "cxvli49z5s",
+   "ms": 800,
+   "chars": 10
+  },
+  "n-end-34": {
+   "hash": "17m18asfqrs",
+   "ms": 870,
+   "chars": 10
+  },
+  "n-end-35": {
+   "hash": "27j5q1j3wmi",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-end-36": {
+   "hash": "25gy8rr3357",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-end-37": {
+   "hash": "6a9m1sz42e",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-end-38": {
+   "hash": "2fqqxbssxvo",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-39": {
+   "hash": "1lpt5lmtc2u",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-end-4": {
+   "hash": "s0iqkmab3g",
+   "ms": 400,
+   "chars": 9
+  },
+  "n-end-40": {
+   "hash": "2e8oblt860n",
+   "ms": 610,
+   "chars": 10
+  },
+  "n-end-400": {
+   "hash": "22v46y4htfw",
+   "ms": 750,
+   "chars": 11
+  },
+  "n-end-4000": {
+   "hash": "1gwqbqc3rv0",
+   "ms": 900,
+   "chars": 12
+  },
+  "n-end-41": {
+   "hash": "1kml0q82qis",
+   "ms": 810,
+   "chars": 10
+  },
+  "n-end-42": {
+   "hash": "kd1t5scqen",
+   "ms": 860,
+   "chars": 10
+  },
+  "n-end-43": {
+   "hash": "tmpqdaodhe",
+   "ms": 880,
+   "chars": 10
+  },
+  "n-end-44": {
+   "hash": "16k8fmobtu",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-end-45": {
+   "hash": "5xjvwdb7t4",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-end-46": {
+   "hash": "2e56n5gyuxm",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-end-47": {
+   "hash": "1tcxcc0ddpe",
+   "ms": 1060,
+   "chars": 10
+  },
+  "n-end-48": {
+   "hash": "1di1i1j2fq0",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-end-49": {
+   "hash": "ededbqvce1",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-end-5": {
+   "hash": "lvia8g3ejz",
+   "ms": 460,
+   "chars": 9
+  },
+  "n-end-50": {
+   "hash": "1b3en4feedb",
+   "ms": 630,
+   "chars": 10
+  },
+  "n-end-500": {
+   "hash": "1azjlpmnff5",
+   "ms": 790,
+   "chars": 11
+  },
+  "n-end-5000": {
+   "hash": "foyj5wkw3g",
+   "ms": 920,
+   "chars": 12
+  },
+  "n-end-51": {
+   "hash": "1nvvkc2t5lh",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-52": {
+   "hash": "g6tb6f8xmk",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-end-53": {
+   "hash": "1f1m3077h54",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-end-54": {
+   "hash": "2bh9028xdo5",
+   "ms": 940,
+   "chars": 10
+  },
+  "n-end-55": {
+   "hash": "12uh8dxucqe",
+   "ms": 1010,
+   "chars": 10
+  },
+  "n-end-56": {
+   "hash": "mzswf6ej3z",
+   "ms": 990,
+   "chars": 10
+  },
+  "n-end-57": {
+   "hash": "1f9xqo9zq06",
+   "ms": 1100,
+   "chars": 10
+  },
+  "n-end-58": {
+   "hash": "15ewtcblkuv",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-end-59": {
+   "hash": "20oghyginmk",
+   "ms": 1090,
+   "chars": 10
+  },
+  "n-end-6": {
+   "hash": "28ibupvem35",
+   "ms": 450,
+   "chars": 9
+  },
+  "n-end-60": {
+   "hash": "5juukxfriz",
+   "ms": 580,
+   "chars": 10
+  },
+  "n-end-600": {
+   "hash": "an895r19q",
+   "ms": 780,
+   "chars": 11
+  },
+  "n-end-6000": {
+   "hash": "1e3dmcyenyl",
+   "ms": 880,
+   "chars": 12
+  },
+  "n-end-61": {
+   "hash": "5a4bymm2du",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-end-62": {
+   "hash": "11xfx00vjno",
+   "ms": 880,
+   "chars": 10
+  },
+  "n-end-63": {
+   "hash": "xe6rq8l9xc",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-end-64": {
+   "hash": "fgwa6h9mx6",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-end-65": {
+   "hash": "r98nvr6rhh",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-end-66": {
+   "hash": "faa91d5qci",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-end-67": {
+   "hash": "24w9qa0bywk",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-end-68": {
+   "hash": "2ey197xekd",
+   "ms": 870,
+   "chars": 10
+  },
+  "n-end-69": {
+   "hash": "1y5l1kjixgy",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-end-7": {
+   "hash": "1xvlhdwxr1o",
+   "ms": 530,
+   "chars": 9
+  },
+  "n-end-70": {
+   "hash": "143elfl15kr",
+   "ms": 690,
+   "chars": 10
+  },
+  "n-end-700": {
+   "hash": "3lbhnt612b",
+   "ms": 870,
+   "chars": 11
+  },
+  "n-end-7000": {
+   "hash": "252ewats48e",
+   "ms": 960,
+   "chars": 12
+  },
+  "n-end-71": {
+   "hash": "1zwx8m6fdfr",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-end-72": {
+   "hash": "26uu6bvdjdc",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-end-73": {
+   "hash": "qyaorcjjae",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-end-74": {
+   "hash": "josyz75w6",
+   "ms": 1010,
+   "chars": 10
+  },
+  "n-end-75": {
+   "hash": "1pd4fi80edo",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-end-76": {
+   "hash": "shy3bcvahj",
+   "ms": 1060,
+   "chars": 10
+  },
+  "n-end-77": {
+   "hash": "qd7kode56a",
+   "ms": 1160,
+   "chars": 10
+  },
+  "n-end-78": {
+   "hash": "2gfoba1fsw8",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-end-79": {
+   "hash": "5zuuewejkf",
+   "ms": 1110,
+   "chars": 10
+  },
+  "n-end-8": {
+   "hash": "28vdw1gr55z",
+   "ms": 370,
+   "chars": 9
+  },
+  "n-end-80": {
+   "hash": "1bp9188fvun",
+   "ms": 510,
+   "chars": 10
+  },
+  "n-end-800": {
+   "hash": "1e5ugyfiw8",
+   "ms": 700,
+   "chars": 11
+  },
+  "n-end-8000": {
+   "hash": "r2x2mq4zba",
+   "ms": 760,
+   "chars": 12
+  },
+  "n-end-81": {
+   "hash": "1mlq81pgdnv",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-end-82": {
+   "hash": "895ktgv35w",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-83": {
+   "hash": "207h97tlie2",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-84": {
+   "hash": "1a7o94kim1b",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-end-85": {
+   "hash": "2g4gt6gqqkr",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-end-86": {
+   "hash": "2dn48vynvja",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-end-87": {
+   "hash": "16i0q3p98cb",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-end-88": {
+   "hash": "d6nfcw0unu",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-end-89": {
+   "hash": "1tk07aqw09g",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-end-9": {
+   "hash": "13zope9d2qd",
+   "ms": 480,
+   "chars": 9
+  },
+  "n-end-90": {
+   "hash": "1sms70ct68f",
+   "ms": 640,
+   "chars": 10
+  },
+  "n-end-900": {
+   "hash": "1ic9r01ij1s",
+   "ms": 840,
+   "chars": 11
+  },
+  "n-end-9000": {
+   "hash": "4zpsfbfnie",
+   "ms": 990,
+   "chars": 12
+  },
+  "n-end-91": {
+   "hash": "1qkft5ic6lu",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-end-92": {
+   "hash": "y2mfddex4u",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-end-93": {
+   "hash": "h1satygf29",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-end-94": {
+   "hash": "yfz2p040vj",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-end-95": {
+   "hash": "10ttw7g1w7b",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-end-96": {
+   "hash": "6wpbh3b41p",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-end-97": {
+   "hash": "13nsfls2n80",
+   "ms": 1080,
+   "chars": 10
+  },
+  "n-end-98": {
+   "hash": "1u12x2rk9xc",
+   "ms": 880,
+   "chars": 10
+  },
+  "n-end-99": {
+   "hash": "1rexgs51c6y",
+   "ms": 1060,
+   "chars": 10
+  },
+  "n-mid-0": {
+   "hash": "360pas2y2a",
+   "ms": 370,
+   "chars": 9
+  },
+  "n-mid-1": {
+   "hash": "yaxa3s1d1u",
+   "ms": 360,
+   "chars": 9
+  },
+  "n-mid-10": {
+   "hash": "o2m9ywi74e",
+   "ms": 330,
+   "chars": 10
+  },
+  "n-mid-100": {
+   "hash": "3r5ah8d6aw",
+   "ms": 480,
+   "chars": 11
+  },
+  "n-mid-1000": {
+   "hash": "psm91zeir6",
+   "ms": 560,
+   "chars": 12
+  },
+  "n-mid-10000": {
+   "hash": "y8u26f7hk6",
+   "ms": 760,
+   "chars": 13
+  },
+  "n-mid-1000000": {
+   "hash": "22nfsx45e6p",
+   "ms": 740,
+   "chars": 15
+  },
+  "n-mid-11": {
+   "hash": "1q9vmth28io",
+   "ms": 380,
+   "chars": 10
+  },
+  "n-mid-12": {
+   "hash": "24hrdgaaqr8",
+   "ms": 470,
+   "chars": 10
+  },
+  "n-mid-13": {
+   "hash": "1r7glg4d8ve",
+   "ms": 540,
+   "chars": 10
+  },
+  "n-mid-14": {
+   "hash": "6o04c18jug",
+   "ms": 640,
+   "chars": 10
+  },
+  "n-mid-15": {
+   "hash": "25vmaqdtg3k",
+   "ms": 670,
+   "chars": 10
+  },
+  "n-mid-16": {
+   "hash": "jejd3qp1qj",
+   "ms": 610,
+   "chars": 10
+  },
+  "n-mid-17": {
+   "hash": "1ntq7jqzimb",
+   "ms": 750,
+   "chars": 10
+  },
+  "n-mid-18": {
+   "hash": "2ffte1sfzc",
+   "ms": 540,
+   "chars": 10
+  },
+  "n-mid-19": {
+   "hash": "10t74ka0w6e",
+   "ms": 650,
+   "chars": 10
+  },
+  "n-mid-2": {
+   "hash": "1v1k4r94vpc",
+   "ms": 410,
+   "chars": 9
+  },
+  "n-mid-20": {
+   "hash": "17xj3ob2pj5",
+   "ms": 500,
+   "chars": 10
+  },
+  "n-mid-200": {
+   "hash": "o31frqxglv",
+   "ms": 690,
+   "chars": 11
+  },
+  "n-mid-2000": {
+   "hash": "29ygcozmo5",
+   "ms": 760,
+   "chars": 12
+  },
+  "n-mid-21": {
+   "hash": "1mvpaa6bjdv",
+   "ms": 830,
+   "chars": 10
+  },
+  "n-mid-22": {
+   "hash": "1wab716g56v",
+   "ms": 830,
+   "chars": 10
+  },
+  "n-mid-23": {
+   "hash": "1j4wfk39w7h",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-mid-24": {
+   "hash": "1o86lkrs9js",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-mid-25": {
+   "hash": "1ktv6kkoq0z",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-mid-26": {
+   "hash": "1ofmygzsrkx",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-mid-27": {
+   "hash": "7e57j8ptj4",
+   "ms": 990,
+   "chars": 10
+  },
+  "n-mid-28": {
+   "hash": "2do6suo8cro",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-mid-29": {
+   "hash": "e2p2ostkf7",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-mid-3": {
+   "hash": "1e5cux4p5bn",
+   "ms": 360,
+   "chars": 9
+  },
+  "n-mid-30": {
+   "hash": "ga72jl99nt",
+   "ms": 510,
+   "chars": 10
+  },
+  "n-mid-300": {
+   "hash": "h7ikp8jykc",
+   "ms": 680,
+   "chars": 11
+  },
+  "n-mid-3000": {
+   "hash": "23tshomdarc",
+   "ms": 810,
+   "chars": 12
+  },
+  "n-mid-31": {
+   "hash": "1fg8ck206yv",
+   "ms": 740,
+   "chars": 10
+  },
+  "n-mid-32": {
+   "hash": "diwdnlccei",
+   "ms": 800,
+   "chars": 10
+  },
+  "n-mid-33": {
+   "hash": "1dp3nb9m07i",
+   "ms": 800,
+   "chars": 10
+  },
+  "n-mid-34": {
+   "hash": "9sgq5mowag",
+   "ms": 860,
+   "chars": 10
+  },
+  "n-mid-35": {
+   "hash": "18lj45cryf5",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-mid-36": {
+   "hash": "10cfio0jgv5",
+   "ms": 880,
+   "chars": 10
+  },
+  "n-mid-37": {
+   "hash": "2c2rqm2fzs7",
+   "ms": 990,
+   "chars": 10
+  },
+  "n-mid-38": {
+   "hash": "1yf872t0akg",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-mid-39": {
+   "hash": "2qsecck6to",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-mid-4": {
+   "hash": "1hd9jqk5o7v",
+   "ms": 400,
+   "chars": 9
+  },
+  "n-mid-40": {
+   "hash": "1lcsgz1j05s",
+   "ms": 580,
+   "chars": 10
+  },
+  "n-mid-400": {
+   "hash": "1bkgtea4w7e",
+   "ms": 740,
+   "chars": 11
+  },
+  "n-mid-4000": {
+   "hash": "1x4woa021j8",
+   "ms": 890,
+   "chars": 12
+  },
+  "n-mid-41": {
+   "hash": "1ex30bx6isj",
+   "ms": 830,
+   "chars": 10
+  },
+  "n-mid-42": {
+   "hash": "1rgldq2pck2",
+   "ms": 870,
+   "chars": 10
+  },
+  "n-mid-43": {
+   "hash": "2bauskzf6h0",
+   "ms": 870,
+   "chars": 10
+  },
+  "n-mid-44": {
+   "hash": "h6n2302njr",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-mid-45": {
+   "hash": "1t4k2mbzq0",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-mid-46": {
+   "hash": "2egfwnqqbi4",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-47": {
+   "hash": "1l0wnkxv4bk",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-mid-48": {
+   "hash": "1o55av155ts",
+   "ms": 880,
+   "chars": 10
+  },
+  "n-mid-49": {
+   "hash": "1vbl9mvy01n",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-mid-5": {
+   "hash": "25bthd6307g",
+   "ms": 450,
+   "chars": 9
+  },
+  "n-mid-50": {
+   "hash": "1au5x9lf6cd",
+   "ms": 620,
+   "chars": 10
+  },
+  "n-mid-500": {
+   "hash": "1e1sairv7em",
+   "ms": 790,
+   "chars": 11
+  },
+  "n-mid-5000": {
+   "hash": "1yovhlhy08p",
+   "ms": 900,
+   "chars": 12
+  },
+  "n-mid-51": {
+   "hash": "nfw5y88qwx",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-mid-52": {
+   "hash": "20pvbg9xpvc",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-mid-53": {
+   "hash": "bkx9rvv5t",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-54": {
+   "hash": "19om6gwfgs0",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-55": {
+   "hash": "2f7uzm7u7qe",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-mid-56": {
+   "hash": "jsazh101so",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-mid-57": {
+   "hash": "q9kcg0s8p8",
+   "ms": 1080,
+   "chars": 10
+  },
+  "n-mid-58": {
+   "hash": "ygreaof2xl",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-mid-59": {
+   "hash": "1zijuwduw1u",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-mid-6": {
+   "hash": "4lpkv3k6ia",
+   "ms": 440,
+   "chars": 9
+  },
+  "n-mid-60": {
+   "hash": "15uqaavh5vi",
+   "ms": 570,
+   "chars": 10
+  },
+  "n-mid-600": {
+   "hash": "27sohn9hq89",
+   "ms": 780,
+   "chars": 11
+  },
+  "n-mid-6000": {
+   "hash": "1lmww9vlcj7",
+   "ms": 880,
+   "chars": 12
+  },
+  "n-mid-61": {
+   "hash": "19riobg03nk",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-mid-62": {
+   "hash": "175ts0fudmr",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-mid-63": {
+   "hash": "24660eb4i3g",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-mid-64": {
+   "hash": "1uxnotjrynb",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-mid-65": {
+   "hash": "jz8ry3uuyl",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-66": {
+   "hash": "vjsvabgf8k",
+   "ms": 940,
+   "chars": 10
+  },
+  "n-mid-67": {
+   "hash": "rwsjvy0c79",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-mid-68": {
+   "hash": "fgd6xk07hv",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-mid-69": {
+   "hash": "1ic7xffffyh",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-mid-7": {
+   "hash": "1w0kynw6dov",
+   "ms": 540,
+   "chars": 9
+  },
+  "n-mid-70": {
+   "hash": "21dlvnlu75a",
+   "ms": 690,
+   "chars": 10
+  },
+  "n-mid-700": {
+   "hash": "b9xip9emk7",
+   "ms": 850,
+   "chars": 11
+  },
+  "n-mid-7000": {
+   "hash": "1lzqt1zknkj",
+   "ms": 950,
+   "chars": 12
+  },
+  "n-mid-71": {
+   "hash": "1oayv5bbriu",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-72": {
+   "hash": "12grpsvz38c",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-mid-73": {
+   "hash": "18fsdrcg7e",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-mid-74": {
+   "hash": "1jcnhgy5f0j",
+   "ms": 1010,
+   "chars": 10
+  },
+  "n-mid-75": {
+   "hash": "1jtwa9mcq1o",
+   "ms": 1010,
+   "chars": 10
+  },
+  "n-mid-76": {
+   "hash": "1mymub1cd8k",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-mid-77": {
+   "hash": "lg91fheodx",
+   "ms": 1160,
+   "chars": 10
+  },
+  "n-mid-78": {
+   "hash": "n6i90kgsjs",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-mid-79": {
+   "hash": "14llei5iask",
+   "ms": 1110,
+   "chars": 10
+  },
+  "n-mid-8": {
+   "hash": "1vf9kr7cm2w",
+   "ms": 360,
+   "chars": 9
+  },
+  "n-mid-80": {
+   "hash": "1s5ifdx3dhq",
+   "ms": 500,
+   "chars": 10
+  },
+  "n-mid-800": {
+   "hash": "mzy5pgezo8",
+   "ms": 690,
+   "chars": 11
+  },
+  "n-mid-8000": {
+   "hash": "o4djnppd7j",
+   "ms": 750,
+   "chars": 12
+  },
+  "n-mid-81": {
+   "hash": "15qiqmi8mqr",
+   "ms": 790,
+   "chars": 10
+  },
+  "n-mid-82": {
+   "hash": "10uw8kr82on",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-mid-83": {
+   "hash": "a1su0inm3l",
+   "ms": 850,
+   "chars": 10
+  },
+  "n-mid-84": {
+   "hash": "41lu8jyimq",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-mid-85": {
+   "hash": "tqy70k2ra1",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-mid-86": {
+   "hash": "28lf1swy5km",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-mid-87": {
+   "hash": "t2qlfamn7y",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-mid-88": {
+   "hash": "7e1qlzlhpy",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-mid-89": {
+   "hash": "18bkj7lauzr",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-mid-9": {
+   "hash": "1qkes9mi5s0",
+   "ms": 480,
+   "chars": 9
+  },
+  "n-mid-90": {
+   "hash": "k1y0xrpol5",
+   "ms": 630,
+   "chars": 10
+  },
+  "n-mid-900": {
+   "hash": "1mndpezdv4v",
+   "ms": 830,
+   "chars": 11
+  },
+  "n-mid-9000": {
+   "hash": "2agmqoaf5vm",
+   "ms": 950,
+   "chars": 12
+  },
+  "n-mid-91": {
+   "hash": "1cn62pvk05x",
+   "ms": 840,
+   "chars": 10
+  },
+  "n-mid-92": {
+   "hash": "1ziwghh8c9s",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-mid-93": {
+   "hash": "jms3y18iep",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-mid-94": {
+   "hash": "271jgjd7te5",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-mid-95": {
+   "hash": "1rb6jmn5blk",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-mid-96": {
+   "hash": "v4shzsk1r4",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-mid-97": {
+   "hash": "19g7qjhk23",
+   "ms": 1070,
+   "chars": 10
+  },
+  "n-mid-98": {
+   "hash": "2e8pcd2q5mh",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-mid-99": {
+   "hash": "2147d416c14",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-q-0": {
+   "hash": "16uyvsp5lat",
+   "ms": 330,
+   "chars": 9
+  },
+  "n-q-1": {
+   "hash": "1zv1nmgg83r",
+   "ms": 280,
+   "chars": 9
+  },
+  "n-q-10": {
+   "hash": "26n9so50dk4",
+   "ms": 270,
+   "chars": 10
+  },
+  "n-q-100": {
+   "hash": "1y9rh32p3bp",
+   "ms": 540,
+   "chars": 11
+  },
+  "n-q-1000": {
+   "hash": "28pdzsok5fw",
+   "ms": 630,
+   "chars": 12
+  },
+  "n-q-10000": {
+   "hash": "1ipkrl0ecrj",
+   "ms": 770,
+   "chars": 13
+  },
+  "n-q-1000000": {
+   "hash": "223dmt9ub7z",
+   "ms": 710,
+   "chars": 15
+  },
+  "n-q-11": {
+   "hash": "1ojqrigjjmk",
+   "ms": 380,
+   "chars": 10
+  },
+  "n-q-12": {
+   "hash": "24wfd0hllvn",
+   "ms": 460,
+   "chars": 10
+  },
+  "n-q-13": {
+   "hash": "vvjhhcu535",
+   "ms": 520,
+   "chars": 10
+  },
+  "n-q-14": {
+   "hash": "rozl2jhk0j",
+   "ms": 610,
+   "chars": 10
+  },
+  "n-q-15": {
+   "hash": "2bcykirvloe",
+   "ms": 630,
+   "chars": 10
+  },
+  "n-q-16": {
+   "hash": "hnviag8pyq",
+   "ms": 600,
+   "chars": 10
+  },
+  "n-q-17": {
+   "hash": "17erifw926h",
+   "ms": 750,
+   "chars": 10
+  },
+  "n-q-18": {
+   "hash": "vwi92kjzt1",
+   "ms": 500,
+   "chars": 10
+  },
+  "n-q-19": {
+   "hash": "9eouued7cs",
+   "ms": 740,
+   "chars": 10
+  },
+  "n-q-2": {
+   "hash": "1in95ckqtbk",
+   "ms": 350,
+   "chars": 9
+  },
+  "n-q-20": {
+   "hash": "1vusbl6ovq2",
+   "ms": 570,
+   "chars": 10
+  },
+  "n-q-200": {
+   "hash": "d6oakqz3lb",
+   "ms": 730,
+   "chars": 11
+  },
+  "n-q-2000": {
+   "hash": "gpul6v2lru",
+   "ms": 790,
+   "chars": 12
+  },
+  "n-q-21": {
+   "hash": "o04qvh0jc6",
+   "ms": 860,
+   "chars": 10
+  },
+  "n-q-22": {
+   "hash": "2f382und15z",
+   "ms": 920,
+   "chars": 10
+  },
+  "n-q-23": {
+   "hash": "zpv8ex2rnh",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-q-24": {
+   "hash": "cfa4gu5yde",
+   "ms": 940,
+   "chars": 10
+  },
+  "n-q-25": {
+   "hash": "mn5w5fzhgm",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-q-26": {
+   "hash": "1s72t2t7tsx",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-q-27": {
+   "hash": "xyhcv7x4fk",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-q-28": {
+   "hash": "2ckcrrqaaus",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-q-29": {
+   "hash": "2c8x58hevcd",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-q-3": {
+   "hash": "z2dp1tgb82",
+   "ms": 320,
+   "chars": 9
+  },
+  "n-q-30": {
+   "hash": "97eukj4a7y",
+   "ms": 570,
+   "chars": 10
+  },
+  "n-q-300": {
+   "hash": "iead56qett",
+   "ms": 740,
+   "chars": 11
+  },
+  "n-q-3000": {
+   "hash": "292c8lord21",
+   "ms": 810,
+   "chars": 12
+  },
+  "n-q-31": {
+   "hash": "1f0l4exyjyt",
+   "ms": 820,
+   "chars": 10
+  },
+  "n-q-32": {
+   "hash": "26rpy3vixhc",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-q-33": {
+   "hash": "12y1xe4h9o9",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-q-34": {
+   "hash": "1cjqd4ddmp2",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-35": {
+   "hash": "wxiqf6mrps",
+   "ms": 980,
+   "chars": 10
+  },
+  "n-q-36": {
+   "hash": "2fjgyzpjtcu",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-q-37": {
+   "hash": "1er8xygrbiu",
+   "ms": 1060,
+   "chars": 10
+  },
+  "n-q-38": {
+   "hash": "2f2947gqsqp",
+   "ms": 890,
+   "chars": 10
+  },
+  "n-q-39": {
+   "hash": "1x5y104fohl",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-q-4": {
+   "hash": "126zdim5ma",
+   "ms": 360,
+   "chars": 9
+  },
+  "n-q-40": {
+   "hash": "1iybfie8r5z",
+   "ms": 640,
+   "chars": 10
+  },
+  "n-q-400": {
+   "hash": "1559m7qxd4t",
+   "ms": 800,
+   "chars": 11
+  },
+  "n-q-4000": {
+   "hash": "aes4og454m",
+   "ms": 870,
+   "chars": 12
+  },
+  "n-q-41": {
+   "hash": "i3i304fz9i",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-q-42": {
+   "hash": "23gyitgg3n9",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-q-43": {
+   "hash": "qvgl9qje7u",
+   "ms": 990,
+   "chars": 10
+  },
+  "n-q-44": {
+   "hash": "eqt0scmxc1",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-q-45": {
+   "hash": "7cmxhgsj8w",
+   "ms": 1050,
+   "chars": 10
+  },
+  "n-q-46": {
+   "hash": "xvm635x0ya",
+   "ms": 990,
+   "chars": 10
+  },
+  "n-q-47": {
+   "hash": "ao4jt4pet",
+   "ms": 1150,
+   "chars": 10
+  },
+  "n-q-48": {
+   "hash": "1a290kpqws1",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-49": {
+   "hash": "1m0hwt04a4t",
+   "ms": 1120,
+   "chars": 10
+  },
+  "n-q-5": {
+   "hash": "16b0evnsseq",
+   "ms": 430,
+   "chars": 9
+  },
+  "n-q-50": {
+   "hash": "g0e5xy37kf",
+   "ms": 650,
+   "chars": 10
+  },
+  "n-q-500": {
+   "hash": "1w049cac7ax",
+   "ms": 840,
+   "chars": 11
+  },
+  "n-q-5000": {
+   "hash": "1stc94boyvt",
+   "ms": 900,
+   "chars": 12
+  },
+  "n-q-51": {
+   "hash": "1olocbp9aq0",
+   "ms": 900,
+   "chars": 10
+  },
+  "n-q-52": {
+   "hash": "1xntuyvkdlf",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-53": {
+   "hash": "13sw972a5ad",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-54": {
+   "hash": "slip9sr7h9",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-55": {
+   "hash": "xrhy17a6a0",
+   "ms": 1070,
+   "chars": 10
+  },
+  "n-q-56": {
+   "hash": "1gk6hctip02",
+   "ms": 1030,
+   "chars": 10
+  },
+  "n-q-57": {
+   "hash": "1y3inhpw6q7",
+   "ms": 1130,
+   "chars": 10
+  },
+  "n-q-58": {
+   "hash": "12r4omijctt",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-q-59": {
+   "hash": "jlms8o6dbi",
+   "ms": 1140,
+   "chars": 10
+  },
+  "n-q-6": {
+   "hash": "1t3yrln5ujd",
+   "ms": 420,
+   "chars": 9
+  },
+  "n-q-60": {
+   "hash": "1uo0tmc70hm",
+   "ms": 610,
+   "chars": 10
+  },
+  "n-q-600": {
+   "hash": "1d0hql5z31u",
+   "ms": 830,
+   "chars": 11
+  },
+  "n-q-6000": {
+   "hash": "20p9nyg0ko2",
+   "ms": 880,
+   "chars": 12
+  },
+  "n-q-61": {
+   "hash": "2z3vi62nf2",
+   "ms": 860,
+   "chars": 10
+  },
+  "n-q-62": {
+   "hash": "1yenhtnz9eg",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-63": {
+   "hash": "26r7xfjxvgx",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-64": {
+   "hash": "295nooi7dc4",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-65": {
+   "hash": "tktqnjdpec",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-66": {
+   "hash": "20fgfzztbr9",
+   "ms": 960,
+   "chars": 10
+  },
+  "n-q-67": {
+   "hash": "12hpwdi272r",
+   "ms": 1090,
+   "chars": 10
+  },
+  "n-q-68": {
+   "hash": "1oe6vg7mgvz",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-q-69": {
+   "hash": "b6mmomha5q",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-q-7": {
+   "hash": "1rjeprnw90r",
+   "ms": 550,
+   "chars": 9
+  },
+  "n-q-70": {
+   "hash": "25plmkmdm2f",
+   "ms": 730,
+   "chars": 10
+  },
+  "n-q-700": {
+   "hash": "27qrmxzo6v",
+   "ms": 920,
+   "chars": 11
+  },
+  "n-q-7000": {
+   "hash": "1wq9j6r1wi0",
+   "ms": 990,
+   "chars": 12
+  },
+  "n-q-71": {
+   "hash": "pp6xfy8x7d",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-72": {
+   "hash": "vj5kp39j18",
+   "ms": 1100,
+   "chars": 10
+  },
+  "n-q-73": {
+   "hash": "1dgq1wndhg5",
+   "ms": 1100,
+   "chars": 10
+  },
+  "n-q-74": {
+   "hash": "2fm33lziq11",
+   "ms": 1100,
+   "chars": 10
+  },
+  "n-q-75": {
+   "hash": "rr34k9dl7i",
+   "ms": 1130,
+   "chars": 10
+  },
+  "n-q-76": {
+   "hash": "1jqyt731cf8",
+   "ms": 1120,
+   "chars": 10
+  },
+  "n-q-77": {
+   "hash": "18393mchmk8",
+   "ms": 1220,
+   "chars": 10
+  },
+  "n-q-78": {
+   "hash": "1eyrfxq1ykr",
+   "ms": 1040,
+   "chars": 10
+  },
+  "n-q-79": {
+   "hash": "23uihbhny73",
+   "ms": 1180,
+   "chars": 10
+  },
+  "n-q-8": {
+   "hash": "fm9zhljw7j",
+   "ms": 340,
+   "chars": 9
+  },
+  "n-q-80": {
+   "hash": "7z4o54oxd8",
+   "ms": 530,
+   "chars": 10
+  },
+  "n-q-800": {
+   "hash": "uh1nbe7bm9",
+   "ms": 750,
+   "chars": 11
+  },
+  "n-q-8000": {
+   "hash": "1pye9hefrw6",
+   "ms": 730,
+   "chars": 12
+  },
+  "n-q-81": {
+   "hash": "97ihj1q1hz",
+   "ms": 910,
+   "chars": 10
+  },
+  "n-q-82": {
+   "hash": "17ev61cgr41",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-q-83": {
+   "hash": "1kd8yt4m244",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-q-84": {
+   "hash": "2cgunggq48g",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-q-85": {
+   "hash": "7ybbj5drom",
+   "ms": 1080,
+   "chars": 10
+  },
+  "n-q-86": {
+   "hash": "1lps05yl2ce",
+   "ms": 1020,
+   "chars": 10
+  },
+  "n-q-87": {
+   "hash": "56h9mkfv6b",
+   "ms": 1150,
+   "chars": 10
+  },
+  "n-q-88": {
+   "hash": "22qfulzo831",
+   "ms": 930,
+   "chars": 10
+  },
+  "n-q-89": {
+   "hash": "m37ulds3rk",
+   "ms": 1110,
+   "chars": 10
+  },
+  "n-q-9": {
+   "hash": "29fh5e28up8",
+   "ms": 500,
+   "chars": 9
+  },
+  "n-q-90": {
+   "hash": "16q1th6nlxs",
+   "ms": 710,
+   "chars": 10
+  },
+  "n-q-900": {
+   "hash": "11vcxaoewlx",
+   "ms": 920,
+   "chars": 11
+  },
+  "n-q-9000": {
+   "hash": "14v3i2w4hm7",
+   "ms": 1040,
+   "chars": 12
+  },
+  "n-q-91": {
+   "hash": "1kk35od1kx0",
+   "ms": 950,
+   "chars": 10
+  },
+  "n-q-92": {
+   "hash": "19eqhxsyiqj",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-93": {
+   "hash": "1e2bidc5b21",
+   "ms": 970,
+   "chars": 10
+  },
+  "n-q-94": {
+   "hash": "1hdei95vpi2",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-95": {
+   "hash": "1ydd14smo33",
+   "ms": 1080,
+   "chars": 10
+  },
+  "n-q-96": {
+   "hash": "12rfjs6m1n9",
+   "ms": 1080,
+   "chars": 10
+  },
+  "n-q-97": {
+   "hash": "1ecejmu2un0",
+   "ms": 1180,
+   "chars": 10
+  },
+  "n-q-98": {
+   "hash": "1ehkmaozka",
+   "ms": 1000,
+   "chars": 10
+  },
+  "n-q-99": {
+   "hash": "1hu8d1xk5rt",
+   "ms": 1150,
+   "chars": 10
+  },
+  "p-b-cooked-0": {
+   "hash": "m959lttsu5",
+   "ms": 500,
+   "chars": 9
+  },
+  "p-b-down-0": {
+   "hash": "v0ayi68f2u",
+   "ms": 1520,
+   "chars": 16
+  },
+  "p-b-dubbel-0": {
+   "hash": "1485mhcjqeq",
+   "ms": 2790,
+   "chars": 26
+  },
+  "p-c-door-0": {
+   "hash": "1g13bg4htg2",
+   "ms": 1050,
+   "chars": 16
+  },
+  "p-c-lowkey-0": {
+   "hash": "gexdlxq00v",
+   "ms": 1410,
+   "chars": 24
+  },
+  "p-c-normaal-0": {
+   "hash": "10ry4v78nas",
+   "ms": 760,
+   "chars": 13
+  },
+  "p-c-wie-0": {
+   "hash": "26j2ukpm0xq",
+   "ms": 760,
+   "chars": 12
+  },
+  "p-e-gespeeld-0": {
+   "hash": "en7sjb9o9m",
+   "ms": 840,
+   "chars": 14
+  },
+  "p-e-klaar-0": {
+   "hash": "yl5xl4l74v",
+   "ms": 820,
+   "chars": 12
+  },
+  "p-e-lowkey-0": {
+   "hash": "2bu0vulgubj",
+   "ms": 1270,
+   "chars": 18
+  },
+  "p-e-netjes-0": {
+   "hash": "1xzfgfz479u",
+   "ms": 1040,
+   "chars": 14
+  },
+  "p-e-tuff-0": {
+   "hash": "1vsh3dt4dcp",
+   "ms": 750,
+   "chars": 11
+  },
+  "p-e-volgende-0": {
+   "hash": "1z3yxvn29d",
+   "ms": 990,
+   "chars": 20
+  },
+  "p-el-begin-0": {
+   "hash": "1kx40j0m1hy",
+   "ms": 2830,
+   "chars": 38
+  },
+  "p-el-nog-0": {
+   "hash": "20tpj9u7u8x",
+   "ms": 2400,
+   "chars": 34
+  },
+  "p-el-oefen-0": {
+   "hash": "dq0dbptuma",
+   "ms": 2660,
+   "chars": 36
+  },
+  "p-el-volgende-0": {
+   "hash": "1yiktrin9ih",
+   "ms": 1690,
+   "chars": 26
+  },
+  "p-f-bijna-0": {
+   "hash": "2e1nm8o5fow",
+   "ms": 470,
+   "chars": 6
+  },
+  "p-f-bruh-0": {
+   "hash": "3lgsqt3pbs",
+   "ms": 380,
+   "chars": 5
+  },
+  "p-f-helaas-0": {
+   "hash": "1ytmjkv0w9z",
+   "ms": 550,
+   "chars": 7
+  },
+  "p-f-helly-0": {
+   "hash": "1cl4w8wcf2k",
+   "ms": 850,
+   "chars": 13
+  },
+  "p-f-jammer-0": {
+   "hash": "148k1m8qb0g",
+   "ms": 410,
+   "chars": 7
+  },
+  "p-f-mis-0": {
+   "hash": "28i9o78x0nb",
+   "ms": 390,
+   "chars": 4
+  },
+  "p-f-nope-0": {
+   "hash": "acw2lfk9z7",
+   "ms": 320,
+   "chars": 5
+  },
+  "p-f-skeer-0": {
+   "hash": "1lf15u5z837",
+   "ms": 1500,
+   "chars": 13
+  },
+  "p-f-yusu-0": {
+   "hash": "1sqk34zr4o5",
+   "ms": 1370,
+   "chars": 11
+  },
+  "p-g-clock-0": {
+   "hash": "qbx5mm67y9",
+   "ms": 460,
+   "chars": 9
+  },
+  "p-g-goed-0": {
+   "hash": "1gs75lkg6ll",
+   "ms": 370,
+   "chars": 5
+  },
+  "p-g-ja-0": {
+   "hash": "jk5f2r3epu",
+   "ms": 1590,
+   "chars": 14
+  },
+  "p-g-klopt-0": {
+   "hash": "2cdu96wcmwb",
+   "ms": 420,
+   "chars": 6
+  },
+  "p-g-lekker-0": {
+   "hash": "24yc8al9714",
+   "ms": 1090,
+   "chars": 13
+  },
+  "p-g-makkelijk-0": {
+   "hash": "22678i6hnr5",
+   "ms": 640,
+   "chars": 13
+  },
+  "p-g-netjes-0": {
+   "hash": "1o7p3fibgq5",
+   "ms": 530,
+   "chars": 7
+  },
+  "p-g-slay-0": {
+   "hash": "1go5fo93e4p",
+   "ms": 470,
+   "chars": 5
+  },
+  "p-g-sterk-0": {
+   "hash": "1yqmqk0yid1",
+   "ms": 480,
+   "chars": 6
+  },
+  "p-g-tuff-0": {
+   "hash": "fa0ocx15xg",
+   "ms": 350,
+   "chars": 5
+  },
+  "p-g-zat-0": {
+   "hash": "1zh87wxpgbn",
+   "ms": 530,
+   "chars": 8
+  },
+  "p-n-terug-0": {
+   "hash": "12ebwqfb2xp",
+   "ms": 1120,
+   "chars": 18
+  },
+  "p-o-onthouden-0": {
+   "hash": "2e0f03ojvj5",
+   "ms": 670,
+   "chars": 10
+  },
+  "p-o-zo-0": {
+   "hash": "ja8lrolfn3",
+   "ms": 1830,
+   "chars": 17
+  },
+  "p-s-67-0": {
+   "hash": "uq7ia865xz",
+   "ms": 890,
+   "chars": 10
+  },
+  "p-t-bro-0": {
+   "hash": "1naj76r66la",
+   "ms": 2090,
+   "chars": 35
+  },
+  "p-t-hallo-0": {
+   "hash": "wvol7810u7",
+   "ms": 1880,
+   "chars": 21
+  },
+  "p-t-lag-0": {
+   "hash": "pbijs5nnl",
+   "ms": 940,
+   "chars": 13
+  },
+  "p-t-skeer-0": {
+   "hash": "4oejv59ekj",
+   "ms": 940,
+   "chars": 11
+  },
+  "p-t-telaat-0": {
+   "hash": "2b5a7hsylwa",
+   "ms": 470,
+   "chars": 8
+  },
+  "p-t-tijd-0": {
+   "hash": "183jfj9wo2y",
+   "ms": 810,
+   "chars": 11
+  },
+  "p-x-alles-0": {
+   "hash": "139kf08u33r",
+   "ms": 2140,
+   "chars": 23
+  },
+  "p-x-clock-0": {
+   "hash": "16iqcn6zfiz",
+   "ms": 1740,
+   "chars": 24
+  },
+  "q-10x1": {
+   "hash": "23hp3i1aepb",
+   "ms": 800,
+   "chars": 10
+  },
+  "q-10x10": {
+   "hash": "4zy16iyuyy",
+   "ms": 870,
+   "chars": 11
+  },
+  "q-10x2": {
+   "hash": "jbxdkiszeh",
+   "ms": 970,
+   "chars": 10
+  },
+  "q-10x3": {
+   "hash": "15du9wqpk1t",
+   "ms": 800,
+   "chars": 10
+  },
+  "q-10x4": {
+   "hash": "1fi7tlbgjz8",
+   "ms": 870,
+   "chars": 10
+  },
+  "q-10x5": {
+   "hash": "2a6bptts1fr",
+   "ms": 1010,
+   "chars": 10
+  },
+  "q-10x6": {
+   "hash": "250f8ya70nw",
+   "ms": 990,
+   "chars": 10
+  },
+  "q-10x7": {
+   "hash": "21iwpzimyti",
+   "ms": 1030,
+   "chars": 10
+  },
+  "q-10x8": {
+   "hash": "1pnpg1o56z7",
+   "ms": 860,
+   "chars": 10
+  },
+  "q-10x9": {
+   "hash": "nfabnexo18",
+   "ms": 1020,
+   "chars": 10
+  },
+  "q-1x1": {
+   "hash": "1iss003gcd",
+   "ms": 830,
+   "chars": 9
+  },
+  "q-1x10": {
+   "hash": "6aeqsj0tt9",
+   "ms": 830,
+   "chars": 10
+  },
+  "q-1x2": {
+   "hash": "1i8gzmvguxc",
+   "ms": 940,
+   "chars": 9
+  },
+  "q-1x3": {
+   "hash": "18qkm6plt24",
+   "ms": 840,
+   "chars": 9
+  },
+  "q-1x4": {
+   "hash": "21ilo4i9une",
+   "ms": 860,
+   "chars": 9
+  },
+  "q-1x5": {
+   "hash": "1ye4wa74ikx",
+   "ms": 990,
+   "chars": 9
+  },
+  "q-1x6": {
+   "hash": "1kr5vfmci3x",
+   "ms": 930,
+   "chars": 9
+  },
+  "q-1x7": {
+   "hash": "1qwq708acnv",
+   "ms": 1090,
+   "chars": 9
+  },
+  "q-1x8": {
+   "hash": "1efknavxe2h",
+   "ms": 910,
+   "chars": 9
+  },
+  "q-1x9": {
+   "hash": "1ehkado0up2",
+   "ms": 1040,
+   "chars": 9
+  },
+  "q-2x1": {
+   "hash": "15jhtcmbjso",
+   "ms": 790,
+   "chars": 9
+  },
+  "q-2x10": {
+   "hash": "yvojhp4w82",
+   "ms": 860,
+   "chars": 10
+  },
+  "q-2x2": {
+   "hash": "1tne9ywhgrv",
+   "ms": 940,
+   "chars": 9
+  },
+  "q-2x3": {
+   "hash": "2586ykecwum",
+   "ms": 830,
+   "chars": 9
+  },
+  "q-2x4": {
+   "hash": "14op36l576e",
+   "ms": 850,
+   "chars": 9
+  },
+  "q-2x5": {
+   "hash": "yug678pjzw",
+   "ms": 980,
+   "chars": 9
+  },
+  "q-2x6": {
+   "hash": "91dgabtj4c",
+   "ms": 950,
+   "chars": 9
+  },
+  "q-2x7": {
+   "hash": "12rxppc6j65",
+   "ms": 1050,
+   "chars": 9
+  },
+  "q-2x8": {
+   "hash": "s8mvc9t7vq",
+   "ms": 890,
+   "chars": 9
+  },
+  "q-2x9": {
+   "hash": "inff4wsoow",
+   "ms": 1040,
+   "chars": 9
+  },
+  "q-3x1": {
+   "hash": "2c2nct3fape",
+   "ms": 880,
+   "chars": 9
+  },
+  "q-3x10": {
+   "hash": "5b67p1dzs2",
+   "ms": 960,
+   "chars": 10
+  },
+  "q-3x2": {
+   "hash": "2g9wmigsein",
+   "ms": 1060,
+   "chars": 9
+  },
+  "q-3x3": {
+   "hash": "20e1uhcfl1e",
+   "ms": 920,
+   "chars": 9
+  },
+  "q-3x4": {
+   "hash": "14kgsafk76h",
+   "ms": 970,
+   "chars": 9
+  },
+  "q-3x5": {
+   "hash": "mn1zuma3t6",
+   "ms": 1120,
+   "chars": 9
+  },
+  "q-3x6": {
+   "hash": "o76fh34e6",
+   "ms": 990,
+   "chars": 9
+  },
+  "q-3x7": {
+   "hash": "1jcu10o4kl4",
+   "ms": 1170,
+   "chars": 9
+  },
+  "q-3x8": {
+   "hash": "iygpivasdj",
+   "ms": 960,
+   "chars": 9
+  },
+  "q-3x9": {
+   "hash": "21k773rinjy",
+   "ms": 1160,
+   "chars": 9
+  },
+  "q-4x1": {
+   "hash": "12f2vh46vfo",
+   "ms": 960,
+   "chars": 9
+  },
+  "q-4x10": {
+   "hash": "128ptafumuf",
+   "ms": 940,
+   "chars": 10
+  },
+  "q-4x2": {
+   "hash": "av2h11gft7",
+   "ms": 1050,
+   "chars": 9
+  },
+  "q-4x3": {
+   "hash": "28yxtuxr6fh",
+   "ms": 940,
+   "chars": 9
+  },
+  "q-4x4": {
+   "hash": "53ju65ixbv",
+   "ms": 960,
+   "chars": 9
+  },
+  "q-4x5": {
+   "hash": "595w5dcv8b",
+   "ms": 1100,
+   "chars": 9
+  },
+  "q-4x6": {
+   "hash": "9us3tuobvl",
+   "ms": 1050,
+   "chars": 9
+  },
+  "q-4x7": {
+   "hash": "15fcgj8pj43",
+   "ms": 1160,
+   "chars": 9
+  },
+  "q-4x8": {
+   "hash": "64q5sguf2s",
+   "ms": 1040,
+   "chars": 9
+  },
+  "q-4x9": {
+   "hash": "2c039n2gvyz",
+   "ms": 1130,
+   "chars": 9
+  },
+  "q-5x1": {
+   "hash": "2bfptj9b6sw",
+   "ms": 940,
+   "chars": 9
+  },
+  "q-5x10": {
+   "hash": "2a6xiud9kg1",
+   "ms": 940,
+   "chars": 10
+  },
+  "q-5x2": {
+   "hash": "pqmm4alfct",
+   "ms": 1020,
+   "chars": 9
+  },
+  "q-5x3": {
+   "hash": "jqu3edehpn",
+   "ms": 910,
+   "chars": 9
+  },
+  "q-5x4": {
+   "hash": "1jlmw5zteof",
+   "ms": 950,
+   "chars": 9
+  },
+  "q-5x5": {
+   "hash": "14b6w1bxcci",
+   "ms": 1110,
+   "chars": 9
+  },
+  "q-5x6": {
+   "hash": "l08vws995y",
+   "ms": 1030,
+   "chars": 9
+  },
+  "q-5x7": {
+   "hash": "12uss5lxqk7",
+   "ms": 1180,
+   "chars": 9
+  },
+  "q-5x8": {
+   "hash": "6a4wmj9fv7",
+   "ms": 1010,
+   "chars": 9
+  },
+  "q-5x9": {
+   "hash": "i2n3h784jw",
+   "ms": 1150,
+   "chars": 9
+  },
+  "q-6x1": {
+   "hash": "18boxuty4mw",
+   "ms": 950,
+   "chars": 9
+  },
+  "q-6x10": {
+   "hash": "2217u20jokv",
+   "ms": 940,
+   "chars": 10
+  },
+  "q-6x2": {
+   "hash": "z12ysmn0dr",
+   "ms": 1030,
+   "chars": 9
+  },
+  "q-6x3": {
+   "hash": "26ttpwmndtc",
+   "ms": 920,
+   "chars": 9
+  },
+  "q-6x4": {
+   "hash": "1rs8blnf80f",
+   "ms": 970,
+   "chars": 9
+  },
+  "q-6x5": {
+   "hash": "2eod33ldqu2",
+   "ms": 1090,
+   "chars": 9
+  },
+  "q-6x6": {
+   "hash": "11dyjqmthqh",
+   "ms": 1050,
+   "chars": 9
+  },
+  "q-6x7": {
+   "hash": "20urah7hk5v",
+   "ms": 1160,
+   "chars": 9
+  },
+  "q-6x8": {
+   "hash": "10f5jifx81f",
+   "ms": 1050,
+   "chars": 9
+  },
+  "q-6x9": {
+   "hash": "10aplz4djl5",
+   "ms": 1170,
+   "chars": 9
+  },
+  "q-7x1": {
+   "hash": "w7zietj4m3",
+   "ms": 1150,
+   "chars": 9
+  },
+  "q-7x10": {
+   "hash": "4dtcka1bkc",
+   "ms": 1130,
+   "chars": 10
+  },
+  "q-7x2": {
+   "hash": "1thsojhtfvp",
+   "ms": 1240,
+   "chars": 9
+  },
+  "q-7x3": {
+   "hash": "17jn9udeoec",
+   "ms": 1110,
+   "chars": 9
+  },
+  "q-7x4": {
+   "hash": "ll49iv63z8",
+   "ms": 1100,
+   "chars": 9
+  },
+  "q-7x5": {
+   "hash": "pm3foomzbt",
+   "ms": 1230,
+   "chars": 9
+  },
+  "q-7x6": {
+   "hash": "22bg413xnlh",
+   "ms": 1230,
+   "chars": 9
+  },
+  "q-7x7": {
+   "hash": "10t8c1llol7",
+   "ms": 1290,
+   "chars": 9
+  },
+  "q-7x8": {
+   "hash": "17sbu2p1h55",
+   "ms": 1190,
+   "chars": 9
+  },
+  "q-7x9": {
+   "hash": "1jy3r9pw4cn",
+   "ms": 1240,
+   "chars": 9
+  },
+  "q-8x1": {
+   "hash": "1h45rh3gg96",
+   "ms": 800,
+   "chars": 9
+  },
+  "q-8x10": {
+   "hash": "ejpube2ms9",
+   "ms": 850,
+   "chars": 10
+  },
+  "q-8x2": {
+   "hash": "jv9t98bl0d",
+   "ms": 910,
+   "chars": 9
+  },
+  "q-8x3": {
+   "hash": "2f6i5wzepex",
+   "ms": 820,
+   "chars": 9
+  },
+  "q-8x4": {
+   "hash": "c9owpmjybj",
+   "ms": 830,
+   "chars": 9
+  },
+  "q-8x5": {
+   "hash": "aqwl595gvt",
+   "ms": 950,
+   "chars": 9
+  },
+  "q-8x6": {
+   "hash": "23v3fl2py69",
+   "ms": 930,
+   "chars": 9
+  },
+  "q-8x7": {
+   "hash": "1zat82rujw4",
+   "ms": 990,
+   "chars": 9
+  },
+  "q-8x8": {
+   "hash": "2dlwhvtv6h8",
+   "ms": 910,
+   "chars": 9
+  },
+  "q-8x9": {
+   "hash": "2bxz8jxiez",
+   "ms": 1000,
+   "chars": 9
+  },
+  "q-9x1": {
+   "hash": "2ckowz60e70",
+   "ms": 1090,
+   "chars": 9
+  },
+  "q-9x10": {
+   "hash": "9hmyr4wver",
+   "ms": 1090,
+   "chars": 10
+  },
+  "q-9x2": {
+   "hash": "16t48tf4nw3",
+   "ms": 1190,
+   "chars": 9
+  },
+  "q-9x3": {
+   "hash": "12jr7921762",
+   "ms": 1040,
+   "chars": 9
+  },
+  "q-9x4": {
+   "hash": "1dqks3ic9o3",
+   "ms": 1080,
+   "chars": 9
+  },
+  "q-9x5": {
+   "hash": "11p0u3r02pt",
+   "ms": 1230,
+   "chars": 9
+  },
+  "q-9x6": {
+   "hash": "8hcjppsd50",
+   "ms": 1160,
+   "chars": 9
+  },
+  "q-9x7": {
+   "hash": "8apivdu371",
+   "ms": 1200,
+   "chars": 9
+  },
+  "q-9x8": {
+   "hash": "1spqv5pbm3p",
+   "ms": 1170,
+   "chars": 9
+  },
+  "q-9x9": {
+   "hash": "1m0iil7oaiv",
+   "ms": 1180,
+   "chars": 9
+  },
+  "som-10x1": {
+   "hash": "16fs3gh2vl",
+   "ms": 1360,
+   "chars": 16
+  },
+  "som-10x10": {
+   "hash": "27w9h4k4e6r",
+   "ms": 1380,
+   "chars": 18
+  },
+  "som-10x2": {
+   "hash": "20o8t7w6wsd",
+   "ms": 1610,
+   "chars": 16
+  },
+  "som-10x3": {
+   "hash": "vaduef4rfc",
+   "ms": 1520,
+   "chars": 16
+  },
+  "som-10x4": {
+   "hash": "1oco0pq4ci4",
+   "ms": 1470,
+   "chars": 16
+  },
+  "som-10x5": {
+   "hash": "1mmlg7e5x1q",
+   "ms": 1620,
+   "chars": 16
+  },
+  "som-10x6": {
+   "hash": "1drlclni191",
+   "ms": 1600,
+   "chars": 16
+  },
+  "som-10x7": {
+   "hash": "2gepfv1fywk",
+   "ms": 1700,
+   "chars": 16
+  },
+  "som-10x8": {
+   "hash": "icfsis1cz5",
+   "ms": 1420,
+   "chars": 16
+  },
+  "som-10x9": {
+   "hash": "2844e2g0tc2",
+   "ms": 1680,
+   "chars": 16
+  },
+  "som-1x1": {
+   "hash": "10dlota3ftt",
+   "ms": 1400,
+   "chars": 14
+  },
+  "som-1x10": {
+   "hash": "17kunvu390b",
+   "ms": 1350,
+   "chars": 16
+  },
+  "som-1x2": {
+   "hash": "21q633ood0n",
+   "ms": 1540,
+   "chars": 14
+  },
+  "som-1x3": {
+   "hash": "1yb4c09q5q8",
+   "ms": 1320,
+   "chars": 14
+  },
+  "som-1x4": {
+   "hash": "lqh4qhr1fo",
+   "ms": 1350,
+   "chars": 14
+  },
+  "som-1x5": {
+   "hash": "kr07qft4mx",
+   "ms": 1490,
+   "chars": 14
+  },
+  "som-1x6": {
+   "hash": "1t2topt63rs",
+   "ms": 1460,
+   "chars": 14
+  },
+  "som-1x7": {
+   "hash": "2177p98xl2b",
+   "ms": 1590,
+   "chars": 14
+  },
+  "som-1x8": {
+   "hash": "stbq2wtmh6",
+   "ms": 1250,
+   "chars": 14
+  },
+  "som-1x9": {
+   "hash": "1hm5zvsrony",
+   "ms": 1610,
+   "chars": 14
+  },
+  "som-2x1": {
+   "hash": "1bezg65upzi",
+   "ms": 1430,
+   "chars": 14
+  },
+  "som-2x10": {
+   "hash": "zztsqn0v7w",
+   "ms": 1520,
+   "chars": 16
+  },
+  "som-2x2": {
+   "hash": "1847w0p01um",
+   "ms": 1480,
+   "chars": 14
+  },
+  "som-2x3": {
+   "hash": "1xbmk4ulgt0",
+   "ms": 1460,
+   "chars": 14
+  },
+  "som-2x4": {
+   "hash": "1wj7asjraq1",
+   "ms": 1370,
+   "chars": 14
+  },
+  "som-2x5": {
+   "hash": "1bc5itmd75b",
+   "ms": 1360,
+   "chars": 15
+  },
+  "som-2x6": {
+   "hash": "181syj944ms",
+   "ms": 1580,
+   "chars": 15
+  },
+  "som-2x7": {
+   "hash": "2ck1mj5cv0f",
+   "ms": 1700,
+   "chars": 15
+  },
+  "som-2x8": {
+   "hash": "2ehfi38b3lx",
+   "ms": 1490,
+   "chars": 15
+  },
+  "som-2x9": {
+   "hash": "2bhejjrjp04",
+   "ms": 1680,
+   "chars": 15
+  },
+  "som-3x1": {
+   "hash": "1c2dzkjiwmz",
+   "ms": 1330,
+   "chars": 14
+  },
+  "som-3x10": {
+   "hash": "oi9feqi7mn",
+   "ms": 1480,
+   "chars": 16
+  },
+  "som-3x2": {
+   "hash": "o9rk3glxen",
+   "ms": 1490,
+   "chars": 14
+  },
+  "som-3x3": {
+   "hash": "1d58l1u7n15",
+   "ms": 1630,
+   "chars": 14
+  },
+  "som-3x4": {
+   "hash": "251fn4vnzkg",
+   "ms": 1490,
+   "chars": 15
+  },
+  "som-3x5": {
+   "hash": "26ixla1hnrj",
+   "ms": 1670,
+   "chars": 15
+  },
+  "som-3x6": {
+   "hash": "7obm4spr3p",
+   "ms": 1620,
+   "chars": 15
+  },
+  "som-3x7": {
+   "hash": "220gajyxazp",
+   "ms": 1980,
+   "chars": 15
+  },
+  "som-3x8": {
+   "hash": "1ftggte977u",
+   "ms": 1900,
+   "chars": 15
+  },
+  "som-3x9": {
+   "hash": "15ug93zwm7a",
+   "ms": 2070,
+   "chars": 15
+  },
+  "som-4x1": {
+   "hash": "1rtd5k835uj",
+   "ms": 1470,
+   "chars": 14
+  },
+  "som-4x10": {
+   "hash": "v3hay7icu7",
+   "ms": 1600,
+   "chars": 16
+  },
+  "som-4x2": {
+   "hash": "1y8ekbgsd0c",
+   "ms": 1560,
+   "chars": 14
+  },
+  "som-4x3": {
+   "hash": "gu4uzegvmm",
+   "ms": 1650,
+   "chars": 15
+  },
+  "som-4x4": {
+   "hash": "14hqm823ugn",
+   "ms": 1530,
+   "chars": 15
+  },
+  "som-4x5": {
+   "hash": "18l119i9y6r",
+   "ms": 1640,
+   "chars": 15
+  },
+  "som-4x6": {
+   "hash": "1s9l4pi8mom",
+   "ms": 2010,
+   "chars": 15
+  },
+  "som-4x7": {
+   "hash": "fki4pmncao",
+   "ms": 2090,
+   "chars": 15
+  },
+  "som-4x8": {
+   "hash": "gszp6j8d9s",
+   "ms": 1880,
+   "chars": 15
+  },
+  "som-4x9": {
+   "hash": "2dstg4czo63",
+   "ms": 2030,
+   "chars": 15
+  },
+  "som-5x1": {
+   "hash": "p785h57wqb",
+   "ms": 1550,
+   "chars": 14
+  },
+  "som-5x10": {
+   "hash": "12vqwyz5i9p",
+   "ms": 1670,
+   "chars": 16
+  },
+  "som-5x2": {
+   "hash": "11k8rww0ch8",
+   "ms": 1580,
+   "chars": 15
+  },
+  "som-5x3": {
+   "hash": "4bct1y0bc7",
+   "ms": 1780,
+   "chars": 15
+  },
+  "som-5x4": {
+   "hash": "45srrmeblp",
+   "ms": 1570,
+   "chars": 15
+  },
+  "som-5x5": {
+   "hash": "q4n3xzl59l",
+   "ms": 2100,
+   "chars": 15
+  },
+  "som-5x6": {
+   "hash": "va7kfnx8r0",
+   "ms": 1670,
+   "chars": 15
+  },
+  "som-5x7": {
+   "hash": "ease46gayr",
+   "ms": 2160,
+   "chars": 15
+  },
+  "som-5x8": {
+   "hash": "10p6f6ekh4v",
+   "ms": 1640,
+   "chars": 15
+  },
+  "som-5x9": {
+   "hash": "1wl5u3gormx",
+   "ms": 2070,
+   "chars": 15
+  },
+  "som-6x1": {
+   "hash": "v9luwsnez0",
+   "ms": 1530,
+   "chars": 14
+  },
+  "som-6x10": {
+   "hash": "2c4kxnjxl1c",
+   "ms": 1550,
+   "chars": 16
+  },
+  "som-6x2": {
+   "hash": "21r2656lep8",
+   "ms": 1690,
+   "chars": 15
+  },
+  "som-6x3": {
+   "hash": "232lf0fhm4m",
+   "ms": 1680,
+   "chars": 15
+  },
+  "som-6x4": {
+   "hash": "1oxt6f0ny6g",
+   "ms": 1880,
+   "chars": 15
+  },
+  "som-6x5": {
+   "hash": "bb3upslmzt",
+   "ms": 1620,
+   "chars": 15
+  },
+  "som-6x6": {
+   "hash": "g8258scpoj",
+   "ms": 1970,
+   "chars": 15
+  },
+  "som-6x7": {
+   "hash": "1xhs0qbyifr",
+   "ms": 2050,
+   "chars": 15
+  },
+  "som-6x8": {
+   "hash": "1ibswn9yg6o",
+   "ms": 1910,
+   "chars": 15
+  },
+  "som-6x9": {
+   "hash": "11idyzpzwsy",
+   "ms": 2160,
+   "chars": 15
+  },
+  "som-7x1": {
+   "hash": "1s2bmydnby5",
+   "ms": 1730,
+   "chars": 14
+  },
+  "som-7x10": {
+   "hash": "1s1c54oprds",
+   "ms": 1810,
+   "chars": 16
+  },
+  "som-7x2": {
+   "hash": "txc5z4ohvd",
+   "ms": 1840,
+   "chars": 15
+  },
+  "som-7x3": {
+   "hash": "gbygjjjy4v",
+   "ms": 2110,
+   "chars": 15
+  },
+  "som-7x4": {
+   "hash": "1jy2wr8mw2l",
+   "ms": 1990,
+   "chars": 15
+  },
+  "som-7x5": {
+   "hash": "sdirp6khwp",
+   "ms": 2120,
+   "chars": 15
+  },
+  "som-7x6": {
+   "hash": "ntwtcb4epj",
+   "ms": 2090,
+   "chars": 15
+  },
+  "som-7x7": {
+   "hash": "tgqqcv6b75",
+   "ms": 2280,
+   "chars": 15
+  },
+  "som-7x8": {
+   "hash": "195pkhlf769",
+   "ms": 2190,
+   "chars": 15
+  },
+  "som-7x9": {
+   "hash": "1hd8uq22jya",
+   "ms": 2100,
+   "chars": 15
+  },
+  "som-8x1": {
+   "hash": "1qy8cgpdzx5",
+   "ms": 1450,
+   "chars": 14
+  },
+  "som-8x10": {
+   "hash": "1sb2ie59evy",
+   "ms": 1520,
+   "chars": 16
+  },
+  "som-8x2": {
+   "hash": "29a2arscuir",
+   "ms": 1620,
+   "chars": 15
+  },
+  "som-8x3": {
+   "hash": "1pm7jvqi1h7",
+   "ms": 1990,
+   "chars": 15
+  },
+  "som-8x4": {
+   "hash": "2b9ho9mc24b",
+   "ms": 1780,
+   "chars": 15
+  },
+  "som-8x5": {
+   "hash": "22nwdgh3fyy",
+   "ms": 1630,
+   "chars": 15
+  },
+  "som-8x6": {
+   "hash": "1unqhjsbjhj",
+   "ms": 1940,
+   "chars": 15
+  },
+  "som-8x7": {
+   "hash": "28uhnu3trmt",
+   "ms": 2080,
+   "chars": 15
+  },
+  "som-8x8": {
+   "hash": "dddtrdgd5w",
+   "ms": 1920,
+   "chars": 15
+  },
+  "som-8x9": {
+   "hash": "1cl46ytqmyl",
+   "ms": 2070,
+   "chars": 15
+  },
+  "som-9x1": {
+   "hash": "hk1fpb1tf",
+   "ms": 1670,
+   "chars": 14
+  },
+  "som-9x10": {
+   "hash": "2d8igx2ebff",
+   "ms": 1760,
+   "chars": 16
+  },
+  "som-9x2": {
+   "hash": "jx75kb1l7l",
+   "ms": 1780,
+   "chars": 15
+  },
+  "som-9x3": {
+   "hash": "1512luuf5px",
+   "ms": 2230,
+   "chars": 15
+  },
+  "som-9x4": {
+   "hash": "us93fv0mda",
+   "ms": 1950,
+   "chars": 15
+  },
+  "som-9x5": {
+   "hash": "y0wrytvnxo",
+   "ms": 2140,
+   "chars": 15
+  },
+  "som-9x6": {
+   "hash": "21erxgs4mhr",
+   "ms": 2140,
+   "chars": 15
+  },
+  "som-9x7": {
+   "hash": "1o1beg3k6ht",
+   "ms": 2110,
+   "chars": 15
+  },
+  "som-9x8": {
+   "hash": "9f8uhv52wd",
+   "ms": 2110,
+   "chars": 15
+  },
+  "som-9x9": {
+   "hash": "110mant0tv0",
+   "ms": 2110,
+   "chars": 15
+  },
+  "w-combo": {
+   "hash": "z6scp5lxcj",
+   "ms": 480,
+   "chars": 9
+  },
+  "w-cooked": {
+   "hash": "1yxr1e7hdrr",
+   "ms": 650,
+   "chars": 19
+  },
+  "w-hetis": {
+   "hash": "1xcjjg5fb92",
+   "ms": 510,
+   "chars": 9
+  },
+  "w-is": {
+   "hash": "1mqdr1aex0q",
+   "ms": 320,
+   "chars": 14
+  },
+  "w-is-zeg": {
+   "hash": "2d2in58q16u",
+   "ms": 320,
+   "chars": 27
+  },
+  "w-keer": {
+   "hash": "1lht9m39z73",
+   "ms": 350,
+   "chars": 9
+  },
+  "w-zeg": {
+   "hash": "1zazwsb3o96",
+   "ms": 840,
+   "chars": 27
+  },
+  "zeg-10x1": {
+   "hash": "245zc4gz0xh",
+   "ms": 1790,
+   "chars": 28
+  },
+  "zeg-10x10": {
+   "hash": "1hoji1uptq9",
+   "ms": 1770,
+   "chars": 29
+  },
+  "zeg-10x2": {
+   "hash": "1fxkj730bmu",
+   "ms": 1860,
+   "chars": 28
+  },
+  "zeg-10x3": {
+   "hash": "28i1iwogaqq",
+   "ms": 1810,
+   "chars": 28
+  },
+  "zeg-10x4": {
+   "hash": "1yhyu55cr5s",
+   "ms": 1840,
+   "chars": 28
+  },
+  "zeg-10x5": {
+   "hash": "1xldrc50gbu",
+   "ms": 1870,
+   "chars": 28
+  },
+  "zeg-10x6": {
+   "hash": "ps5c5jr52s",
+   "ms": 1840,
+   "chars": 28
+  },
+  "zeg-10x7": {
+   "hash": "2br6ofn9eub",
+   "ms": 1980,
+   "chars": 28
+  },
+  "zeg-10x8": {
+   "hash": "1wgmo5z8qv1",
+   "ms": 1790,
+   "chars": 28
+  },
+  "zeg-10x9": {
+   "hash": "22e8jzdhkw3",
+   "ms": 1940,
+   "chars": 28
+  },
+  "zeg-1x1": {
+   "hash": "17facyfrq6h",
+   "ms": 1840,
+   "chars": 27
+  },
+  "zeg-1x10": {
+   "hash": "1of3p1i4b9w",
+   "ms": 1830,
+   "chars": 28
+  },
+  "zeg-1x2": {
+   "hash": "11odxkyhl5f",
+   "ms": 1950,
+   "chars": 27
+  },
+  "zeg-1x3": {
+   "hash": "13n82ezwdp7",
+   "ms": 1870,
+   "chars": 27
+  },
+  "zeg-1x4": {
+   "hash": "6aehm4xj8w",
+   "ms": 1880,
+   "chars": 27
+  },
+  "zeg-1x5": {
+   "hash": "1mg27thrrc5",
+   "ms": 1930,
+   "chars": 27
+  },
+  "zeg-1x6": {
+   "hash": "zrdaxt5de6",
+   "ms": 1900,
+   "chars": 27
+  },
+  "zeg-1x7": {
+   "hash": "i95pipit84",
+   "ms": 1970,
+   "chars": 27
+  },
+  "zeg-1x8": {
+   "hash": "oo5c5bvqx4",
+   "ms": 1820,
+   "chars": 27
+  },
+  "zeg-1x9": {
+   "hash": "19dam1k9mb1",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-2x1": {
+   "hash": "4z1qf0dmkw",
+   "ms": 1810,
+   "chars": 27
+  },
+  "zeg-2x10": {
+   "hash": "m37vwg6ikm",
+   "ms": 1790,
+   "chars": 28
+  },
+  "zeg-2x2": {
+   "hash": "2dv32fvlt6n",
+   "ms": 1940,
+   "chars": 27
+  },
+  "zeg-2x3": {
+   "hash": "1ay9q3ci2f6",
+   "ms": 1830,
+   "chars": 27
+  },
+  "zeg-2x4": {
+   "hash": "17iarxfm6yz",
+   "ms": 1880,
+   "chars": 27
+  },
+  "zeg-2x5": {
+   "hash": "1xdyv5cj8ae",
+   "ms": 1920,
+   "chars": 27
+  },
+  "zeg-2x6": {
+   "hash": "1cxvy1scsum",
+   "ms": 1900,
+   "chars": 27
+  },
+  "zeg-2x7": {
+   "hash": "1bfspjlpnmu",
+   "ms": 2050,
+   "chars": 27
+  },
+  "zeg-2x8": {
+   "hash": "wraqxwdc9s",
+   "ms": 1850,
+   "chars": 27
+  },
+  "zeg-2x9": {
+   "hash": "2bpo1rxyn0i",
+   "ms": 2050,
+   "chars": 27
+  },
+  "zeg-3x1": {
+   "hash": "1qppwmwf50b",
+   "ms": 1790,
+   "chars": 27
+  },
+  "zeg-3x10": {
+   "hash": "23cftrap8zu",
+   "ms": 1850,
+   "chars": 28
+  },
+  "zeg-3x2": {
+   "hash": "148sj5up4vm",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-3x3": {
+   "hash": "lonm5loihl",
+   "ms": 1870,
+   "chars": 27
+  },
+  "zeg-3x4": {
+   "hash": "19pfh85veit",
+   "ms": 1900,
+   "chars": 27
+  },
+  "zeg-3x5": {
+   "hash": "2ey0a0yplaj",
+   "ms": 1950,
+   "chars": 27
+  },
+  "zeg-3x6": {
+   "hash": "265uxdwaitn",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-3x7": {
+   "hash": "74iynrvq0k",
+   "ms": 1970,
+   "chars": 27
+  },
+  "zeg-3x8": {
+   "hash": "pvmoal3zd4",
+   "ms": 1790,
+   "chars": 27
+  },
+  "zeg-3x9": {
+   "hash": "1bgqhn6o6st",
+   "ms": 1980,
+   "chars": 27
+  },
+  "zeg-4x1": {
+   "hash": "1hsjxh1m4sb",
+   "ms": 1870,
+   "chars": 27
+  },
+  "zeg-4x10": {
+   "hash": "1njfcixb2k5",
+   "ms": 1920,
+   "chars": 28
+  },
+  "zeg-4x2": {
+   "hash": "b2g4rjqalo",
+   "ms": 1980,
+   "chars": 27
+  },
+  "zeg-4x3": {
+   "hash": "17rbz4fya6z",
+   "ms": 1920,
+   "chars": 27
+  },
+  "zeg-4x4": {
+   "hash": "s0gqntrmq4",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-4x5": {
+   "hash": "168pvkpojbm",
+   "ms": 1980,
+   "chars": 27
+  },
+  "zeg-4x6": {
+   "hash": "5p6yi5jp2q",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-4x7": {
+   "hash": "1kiuyjv2qps",
+   "ms": 2030,
+   "chars": 27
+  },
+  "zeg-4x8": {
+   "hash": "2cwqjhme4k9",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-4x9": {
+   "hash": "bywoyfh8i6",
+   "ms": 2040,
+   "chars": 27
+  },
+  "zeg-5x1": {
+   "hash": "21q6hmfeu65",
+   "ms": 1920,
+   "chars": 27
+  },
+  "zeg-5x10": {
+   "hash": "cl16fccw1w",
+   "ms": 1910,
+   "chars": 28
+  },
+  "zeg-5x2": {
+   "hash": "10smcgn32sm",
+   "ms": 2000,
+   "chars": 27
+  },
+  "zeg-5x3": {
+   "hash": "22psietowho",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-5x4": {
+   "hash": "1m3ybku75qb",
+   "ms": 1940,
+   "chars": 27
+  },
+  "zeg-5x5": {
+   "hash": "14gbqtm51gr",
+   "ms": 1970,
+   "chars": 27
+  },
+  "zeg-5x6": {
+   "hash": "oemj177j25",
+   "ms": 1940,
+   "chars": 27
+  },
+  "zeg-5x7": {
+   "hash": "1bt3czny4dr",
+   "ms": 2020,
+   "chars": 27
+  },
+  "zeg-5x8": {
+   "hash": "1sfvvtwzwfz",
+   "ms": 1890,
+   "chars": 27
+  },
+  "zeg-5x9": {
+   "hash": "7ntn8ld6e7",
+   "ms": 2050,
+   "chars": 27
+  },
+  "zeg-6x1": {
+   "hash": "1igih1gyy46",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-6x10": {
+   "hash": "1ubxgbxgh3c",
+   "ms": 1890,
+   "chars": 28
+  },
+  "zeg-6x2": {
+   "hash": "lhdh763jmk",
+   "ms": 1930,
+   "chars": 27
+  },
+  "zeg-6x3": {
+   "hash": "1k2ffxyuq61",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-6x4": {
+   "hash": "1ynslag7c5o",
+   "ms": 1950,
+   "chars": 27
+  },
+  "zeg-6x5": {
+   "hash": "khe97vsmg5",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-6x6": {
+   "hash": "141irbfwn0b",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-6x7": {
+   "hash": "1ujr1s6wwav",
+   "ms": 2040,
+   "chars": 27
+  },
+  "zeg-6x8": {
+   "hash": "2785ij597od",
+   "ms": 1990,
+   "chars": 27
+  },
+  "zeg-6x9": {
+   "hash": "1rimdxx5rcv",
+   "ms": 2000,
+   "chars": 27
+  },
+  "zeg-7x1": {
+   "hash": "jvnwhvcl7q",
+   "ms": 1950,
+   "chars": 27
+  },
+  "zeg-7x10": {
+   "hash": "2ecct6o3u9y",
+   "ms": 2030,
+   "chars": 28
+  },
+  "zeg-7x2": {
+   "hash": "2mikb2ck7y",
+   "ms": 2060,
+   "chars": 27
+  },
+  "zeg-7x3": {
+   "hash": "1czhwdsf92a",
+   "ms": 2040,
+   "chars": 27
+  },
+  "zeg-7x4": {
+   "hash": "2b0y0f715f6",
+   "ms": 2060,
+   "chars": 27
+  },
+  "zeg-7x5": {
+   "hash": "1e3uxzm9ey8",
+   "ms": 2080,
+   "chars": 27
+  },
+  "zeg-7x6": {
+   "hash": "16mzxmqd79j",
+   "ms": 2070,
+   "chars": 27
+  },
+  "zeg-7x7": {
+   "hash": "z3n0khw2k4",
+   "ms": 2120,
+   "chars": 27
+  },
+  "zeg-7x8": {
+   "hash": "1yohfa7yv4g",
+   "ms": 1930,
+   "chars": 27
+  },
+  "zeg-7x9": {
+   "hash": "1na5etdt83h",
+   "ms": 2140,
+   "chars": 27
+  },
+  "zeg-8x1": {
+   "hash": "1loy5mm1o9n",
+   "ms": 1910,
+   "chars": 27
+  },
+  "zeg-8x10": {
+   "hash": "29wnmxpmloa",
+   "ms": 1940,
+   "chars": 28
+  },
+  "zeg-8x2": {
+   "hash": "ytr2n9ygzf",
+   "ms": 2000,
+   "chars": 27
+  },
+  "zeg-8x3": {
+   "hash": "9j3ee69cu6",
+   "ms": 1930,
+   "chars": 27
+  },
+  "zeg-8x4": {
+   "hash": "1gnuwecfoop",
+   "ms": 1980,
+   "chars": 27
+  },
+  "zeg-8x5": {
+   "hash": "18dxv9p1lx2",
+   "ms": 2010,
+   "chars": 27
+  },
+  "zeg-8x6": {
+   "hash": "au7q4emi2",
+   "ms": 1970,
+   "chars": 27
+  },
+  "zeg-8x7": {
+   "hash": "204ogwgp46p",
+   "ms": 2190,
+   "chars": 27
+  },
+  "zeg-8x8": {
+   "hash": "779eczgdwq",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-8x9": {
+   "hash": "niwlx2g6pt",
+   "ms": 2140,
+   "chars": 27
+  },
+  "zeg-9x1": {
+   "hash": "29zyesxy9iz",
+   "ms": 1960,
+   "chars": 27
+  },
+  "zeg-9x10": {
+   "hash": "1mbrxahlslw",
+   "ms": 2000,
+   "chars": 28
+  },
+  "zeg-9x2": {
+   "hash": "m2dzc219ya",
+   "ms": 2100,
+   "chars": 27
+  },
+  "zeg-9x3": {
+   "hash": "9drw0p1h3r",
+   "ms": 2020,
+   "chars": 27
+  },
+  "zeg-9x4": {
+   "hash": "ndqa26phl8",
+   "ms": 2080,
+   "chars": 27
+  },
+  "zeg-9x5": {
+   "hash": "skhvnc3upr",
+   "ms": 2080,
+   "chars": 27
+  },
+  "zeg-9x6": {
+   "hash": "2b9ptgkgetr",
+   "ms": 2060,
+   "chars": 27
+  },
+  "zeg-9x7": {
+   "hash": "10bejwoa58y",
+   "ms": 2160,
+   "chars": 27
+  },
+  "zeg-9x8": {
+   "hash": "2f51zqiu75a",
+   "ms": 1950,
+   "chars": 27
+  },
+  "zeg-9x9": {
+   "hash": "13parvvj4lb",
+   "ms": 2160,
+   "chars": 27
+  }
+ }
+}
