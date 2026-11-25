@@ -549,6 +549,8 @@ export default function Ronde() {
   const onColor = phase === 'goed' || phase === 'fout'
   const fg = onColor ? colors.ink : colors.text
 
+  // With the keyboard up there is room for two lines, or for the (long) notice alone.
+  const shownLines = keyboard > 0 ? (view.notice ? [] : view.lines.slice(-2)) : view.lines
   const choiceNow = view.input === 'kiezen' && phase === 'luisteren'
   const bottom = (
     <Bottom key={`${view.index}-${view.phase}`} view={view} accent={accent} fg={fg} onAnswer={(n) => eng.current.typedResolve?.(n)} />
@@ -577,7 +579,7 @@ export default function Ronde() {
 
         <View style={s.lines}>
           {view.notice ? <Bubble from="app" text={view.notice} /> : null}
-          {view.lines.slice(keyboard > 0 ? -2 : 0).map((l, i, shown) => (
+          {shownLines.map((l, i, shown) => (
             <Bubble key={l.id} from={l.from} text={l.text} strong={i === shown.length - 1} />
           ))}
           {(phase === 'luisteren' || phase === 'nazeggen') && view.input === 'praten' ? (
@@ -882,7 +884,7 @@ const s = StyleSheet.create({
   },
   /** The keyboard shortcut, small in the corner (browser only). */
   choiceKey: { position: 'absolute', top: 6, left: 10, fontSize: 12, lineHeight: 14 },
-  lines: { flex: 1, justifyContent: 'flex-end', gap: 10 },
+  lines: { flex: 1, justifyContent: 'flex-end', gap: 10, overflow: 'hidden' },
   segments: { flex: 1, flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 8, borderRadius: 4 },
   timerTrack: { flex: 1, height: 14, borderRadius: radius.pill, backgroundColor: colors.line, overflow: 'hidden' },
