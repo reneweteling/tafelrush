@@ -114,6 +114,8 @@ export type ListenOptions = {
   /** The voice reading the question; resolves when it is done. Absent: nothing is being read. */
   spoken?: Promise<void>
   signal: { cancelled: boolean }
+  /** The mic is open (or never will be): on iOS the question is read only now, see voice.ts. */
+  onMicOpen?: () => void
   onPartial?: (text: string) => void
   onListening?: () => void
   onSpeech?: () => void
@@ -158,6 +160,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       if (micOpenAt !== null) return
       micOpenAt = Date.now()
       handoffLog('mic open', why)
+      opts.onMicOpen?.()
       maybeStartClock()
     }
 

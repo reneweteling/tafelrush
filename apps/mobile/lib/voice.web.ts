@@ -118,6 +118,8 @@ export type Spoken = {
   done: Promise<void>
   /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. */
   micCue: Promise<void>
+  /** The mic is open. Only the iPhone app waits for this (see voice.ts); nothing to do in a browser. */
+  micOpen: () => void
 }
 
 /**
@@ -169,7 +171,7 @@ export function sayWithCue(text: string): Spoken {
       handoffLog('tts end')
       fire('tts end')
     })
-  return { done, micCue }
+  return { done, micCue, micOpen: () => {} }
 }
 
 export function stopVoice() {

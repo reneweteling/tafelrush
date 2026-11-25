@@ -1,7 +1,7 @@
 // The thinking clock for one sum. It starts only when the app is ready for an
 // answer: when talking, once the sum has been read aloud and the mic is open,
-// whichever comes later (the mic opens a little before the voice ends, see
-// lib/handoff.ts); when typing or tapping, as soon as the sum is on screen. While she talks it is
+// whichever comes later (the mic opens a little before the voice ends, on iOS
+// before it starts, see lib/handoff.ts); when typing or tapping, as soon as the sum is on screen. While she talks it is
 // frozen, so recognition time does not count as thinking time. Pure, so it runs in Vitest.
 
 import type { InputMethod } from './store'

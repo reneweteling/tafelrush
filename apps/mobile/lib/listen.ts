@@ -2,8 +2,9 @@
 //
 // Speed matters, so:
 // - the mic starts a little before the question has been read, so it is live when
-//   the voice ends (lib/handoff.ts); the clock starts once the question is read and
-//   the mic is really open, whichever is later;
+//   the voice ends (lib/handoff.ts); on iOS it starts before the question, as
+//   starting it mid-sentence silences the voice; the clock starts once the
+//   question is read and the mic is really open, whichever is later;
 // - what the mic hears of the question itself does not count (lib/handoff.ts);
 // - the clock stops when she starts talking ('speechstart'): recognition time is
 //   not her thinking time, and she gets a short grace period to finish;
@@ -178,6 +179,8 @@ export type ListenOptions = {
   /** The voice reading the question; resolves when it is done. Absent: nothing is being read. */
   spoken?: Promise<void>
   signal: { cancelled: boolean }
+  /** The mic is open (or never will be): on iOS the question is read only now, see voice.ts. */
+  onMicOpen?: () => void
   onPartial?: (text: string) => void
   /** The question is read and the mic is open: start the visible clock. */
   onListening?: () => void
@@ -222,6 +225,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       if (micOpenAt !== null) return
       micOpenAt = Date.now()
       handoffLog('mic open', why)
+      opts.onMicOpen?.()
       maybeStartClock()
     }
 
@@ -299,6 +303,8 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'language-not-supported') {
           settled = true
           cleanup()
+          // The mic will not open; a question waiting for it is read anyway.
+          opts.onMicOpen?.()
           reject(new ListenError(e.error))
         }
         // no-speech, network, busy: the 'end' event that follows restarts or finishes.
@@ -357,6 +363,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
           androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'web_search' },
         })
       } catch {
+        opts.onMicOpen?.()
         finish(null)
       }
     }

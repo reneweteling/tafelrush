@@ -53,7 +53,7 @@ import { play } from '@/lib/sfx'
 import { clockStartsOn, elapsedMs, fractionLeft, freezeClock, newClock, secondsLeft, startClock, timeUp } from '@/lib/clock'
 import { getState, setState, today, updateSettings, type InputMethod, type RoundResult } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
-import { say, sayWithCue, stopVoice } from '@/lib/voice'
+import { say, sayWithCue, stopVoice, type Spoken } from '@/lib/voice'
 
 type Phase = 'start' | 'spreken' | 'luisteren' | 'goed' | 'fout' | 'nazeggen' | 'telaat' | 'pauze'
 type Line = { id: number; from: 'app' | 'me'; text: string; live?: boolean }
@@ -191,8 +191,8 @@ export default function Ronde() {
       token: Token,
       withTimer: boolean,
       sum: Sum,
-      /** The question still being read aloud; listening starts before it ends. */
-      spoken?: Promise<void>,
+      /** The question being read aloud; listening starts before it ends (on iOS before it starts). */
+      spoken?: Spoken,
     ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' | 'choice' }> => {
       const e = eng.current
       const input = e.input
@@ -236,7 +236,8 @@ export default function Ronde() {
         const heard = await listenForNumber({
           timeoutMs,
           sum,
-          spoken,
+          spoken: spoken?.done,
+          onMicOpen: spoken?.micOpen,
           signal: token,
           onPartial: (t) => patch({ heard: t }),
           onListening: () => {
@@ -296,15 +297,15 @@ export default function Ronde() {
         secondsLeft: settings.seconds,
         choices: e.input === 'kiezen' ? choicesFor(s, Math.random) : [],
       })
-      // Talking: the mic starts just before the question ends (see lib/handoff.ts).
-      let spoken: Promise<void> | undefined
+      // Talking: the mic starts just before the question ends, on iOS before it starts (see lib/handoff.ts).
+      let spoken: Spoken | undefined
       if (talking) {
         addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
         handoffMark(`q${i + 1} ${s.a}x${s.b}`)
         const q = sayWithCue(`${s.a} keer ${s.b}?`)
         await q.micCue
         if (token.cancelled) return false
-        spoken = q.done
+        spoken = q
       }
 
       const timeoutMs = settings.seconds > 0 ? settings.seconds * 1000 : NO_TIMER_MS
@@ -382,13 +383,13 @@ export default function Ronde() {
       // Say (or type) it once correctly, then it comes back later in the round.
       // Not with buttons: the answer is still on screen, tapping it teaches nothing.
       if (settings.repeatAfterWrong && e.input !== 'kiezen') {
-        let repeatSpoken: Promise<void> | undefined
+        let repeatSpoken: Spoken | undefined
         if (e.input === 'praten') {
           addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
           handoffMark(`repeat ${s.a}x${s.b}`)
           const q = sayWithCue(`Zeg maar na: ${s.a} keer ${s.b} is`)
           await q.micCue
-          repeatSpoken = q.done
+          repeatSpoken = q
         } else {
           addLine('app', `Typ hem nog een keer: ${s.a} × ${s.b} is...`)
         }

@@ -8,6 +8,7 @@ import {
   judge,
   LISTEN_LEAD_MS,
   listenDelayMs,
+  micBeforeVoice,
   speechStartCounts,
   sumOnly,
 } from './handoff'
@@ -32,6 +33,14 @@ describe('estimateSpeechMs', () => {
 
   it('is zero for nothing to say', () => {
     expect(estimateSpeechMs('')).toBe(0)
+  })
+})
+
+describe('micBeforeVoice', () => {
+  it('opens the mic before the voice only on iOS, where starting it cuts the voice off', () => {
+    expect(micBeforeVoice('ios')).toBe(true)
+    expect(micBeforeVoice('android')).toBe(false)
+    expect(micBeforeVoice('web')).toBe(false)
   })
 })
 
@@ -114,6 +123,19 @@ describe('judge', () => {
   it('takes a question number when it came in too late to be the voice (1 x 8 = 8)', () => {
     expect(judge(['acht'], { a: 1, b: 8 }, late)).toEqual({ value: 8, text: 'acht' })
     expect(judge(['acht'], { a: 1, b: 8 }, justDone)).toBeNull()
+  })
+
+  it('with the mic open for the whole question (iOS), ignores the full echo and takes what follows', () => {
+    const wholeQuestion = { spokenEndAt: 1000, firstHeardAt: 100 }
+    const oneEight = { a: 1, b: 8 }
+    expect(judge(['een keer acht'], oneEight, wholeQuestion)).toBeNull()
+    expect(judge(['een keer acht acht'], oneEight, wholeQuestion)).toEqual({ value: 8, text: 'een keer acht acht' })
+    expect(judge(['zeven keer acht 54'], sum, wholeQuestion)).toEqual({ value: 54, text: 'zeven keer acht 54' })
+    expect(judge(['zeg maar na zeven keer acht is'], sum, wholeQuestion)).toBeNull()
+    expect(judge(['zeg maar na zeven keer acht is zesenvijftig'], sum, wholeQuestion)).toEqual({
+      value: 56,
+      text: 'zeg maar na zeven keer acht is zesenvijftig',
+    })
   })
 
   it('takes nothing without a number', () => {

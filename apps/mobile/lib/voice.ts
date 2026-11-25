@@ -3,9 +3,10 @@
 // the settings.
 
 import * as Speech from 'expo-speech'
+import { Platform } from 'react-native'
 
 import { handoffLog } from './devlog'
-import { listenDelayMs } from './handoff'
+import { listenDelayMs, MIC_WAIT_MS, micBeforeVoice } from './handoff'
 import { getState } from './store'
 
 export type DutchVoice = { id: string; label: string }
@@ -115,18 +116,28 @@ export async function say(
 export type Spoken = {
   /** The voice is done (or stopped, or gave up). */
   done: Promise<void>
-  /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. */
+  /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. On iOS at once. */
   micCue: Promise<void>
+  /** Call when the mic is open. On iOS the voice waits for this (at most MIC_WAIT_MS); elsewhere it does nothing. */
+  micOpen: () => void
 }
+
+/** Bumped by stopVoice(), so a question still waiting for the mic is not read after all. */
+let generation = 0
 
 /**
  * Speaks a question and tells when to start listening, so the mic is open by
  * the time the last word ends (see lib/handoff.ts). The cue is re-planned at
  * every word the engine reports; without word events the estimate from the
  * start stands, and without any events the end of the voice is the cue.
+ *
+ * On iOS starting the mic cuts the voice off, so there it goes the other way
+ * round: the cue comes at once and the voice starts when micOpen() is called.
  */
 export function sayWithCue(text: string): Spoken {
   const rate = getState().settings.rate
+  const micFirst = micBeforeVoice(Platform.OS)
+  const gen = generation
   let cue = () => {}
   const micCue = new Promise<void>((r) => (cue = r))
   let cued = false
@@ -144,10 +155,29 @@ export function sayWithCue(text: string): Spoken {
     const ms = listenDelayMs(text, charIndex, rate)
     timer = setTimeout(() => fire(`planned at char ${charIndex}`), ms)
   }
+
+  let micOpen = () => {}
+  let gate: Promise<void> = Promise.resolve()
+  if (micFirst) {
+    gate = new Promise<void>((r) => {
+      const wait = setTimeout(() => {
+        handoffLog('tts waited long enough for the mic')
+        r()
+      }, MIC_WAIT_MS)
+      micOpen = () => {
+        clearTimeout(wait)
+        r()
+      }
+    })
+    fire('mic first')
+  }
+
   handoffLog('tts speak', text)
   const done = initVoice()
-    .then(() =>
-      speak(text, {}, {
+    .then(() => gate)
+    .then(() => {
+      if (gen !== generation) return
+      return speak(text, {}, {
         onStart: () => {
           handoffLog('tts start')
           plan(0)
@@ -156,16 +186,17 @@ export function sayWithCue(text: string): Spoken {
           handoffLog('tts word', `char ${i}`)
           plan(i)
         },
-      }),
-    )
+      })
+    })
     .then(() => {
       handoffLog('tts end')
       fire('tts end')
     })
-  return { done, micCue }
+  return { done, micCue, micOpen }
 }
 
 export function stopVoice() {
+  generation++
   void Speech.stop()
 }
 

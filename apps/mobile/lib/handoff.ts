@@ -2,12 +2,28 @@
 // runs in Vitest; voice.ts, listen.ts and their .web versions use it.
 //
 // - The mic opens a little before the voice is done (LISTEN_LEAD_MS), so it is
-//   live the moment the question ends instead of half a second later.
+//   live the moment the question ends instead of half a second later. Not on an
+//   iPhone: there starting the mic silences the voice for good, so the mic opens
+//   before the question is read (micBeforeVoice).
 // - The mic then also hears the end of the question. echoOnly() spots a
 //   transcript that is just the question coming back ("zeven keer acht"), and
 //   judge() decides per recognizer result whether it may count.
 
 import { dutchNumberWord, normalize, parseDutchNumber, type Sum } from '@tafelrush/shared'
+
+/**
+ * True where starting the recognizer while the voice speaks cuts the voice off.
+ * On iOS starting the recognizer's audio engine stops AVSpeechSynthesizer output
+ * on the spot, also with the same playAndRecord session already active (seen in
+ * a TestFlight recording: every question went silent at the planned mic start and
+ * never came back). There the mic opens first and the voice waits for it.
+ */
+export function micBeforeVoice(os: string): boolean {
+  return os === 'ios'
+}
+
+/** How long the voice waits for the mic to open before it reads the question anyway. */
+export const MIC_WAIT_MS = 1500
 
 /** Start the recognizer this long before the voice is expected to finish. */
 export const LISTEN_LEAD_MS = 400
