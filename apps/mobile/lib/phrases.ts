@@ -41,15 +41,17 @@ export const SLANG_WORDS = [
   'six seven',
   // Approved by René: for when things go wrong.
   'skeer',
+  // Approved by René.
+  'hell nah',
 ]
 
 // {som} = "7×8" on screen, "7 keer 8" spoken. {antwoord}, {combo}, {tafel}.
 export const PHRASES: Phrase[] = [
   { id: 'g-slay', kind: 'goed', text: 'Slay.', slang: true },
-  { id: 'g-tuff', kind: 'goed', text: 'Tuff.', slang: true },
+  { id: 'g-tuff', kind: 'goed', text: 'Nice.' },
   { id: 'g-clock', kind: 'goed', text: 'Clock it.', slang: true },
   { id: 'g-ja', kind: 'goed', text: 'Ja. Gewoon ja.' },
-  { id: 'g-makkelijk', kind: 'goed', text: 'Te makkelijk.' },
+  { id: 'g-makkelijk', kind: 'goed', text: 'Too easy.' },
   { id: 'g-goed', kind: 'goed', text: 'Goed.' },
   { id: 'g-klopt', kind: 'goed', text: 'Klopt.' },
   { id: 'g-netjes', kind: 'goed', text: 'Netjes.' },
@@ -69,7 +71,7 @@ export const PHRASES: Phrase[] = [
   { id: 'f-bruh', kind: 'fout', text: 'Bruh. Het is {antwoord}.', slang: true },
   { id: 'f-helly', kind: 'fout', text: 'Wat de helly. Het is {antwoord}.', slang: true },
   { id: 'f-yusu', kind: 'fout', text: 'Yusu? Echt? Het is {antwoord}.', slang: true },
-  { id: 'f-nope', kind: 'fout', text: 'Nope. {antwoord}.' },
+  { id: 'f-nope', kind: 'fout', text: 'Hell nahhh. {antwoord}.', slang: true },
   { id: 'f-bijna', kind: 'fout', text: 'Bijna. Het is {antwoord}.' },
   { id: 'f-helaas', kind: 'fout', text: 'Helaas. {som} is {antwoord}.' },
   { id: 'f-mis', kind: 'fout', text: 'Mis. {antwoord}.' },
