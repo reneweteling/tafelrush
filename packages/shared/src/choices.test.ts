@@ -6,12 +6,13 @@ import { answer, poolFor, seeded, type Sum } from './training'
 const all: Sum[] = [...poolFor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), ...poolFor([17, 25, 100, 1000])]
 
 describe('choicesFor', () => {
-  it('gives six distinct positive options with the answer exactly once', () => {
+  it('gives nine distinct, ascending, positive options with the answer exactly once', () => {
     const rng = seeded(7)
     for (const s of all) {
       const options = choicesFor(s, rng)
       expect(options).toHaveLength(CHOICES)
       expect(new Set(options).size).toBe(CHOICES)
+      expect(options).toEqual([...options].sort((x, y) => x - y))
       expect(options.filter((n) => n === answer(s))).toHaveLength(1)
       for (const n of options) {
         expect(Number.isInteger(n)).toBe(true)
@@ -28,7 +29,14 @@ describe('choicesFor', () => {
     const rng = seeded(11)
     const spots = new Set<number>()
     for (let i = 0; i < 60; i++) spots.add(choicesFor({ a: 6, b: 7 }, rng).indexOf(42))
-    expect(spots.size).toBe(CHOICES)
+    expect(spots.size).toBeGreaterThanOrEqual(5)
+  })
+
+  it('puts the answer in at least five different positions across tables 1 to 10', () => {
+    const rng = seeded(21)
+    const spots = new Set<number>()
+    for (const s of poolFor([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])) spots.add(choicesFor(s, rng).indexOf(answer(s)))
+    expect(spots.size).toBeGreaterThanOrEqual(5)
   })
 
   it('handles 1×1, where few mistakes make sense', () => {

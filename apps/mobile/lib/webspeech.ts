@@ -61,7 +61,7 @@ export function latestResult(results: WebResult[]): WebResult | null {
   }
 }
 
-/** Keys 1 to 6 pick the matching multiple-choice button (left to right, top to bottom). */
+/** Keys 1 to 9 pick the matching multiple-choice button (left to right, top to bottom). */
 export function choiceForKey(key: string, choices: number[]): number | null {
   if (!/^[1-9]$/.test(key)) return null
   const n = choices[Number(key) - 1]

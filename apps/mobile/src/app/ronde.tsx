@@ -87,7 +87,7 @@ type View_ = {
 
 const ROUND = 10
 const WEB = Platform.OS === 'web'
-/** Show 1 to 6 on the multiple-choice buttons (browser with a physical keyboard). */
+/** Show 1 to 9 on the multiple-choice buttons (browser with a physical keyboard). */
 const KEY_HINTS = hasKeyboard()
 const NO_TIMER_MS = 30_000
 const REPEAT_MS = 8_000
@@ -769,7 +769,7 @@ function Bottom({
   const asking = view.phase === 'luisteren' || view.phase === 'nazeggen'
   const choosing = view.input === 'kiezen' && view.phase === 'luisteren'
 
-  // Physical keyboard: 1 to 6 pick a button (only does something in the browser).
+  // Physical keyboard: 1 to 9 pick a button (only does something in the browser).
   useKeys(
     choosing
       ? (key) => {
@@ -798,7 +798,7 @@ function Bottom({
                     {i + 1}
                   </Txt>
                 ) : null}
-                <Txt style={{ fontFamily: fonts.display, fontSize: fit(30, String(n), 4) }} color={pressed ? colors.ink : colors.text}>
+                <Txt style={{ fontFamily: fonts.display, fontSize: fit(28, String(n), 4) }} color={pressed ? colors.ink : colors.text}>
                   {n}
                 </Txt>
               </>
@@ -872,7 +872,7 @@ const s = StyleSheet.create({
   choice: {
     width: '31%',
     flexGrow: 1,
-    minHeight: 72,
+    minHeight: 58,
     borderRadius: radius.m,
     borderWidth: 2,
     borderColor: colors.line,
