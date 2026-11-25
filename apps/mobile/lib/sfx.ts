@@ -19,6 +19,11 @@ export type Sound = keyof typeof SOURCES
 
 const players: Partial<Record<Sound, AudioPlayer>> = {}
 
+// Keep the audio session on after a sound. By default expo-audio switches the
+// session off 100 ms after a sound ends, which on iOS can cut off the voice or the
+// mic that are still using it (the tick plays as the mic opens, "goed" under a line).
+const create = (name: Sound) => createAudioPlayer(SOURCES[name], { keepAudioSessionActive: true })
+
 export async function initSounds() {
   try {
     await setAudioModeAsync({ playsInSilentMode: true })
@@ -26,13 +31,13 @@ export async function initSounds() {
     // Web or an older OS: sounds still play when the phone is not on silent.
   }
   for (const name of Object.keys(SOURCES) as Sound[]) {
-    if (!players[name]) players[name] = createAudioPlayer(SOURCES[name])
+    if (!players[name]) players[name] = create(name)
   }
 }
 
 export function play(name: Sound) {
   if (!getState().settings.sounds) return
-  const p = players[name] ?? (players[name] = createAudioPlayer(SOURCES[name]))
+  const p = players[name] ?? (players[name] = create(name))
   try {
     void p.seekTo(0)
     p.play()

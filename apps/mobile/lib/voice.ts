@@ -4,6 +4,8 @@
 
 import * as Speech from 'expo-speech'
 
+import { handoffLog } from './devlog'
+import { listenDelayMs } from './handoff'
 import { getState } from './store'
 
 export type DutchVoice = { id: string; label: string }
@@ -72,12 +74,9 @@ function chosenId(): string | undefined {
   return bestId
 }
 
-/** Speaks and resolves when done (or stopped). Never rejects: a silent phone should not stop the game. */
-export async function say(
-  text: string,
-  opts: { pitch?: number; rate?: number; voice?: string } = {},
-): Promise<void> {
-  await initVoice()
+type Hooks = { onStart?: () => void; onBoundary?: (charIndex: number) => void }
+
+function speak(text: string, opts: { pitch?: number; rate?: number; voice?: string }, hooks: Hooks): Promise<void> {
   const { rate, pitch } = getState().settings
   return new Promise((resolve) => {
     let finished = false
@@ -94,11 +93,76 @@ export async function say(
       voice: opts.voice ?? chosenId(),
       rate: opts.rate ?? rate,
       pitch: opts.pitch ?? pitch,
+      onStart: hooks.onStart,
+      // iOS (willSpeakRange) and Android 8+ (onRangeStart) report each word as it starts.
+      onBoundary: hooks.onBoundary ? (e: { charIndex: number }) => hooks.onBoundary?.(e.charIndex) : undefined,
       onDone: done,
       onStopped: done,
       onError: done,
     })
   })
+}
+
+/** Speaks and resolves when done (or stopped). Never rejects: a silent phone should not stop the game. */
+export async function say(
+  text: string,
+  opts: { pitch?: number; rate?: number; voice?: string } = {},
+): Promise<void> {
+  await initVoice()
+  return speak(text, opts, {})
+}
+
+export type Spoken = {
+  /** The voice is done (or stopped, or gave up). */
+  done: Promise<void>
+  /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. */
+  micCue: Promise<void>
+}
+
+/**
+ * Speaks a question and tells when to start listening, so the mic is open by
+ * the time the last word ends (see lib/handoff.ts). The cue is re-planned at
+ * every word the engine reports; without word events the estimate from the
+ * start stands, and without any events the end of the voice is the cue.
+ */
+export function sayWithCue(text: string): Spoken {
+  const rate = getState().settings.rate
+  let cue = () => {}
+  const micCue = new Promise<void>((r) => (cue = r))
+  let cued = false
+  let timer: ReturnType<typeof setTimeout> | null = null
+  const fire = (why: string) => {
+    if (cued) return
+    cued = true
+    if (timer) clearTimeout(timer)
+    handoffLog('mic cue', why)
+    cue()
+  }
+  const plan = (charIndex: number) => {
+    if (cued) return
+    if (timer) clearTimeout(timer)
+    const ms = listenDelayMs(text, charIndex, rate)
+    timer = setTimeout(() => fire(`planned at char ${charIndex}`), ms)
+  }
+  handoffLog('tts speak', text)
+  const done = initVoice()
+    .then(() =>
+      speak(text, {}, {
+        onStart: () => {
+          handoffLog('tts start')
+          plan(0)
+        },
+        onBoundary: (i) => {
+          handoffLog('tts word', `char ${i}`)
+          plan(i)
+        },
+      }),
+    )
+    .then(() => {
+      handoffLog('tts end')
+      fire('tts end')
+    })
+  return { done, micCue }
 }
 
 export function stopVoice() {

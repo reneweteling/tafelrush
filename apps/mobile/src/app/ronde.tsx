@@ -37,14 +37,23 @@ import { track } from '@/lib/analytics'
 import { useScreenAwake } from '@/lib/awake'
 import { buzz } from '@/lib/buzz'
 import { hasKeyboard, useKeys } from '@/lib/keys'
-import { canListen, currentEngine, listenForNumber, ListenError, stopListening } from '@/lib/listen'
+import { handoffMark } from '@/lib/devlog'
+import {
+  canListen,
+  currentEngine,
+  holdAudioSession,
+  listenForNumber,
+  ListenError,
+  releaseAudioSession,
+  stopListening,
+} from '@/lib/listen'
 import { choiceForKey } from '@/lib/webspeech'
 import { fill, pickPhrase, type PhraseKind, type PhraseVars } from '@/lib/phrases'
 import { play } from '@/lib/sfx'
 import { clockStartsOn, elapsedMs, fractionLeft, freezeClock, newClock, secondsLeft, startClock, timeUp } from '@/lib/clock'
 import { getState, setState, today, updateSettings, type InputMethod, type RoundResult } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
-import { say, stopVoice } from '@/lib/voice'
+import { say, sayWithCue, stopVoice } from '@/lib/voice'
 
 type Phase = 'start' | 'spreken' | 'luisteren' | 'goed' | 'fout' | 'nazeggen' | 'telaat' | 'pauze'
 type Line = { id: number; from: 'app' | 'me'; text: string; live?: boolean }
@@ -181,7 +190,9 @@ export default function Ronde() {
       timeoutMs: number,
       token: Token,
       withTimer: boolean,
-      expected: number,
+      sum: Sum,
+      /** The question still being read aloud; listening starts before it ends. */
+      spoken?: Promise<void>,
     ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' | 'choice' }> => {
       const e = eng.current
       const input = e.input
@@ -219,12 +230,13 @@ export default function Ronde() {
         })
       if (input !== 'praten') return typedOrTapped(input)
 
-      // Talking: the clock waits until the mic is really open, and stops once she talks.
+      // Talking: the clock waits until the question is read and the mic is open, and stops once she talks.
       const tick = setInterval(show, 100)
       try {
         const heard = await listenForNumber({
           timeoutMs,
-          expected,
+          sum,
+          spoken,
           signal: token,
           onPartial: (t) => patch({ heard: t }),
           onListening: () => {
@@ -284,14 +296,19 @@ export default function Ronde() {
         secondsLeft: settings.seconds,
         choices: e.input === 'kiezen' ? choicesFor(s, Math.random) : [],
       })
+      // Talking: the mic starts just before the question ends (see lib/handoff.ts).
+      let spoken: Promise<void> | undefined
       if (talking) {
         addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
-        await say(`${s.a} keer ${s.b}?`)
+        handoffMark(`q${i + 1} ${s.a}x${s.b}`)
+        const q = sayWithCue(`${s.a} keer ${s.b}?`)
+        await q.micCue
         if (token.cancelled) return false
+        spoken = q.done
       }
 
       const timeoutMs = settings.seconds > 0 ? settings.seconds * 1000 : NO_TIMER_MS
-      const { value, ms, input } = await getAnswer(timeoutMs, token, true, s.a * s.b)
+      const { value, ms, input } = await getAnswer(timeoutMs, token, true, s, spoken)
       if (token.cancelled) return false
 
       e.thinkMs += value === null ? timeoutMs : (ms ?? timeoutMs)
@@ -365,14 +382,18 @@ export default function Ronde() {
       // Say (or type) it once correctly, then it comes back later in the round.
       // Not with buttons: the answer is still on screen, tapping it teaches nothing.
       if (settings.repeatAfterWrong && e.input !== 'kiezen') {
+        let repeatSpoken: Promise<void> | undefined
         if (e.input === 'praten') {
           addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
-          await say(`Zeg maar na: ${s.a} keer ${s.b} is`)
+          handoffMark(`repeat ${s.a}x${s.b}`)
+          const q = sayWithCue(`Zeg maar na: ${s.a} keer ${s.b} is`)
+          await q.micCue
+          repeatSpoken = q.done
         } else {
           addLine('app', `Typ hem nog een keer: ${s.a} × ${s.b} is...`)
         }
         if (token.cancelled) return false
-        const again = await getAnswer(REPEAT_MS, token, false, s.a * s.b)
+        const again = await getAnswer(REPEAT_MS, token, false, s, repeatSpoken)
         if (token.cancelled) return false
         if (again.value !== null) addLine('me', again.input === 'voice' ? dutchNumberWord(again.value) : String(again.value))
         track('repeat_after_wrong', { ok: again.value === ans })
@@ -407,6 +428,7 @@ export default function Ronde() {
       played: e.played,
       challengeCode: typeof code === 'string' ? code : null,
     }
+    releaseAudioSession()
     track('round_end', { score, seconds, best_combo: e.bestCombo, xp: e.xp })
     setState((st) => {
       const challenges = result.challengeCode
@@ -470,6 +492,8 @@ export default function Ronde() {
         }
       }
       if (!alive) return
+      // One audio session for the whole round, so the mic can open without clipping the voice.
+      if (e.input === 'praten') holdAudioSession()
       track('round_start', {
         mode: challenge ? 'challenge' : settings.mode,
         input: e.input === 'praten' ? 'voice' : e.input === 'kiezen' ? 'choice' : 'typed',
@@ -486,6 +510,7 @@ export default function Ronde() {
       e.token.cancelled = true
       stopVoice()
       stopListening()
+      releaseAudioSession()
     }
     // Runs once per round.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -495,11 +520,13 @@ export default function Ronde() {
     eng.current.token.cancelled = true
     stopVoice()
     stopListening()
+    releaseAudioSession()
     patch({ phase: 'pauze' })
   }
 
   function resume() {
     patch({ phase: 'spreken', lines: [] })
+    if (eng.current.input === 'praten') holdAudioSession()
     void runFrom(eng.current.index)
   }
 
@@ -508,6 +535,7 @@ export default function Ronde() {
     eng.current.token.cancelled = true
     stopVoice()
     stopListening()
+    releaseAudioSession()
     router.back()
   }
 

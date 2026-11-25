@@ -5,6 +5,8 @@
 // Microsoft voices, Safari the Apple ones, Firefox only what the OS offers. Without a
 // Dutch voice the text is still spoken with lang nl-NL, whatever that sounds like.
 
+import { handoffLog } from './devlog'
+import { listenDelayMs } from './handoff'
 import { getState } from './store'
 import { rankDutchVoices } from './webspeech'
 
@@ -68,13 +70,10 @@ export function unlockVoice() {
   }
 }
 
-/** Speaks and resolves when done (or stopped). Never rejects and never hangs. */
-export async function say(
-  text: string,
-  opts: { pitch?: number; rate?: number; voice?: string } = {},
-): Promise<void> {
-  await initVoice()
-  if (!synth) return
+type Hooks = { onStart?: () => void; onBoundary?: (charIndex: number) => void }
+
+function speak(text: string, opts: { pitch?: number; rate?: number; voice?: string }, hooks: Hooks): Promise<void> {
+  if (!synth) return Promise.resolve()
   const { rate, pitch } = getState().settings
   return new Promise((resolve) => {
     let finished = false
@@ -93,6 +92,9 @@ export async function say(
       if (v) u.voice = v
       u.rate = opts.rate ?? rate
       u.pitch = opts.pitch ?? pitch
+      if (hooks.onStart) u.onstart = hooks.onStart
+      // Word events: Safari and the local voices send them, Chrome's online voices do not.
+      if (hooks.onBoundary) u.onboundary = (e) => hooks.onBoundary?.(e.charIndex)
       u.onend = done
       u.onerror = done
       synth.speak(u)
@@ -100,6 +102,74 @@ export async function say(
       done()
     }
   })
+}
+
+/** Speaks and resolves when done (or stopped). Never rejects and never hangs. */
+export async function say(
+  text: string,
+  opts: { pitch?: number; rate?: number; voice?: string } = {},
+): Promise<void> {
+  await initVoice()
+  return speak(text, opts, {})
+}
+
+export type Spoken = {
+  /** The voice is done (or stopped, or gave up). */
+  done: Promise<void>
+  /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. */
+  micCue: Promise<void>
+}
+
+/**
+ * Safari on iPhone and iPad switches the audio to recording when the mic starts,
+ * which would clip the end of the question; a page cannot prevent that. There the
+ * mic waits for the voice to finish, like before.
+ */
+function earlyMicClipsVoice(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent
+  return /iP(hone|ad|od)/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+}
+
+/** Same as voice.ts: speaks a question and tells when to start listening. */
+export function sayWithCue(text: string): Spoken {
+  const early = !earlyMicClipsVoice()
+  const rate = getState().settings.rate
+  let cue = () => {}
+  const micCue = new Promise<void>((r) => (cue = r))
+  let cued = false
+  let timer: ReturnType<typeof setTimeout> | null = null
+  const fire = (why: string) => {
+    if (cued) return
+    cued = true
+    if (timer) clearTimeout(timer)
+    handoffLog('mic cue', why)
+    cue()
+  }
+  const plan = (charIndex: number) => {
+    if (cued || !early) return
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(() => fire(`planned at char ${charIndex}`), listenDelayMs(text, charIndex, rate))
+  }
+  handoffLog('tts speak', text)
+  const done = initVoice()
+    .then(() =>
+      speak(text, {}, {
+        onStart: () => {
+          handoffLog('tts start')
+          plan(0)
+        },
+        onBoundary: (i) => {
+          handoffLog('tts word', `char ${i}`)
+          plan(i)
+        },
+      }),
+    )
+    .then(() => {
+      handoffLog('tts end')
+      fire('tts end')
+    })
+  return { done, micCue }
 }
 
 export function stopVoice() {

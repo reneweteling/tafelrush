@@ -1,6 +1,7 @@
 // The thinking clock for one sum. It starts only when the app is ready for an
-// answer: when talking, once the mic is open (so after the sum was read aloud);
-// when typing or tapping, as soon as the sum is on screen. While she talks it is
+// answer: when talking, once the sum has been read aloud and the mic is open,
+// whichever comes later (the mic opens a little before the voice ends, see
+// lib/handoff.ts); when typing or tapping, as soon as the sum is on screen. While she talks it is
 // frozen, so recognition time does not count as thinking time. Pure, so it runs in Vitest.
 
 import type { InputMethod } from './store'
@@ -10,6 +11,15 @@ export type Clock = { limitMs: number; startedAt: number | null; frozenAt: numbe
 /** The moment the clock starts for this input method. */
 export function clockStartsOn(input: InputMethod): 'shown' | 'mic' {
   return input === 'praten' ? 'mic' : 'shown'
+}
+
+/**
+ * When talking: the clock starts at the later of the voice finishing and the mic
+ * opening; null while one of the two has not happened yet.
+ */
+export function voiceClockStartsAt(spokenEndAt: number | null, micOpenAt: number | null): number | null {
+  if (spokenEndAt === null || micOpenAt === null) return null
+  return Math.max(spokenEndAt, micOpenAt)
 }
 
 export const newClock = (limitMs: number): Clock => ({ limitMs, startedAt: null, frozenAt: null })

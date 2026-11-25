@@ -1,7 +1,10 @@
 // Listens for one spoken number.
 //
 // Speed matters, so:
-// - the clock starts when the mic is really open ('start'), not when we ask for it;
+// - the mic starts a little before the question has been read, so it is live when
+//   the voice ends (lib/handoff.ts); the clock starts once the question is read and
+//   the mic is really open, whichever is later;
+// - what the mic hears of the question itself does not count (lib/handoff.ts);
 // - the clock stops when she starts talking ('speechstart'): recognition time is
 //   not her thinking time, and she gets a short grace period to finish;
 // - a number that cannot grow any more ("zesenvijftig", "16") counts at once,
@@ -9,12 +12,17 @@
 // - continuous mode, so Android does not restart (and beep) after a pause;
 // - on-device recognition when the Dutch model is on the phone: no round trip.
 
-import { numberIsComplete, parseDutchNumber } from '@tafelrush/shared'
+import { numberIsComplete, type Sum } from '@tafelrush/shared'
 import {
   ExpoSpeechRecognitionModule,
   type ExpoSpeechRecognitionErrorCode,
+  type SetCategoryOptions,
 } from 'expo-speech-recognition'
 import { Platform } from 'react-native'
+
+import { voiceClockStartsAt } from './clock'
+import { handoffLog } from './devlog'
+import { echoOnly, echoSuspect, judge, speechStartCounts, type HandoffState } from './handoff'
 
 export type Heard = {
   value: number | null
@@ -117,27 +125,82 @@ export async function canListen(): Promise<'ok' | 'denied' | 'unavailable'> {
   }
 }
 
-export function listenForNumber(opts: {
+/**
+ * The iOS audio session for a whole talking round: playing and recording at once,
+ * loud through the speaker (or a headset). The library default is mode
+ * 'measurement', which makes the voice and sounds very quiet, as if they come from
+ * the earpiece. No voice processing (echo cancellation): the library switches it on
+ * per listen, which resets the audio unit each time (the glitch we are avoiding),
+ * and it turns the voice down. The echo is handled in lib/handoff.ts instead.
+ */
+const IOS_SESSION: SetCategoryOptions = {
+  category: 'playAndRecord',
+  categoryOptions: ['defaultToSpeaker', 'allowBluetooth'],
+  mode: 'default',
+}
+
+let held = false
+
+/**
+ * Sets up the iOS audio session once for a talking round. Without this the session
+ * is in playback mode while the voice speaks and the recognizer switches it to
+ * playAndRecord right as the voice ends: that clips the last word and costs time.
+ * Elsewhere nothing to do.
+ */
+export function holdAudioSession() {
+  if (Platform.OS !== 'ios' || held) return
+  try {
+    ExpoSpeechRecognitionModule.setCategoryIOS(IOS_SESSION)
+    ExpoSpeechRecognitionModule.setAudioSessionActiveIOS(true)
+    held = true
+    handoffLog('audio session held')
+  } catch {
+    // The recognizer sets the same session when it starts; only the handoff is less smooth.
+  }
+}
+
+/** Back to plain playback after the round (or on pause), like the sounds set up at launch. */
+export function releaseAudioSession() {
+  if (Platform.OS !== 'ios' || !held) return
+  held = false
+  try {
+    ExpoSpeechRecognitionModule.setCategoryIOS({ category: 'playback', categoryOptions: ['mixWithOthers'], mode: 'default' })
+    handoffLog('audio session released')
+  } catch {
+    // Sounds still play in playAndRecord, through the speaker.
+  }
+}
+
+export type ListenOptions = {
   timeoutMs: number
-  /** The right answer: once heard it counts at once, even for a long number. */
-  expected?: number
+  /** The sum asked: the right answer counts at once, and the question read back is not an answer. */
+  sum: Sum
+  /** The voice reading the question; resolves when it is done. Absent: nothing is being read. */
+  spoken?: Promise<void>
   signal: { cancelled: boolean }
   onPartial?: (text: string) => void
-  /** The mic is open: start the visible clock. */
+  /** The question is read and the mic is open: start the visible clock. */
   onListening?: () => void
   /** She started talking: stop the visible clock. */
   onSpeech?: () => void
-}): Promise<Heard> {
+}
+
+export function listenForNumber(opts: ListenOptions): Promise<Heard> {
   return new Promise((resolve, reject) => {
+    const expected = opts.sum.a * opts.sum.b
+    const hs: HandoffState = { spokenEndAt: opts.spoken ? null : Date.now(), firstHeardAt: null }
+    let micOpenAt: number | null = null
     let t0: number | null = null
     let speechAt: number | null = null
     let numberAt: number | null = null
     let transcript = ''
+    let lastAlts: string[] = []
     let last: number | null = null
     let settled = false
     let running = false
     let deadline: ReturnType<typeof setTimeout> | null = null
     let shortTimer: ReturnType<typeof setTimeout> | null = null
+    let startGuard: ReturnType<typeof setTimeout> | null = null
 
     const elapsed = () => (t0 === null ? 0 : Date.now() - t0)
 
@@ -146,52 +209,76 @@ export function listenForNumber(opts: {
       deadline = setTimeout(() => finish(last), Math.max(0, ms))
     }
 
-    function opened() {
-      if (t0 !== null) return
+    /** The clock starts once the question is read and the mic is open. */
+    function maybeStartClock() {
+      if (t0 !== null || voiceClockStartsAt(hs.spokenEndAt, micOpenAt) === null) return
       t0 = Date.now()
+      handoffLog('clock start')
       opts.onListening?.()
       setDeadline(opts.timeoutMs)
     }
 
+    function opened(why: string) {
+      if (micOpenAt !== null) return
+      micOpenAt = Date.now()
+      handoffLog('mic open', why)
+      maybeStartClock()
+    }
+
     function heardSpeech() {
-      opened()
       if (speechAt !== null) return
+      maybeStartClock()
       speechAt = Date.now()
+      handoffLog('she talks')
       opts.onSpeech?.()
       // Her time stops here; give her room to finish the word.
       const left = opts.timeoutMs - elapsed()
       setDeadline(Math.max(left, GRACE_MS))
     }
 
+    /** Looks at the latest result again; also when the voice ends, as it may count now. */
+    function evaluate(isFinal: boolean) {
+      if (settled) return
+      const j = judge(lastAlts, opts.sum, hs)
+      if (!j) {
+        if (lastAlts.length > 0 && echoSuspect(hs)) handoffLog('ignored', lastAlts[0])
+        // A finished phrase that was only the echo: what comes next is new.
+        if (isFinal) hs.firstHeardAt = null
+        return
+      }
+      if (speechAt === null) heardSpeech()
+      if (numberAt === null) numberAt = Date.now()
+      if (isFinal || numberIsComplete(j.text, expected)) return finish(j.value)
+      if (j.value !== last) {
+        last = j.value
+        const value = j.value
+        if (shortTimer) clearTimeout(shortTimer)
+        shortTimer = setTimeout(() => finish(value), SHORT_NUMBER_MS)
+      }
+    }
+
     const subs = [
       ExpoSpeechRecognitionModule.addListener('start', () => {
         running = true
+        handoffLog('rec start')
       }),
-      ExpoSpeechRecognitionModule.addListener('audiostart', opened),
-      ExpoSpeechRecognitionModule.addListener('speechstart', heardSpeech),
+      ExpoSpeechRecognitionModule.addListener('audiostart', () => opened('audiostart')),
+      ExpoSpeechRecognitionModule.addListener('speechstart', () => {
+        // The voice itself also sets this off; then the first real number stops the clock instead.
+        if (speechStartCounts(hs, Date.now())) heardSpeech()
+        else handoffLog('speechstart ignored', 'voice still or just speaking')
+      }),
       ExpoSpeechRecognitionModule.addListener('result', (e) => {
-        opened()
+        opened('result')
         const alts = e.results.map((r) => r.transcript)
+        if (hs.firstHeardAt === null && alts.some((a) => a.trim() !== '')) {
+          hs.firstHeardAt = Date.now()
+          handoffLog('first result', alts[0])
+        }
+        lastAlts = alts
         transcript = alts[0] ?? ''
-        opts.onPartial?.(transcript)
-        let text = ''
-        let n: number | null = null
-        for (const a of alts) {
-          n = parseDutchNumber(a)
-          if (n !== null) {
-            text = a
-            break
-          }
-        }
-        if (n === null) return
-        if (speechAt === null) heardSpeech()
-        if (numberAt === null) numberAt = Date.now()
-        if (e.isFinal || numberIsComplete(text, opts.expected)) return finish(n)
-        if (n !== last) {
-          last = n
-          if (shortTimer) clearTimeout(shortTimer)
-          shortTimer = setTimeout(() => finish(n), SHORT_NUMBER_MS)
-        }
+        if (!(echoSuspect(hs) && echoOnly(transcript, opts.sum))) opts.onPartial?.(transcript)
+        evaluate(e.isFinal)
       }),
       ExpoSpeechRecognitionModule.addListener('end', () => {
         running = false
@@ -203,6 +290,7 @@ export function listenForNumber(opts: {
       }),
       ExpoSpeechRecognitionModule.addListener('error', (e) => {
         if (settled) return
+        handoffLog('rec error', e.error)
         if (onDevice && (e.error === 'language-not-supported' || e.error === 'service-not-allowed')) {
           // The on-device model let us down; use Google's servers from now on.
           onDevice = false
@@ -217,8 +305,17 @@ export function listenForNumber(opts: {
       }),
     ]
 
-    // Some recognizers never send audiostart; start the clock anyway.
-    const startGuard = setTimeout(opened, START_TIMEOUT_MS)
+    function spokenDone() {
+      if (settled || hs.spokenEndAt !== null) return
+      hs.spokenEndAt = Date.now()
+      // Some recognizers never send audiostart; start the clock anyway after a while.
+      startGuard = setTimeout(() => opened('guard'), START_TIMEOUT_MS)
+      maybeStartClock()
+      evaluate(false)
+    }
+    if (opts.spoken) void opts.spoken.then(spokenDone)
+    else startGuard = setTimeout(() => opened('guard'), START_TIMEOUT_MS)
+
     const cancelPoll = setInterval(() => {
       if (opts.signal.cancelled) finish(null, true)
     }, 100)
@@ -226,7 +323,7 @@ export function listenForNumber(opts: {
     function cleanup() {
       if (deadline) clearTimeout(deadline)
       if (shortTimer) clearTimeout(shortTimer)
-      clearTimeout(startGuard)
+      if (startGuard) clearTimeout(startGuard)
       clearInterval(cancelPoll)
       subs.forEach((s) => s.remove())
       if (running) ExpoSpeechRecognitionModule.abort()
@@ -236,13 +333,16 @@ export function listenForNumber(opts: {
       if (settled) return
       settled = true
       cleanup()
+      handoffLog('done', value === null ? (cancelled ? 'cancelled' : 'nothing') : String(value))
       const at = speechAt ?? numberAt
-      const ms = value === null || t0 === null || at === null ? null : Math.max(0, at - t0)
+      // Answered before the question was even finished: no thinking time at all.
+      const ms = value === null ? null : t0 === null ? 0 : at === null ? null : Math.max(0, at - t0)
       resolve({ value, ms, transcript, cancelled })
     }
 
     function start() {
       if (settled || opts.signal.cancelled) return
+      handoffLog('rec start requested')
       try {
         ExpoSpeechRecognitionModule.start({
           lang: 'nl-NL',
@@ -252,13 +352,8 @@ export function listenForNumber(opts: {
           requiresOnDeviceRecognition: onDevice === true,
           ...(onDevice ? { androidRecognitionServicePackage: ON_DEVICE_PACKAGE } : {}),
           iosTaskHint: 'confirmation',
-          // The library default is mode 'measurement', which makes the voice and sounds
-          // after it very quiet, as if they come from the earpiece.
-          iosCategory: {
-            category: 'playAndRecord',
-            categoryOptions: ['defaultToSpeaker', 'allowBluetooth'],
-            mode: 'default',
-          },
+          // Exactly the session holdAudioSession() set up, so starting the mic changes nothing about it.
+          iosCategory: IOS_SESSION,
           androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'web_search' },
         })
       } catch {
