@@ -1,5 +1,6 @@
 // What the app says. At most one in three lines uses youth slang, and only words
-// with a Dutch source (Jeugdjournaal Kinderwoord 2025, VRT Tienerwoord 2025).
+// from SLANG_WORDS: each has a Dutch source (Jeugdjournaal Kinderwoord 2025, VRT
+// Tienerwoord 2025) or was approved by hand.
 // The player can vote a line away as cringe; it never comes back.
 // Pure, so it runs in Vitest.
 
@@ -26,6 +27,22 @@ export type Phrase = {
   slang?: boolean
 }
 
+/** The checked slang words. A line marked `slang` must use one of these. */
+export const SLANG_WORDS = [
+  'slay',
+  'tuff',
+  'clock it',
+  'lowkey',
+  'cooked',
+  'bruh',
+  'helly',
+  'yusu',
+  'bro',
+  'six seven',
+  // Approved by René: for when things go wrong.
+  'skeer',
+]
+
 // {som} = "7×8" on screen, "7 keer 8" spoken. {antwoord}, {combo}, {tafel}.
 export const PHRASES: Phrase[] = [
   { id: 'g-slay', kind: 'goed', text: 'Slay.', slang: true },
@@ -37,6 +54,8 @@ export const PHRASES: Phrase[] = [
   { id: 'g-klopt', kind: 'goed', text: 'Klopt.' },
   { id: 'g-netjes', kind: 'goed', text: 'Netjes.' },
   { id: 'g-zat', kind: 'goed', text: 'Die zat.' },
+  { id: 'g-lekker', kind: 'goed', text: 'Lekker bezig.' },
+  { id: 'g-sterk', kind: 'goed', text: 'Sterk.' },
 
   { id: 'c-lowkey', kind: 'combo', text: 'Lowkey een rekenmachine.', slang: true },
   { id: 'c-wie', kind: 'combo', text: 'Combo {combo}. Wie ben jij?' },
@@ -54,11 +73,15 @@ export const PHRASES: Phrase[] = [
   { id: 'f-bijna', kind: 'fout', text: 'Bijna. Het is {antwoord}.' },
   { id: 'f-helaas', kind: 'fout', text: 'Helaas. {som} is {antwoord}.' },
   { id: 'f-mis', kind: 'fout', text: 'Mis. {antwoord}.' },
+  { id: 'f-skeer', kind: 'fout', text: 'Nahhh, skeer. Het is {antwoord}.', slang: true },
+  { id: 'f-jammer', kind: 'fout', text: 'Jammer. Het is {antwoord}.' },
 
   { id: 't-hallo', kind: 'telaat', text: 'Hallo? Ben je er nog? Het is {antwoord}.' },
   { id: 't-bro', kind: 'telaat', text: 'Bro, ik zit hier gewoon te wachten. Het is {antwoord}.', slang: true },
   { id: 't-lag', kind: 'telaat', text: 'Even wat lag. Het is {antwoord}.' },
   { id: 't-tijd', kind: 'telaat', text: 'Tijd is op. Het is {antwoord}.' },
+  { id: 't-skeer', kind: 'telaat', text: 'Oei, skeer. Het is {antwoord}.', slang: true },
+  { id: 't-telaat', kind: 'telaat', text: 'Te laat. Het is {antwoord}.' },
 
   { id: 'p-lowkey', kind: 'porren', text: 'Lowkey spannend.', slang: true },
   { id: 'p-nog', kind: 'porren', text: 'Nog even...' },
@@ -74,6 +97,7 @@ export const PHRASES: Phrase[] = [
   { id: 'e-netjes', kind: 'einde', text: 'Netjes gedaan.' },
   { id: 'e-klaar', kind: 'einde', text: 'Ronde klaar.' },
   { id: 'e-volgende', kind: 'einde', text: 'Op naar de volgende.' },
+  { id: 'e-gespeeld', kind: 'einde', text: 'Goed gespeeld.' },
 
   { id: 'el-nog', kind: 'eindeLaag', text: 'Dit was een lastige. Nog een keer.' },
   { id: 'el-oefen', kind: 'eindeLaag', text: 'Oefenen helpt. Probeer het nog eens.' },

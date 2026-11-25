@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { endKind, fill, PHRASES, pickPhrase } from './phrases'
+import { endKind, fill, PHRASES, pickPhrase, SLANG_WORDS } from './phrases'
 
 describe('pickPhrase', () => {
   it('never repeats the last line of a kind', () => {
@@ -22,7 +22,14 @@ describe('pickPhrase', () => {
 
   it('keeps at most a third of the lines in slang', () => {
     const slang = PHRASES.filter((p) => p.slang).length
-    expect(slang / PHRASES.length).toBeLessThanOrEqual(0.45)
+    expect(slang / PHRASES.length).toBeLessThanOrEqual(1 / 3)
+  })
+
+  it('only uses checked slang words in slang lines', () => {
+    for (const p of PHRASES.filter((x) => x.slang)) {
+      const text = p.text.toLowerCase()
+      expect(SLANG_WORDS.some((w) => new RegExp(`\\b${w}\\b`).test(text)), p.id).toBe(true)
+    }
   })
 
   it('has unique ids', () => {
