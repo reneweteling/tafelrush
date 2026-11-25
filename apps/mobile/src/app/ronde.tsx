@@ -486,7 +486,7 @@ export default function Ronde() {
             input: 'typen',
             notice:
               mic === 'denied'
-                ? `Geen toegang tot de microfoon. Je typt nu je antwoorden; aanzetten kan in de instellingen van je ${WEB ? 'browser' : 'telefoon'}.`
+                ? `Geen microfoon. Je typt nu je antwoorden.`
                 : `Spraakherkenning werkt niet ${WEB ? 'in deze browser' : 'op dit toestel'}. Je typt nu je antwoorden.`,
           })
         }
