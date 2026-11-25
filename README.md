@@ -33,12 +33,31 @@ Sounds and icons are generated, not recorded: `pnpm --filter mobile assets`.
 
 ## How it works
 
-- Reading aloud: `expo-speech` with the device's nl-NL voice.
+- Reading aloud: pre-rendered clips of one voice (Azure `nl-NL-MaartenNeural`), the same on every phone and in the browser. See [Voice files](#voice-files).
 - Listening: `expo-speech-recognition`, nl-NL. A number that stays stable for 0.7 s counts right away, without waiting for the final result.
 - Smart practice (`packages/shared/src/training.ts`): every sum has a level 0 to 5. Fast and right is +1, wrong or too slow is -2. Low levels come up to 6x more often. A wrong sum comes back 2 to 4 sums later.
 - Own tables: players can add tables from 11 up to 1000.
 - Challenges: the link holds the 10 sums played, score, time and name. No server needed.
 - Player progress stays on the device (AsyncStorage). The only data that leaves the phone is opt-in Firebase Analytics, off by default.
+
+## Voice files
+
+Everything the app says is an mp3 in `apps/mobile/assets/voice`, rendered once with Azure text-to-speech (`nl-NL-MaartenNeural`) and committed. The app plays them locally: no speech engine and no network at runtime. Azure is only used on a dev machine to render the files.
+
+- `apps/mobile/lib/voice-lines.ts` is the source of truth: every clip with its SSML, and how a sum or phrase turns into clips.
+- Sums of the tables 1 to 10 and all fixed phrases are whole sentences. Own tables (up to 1000) and their answers are built from word fragments: numbers in chunks ("zevenhonderd", "vijfenzestig"), "keer", "is", "Het is", each cut from a carrier sentence so the intonation fits.
+- Names are never spoken: a challenge starts with "Je bent uitgedaagd. Daar gaan we." The name stays on screen.
+
+After changing a phrase in `lib/phrases.ts` or anything in `voice-lines.ts`:
+
+```bash
+pnpm --filter mobile voice           # renders only missing or changed clips, needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in .env, and ffmpeg
+pnpm --filter mobile voice --check   # no network: fails when a clip is missing or stale
+```
+
+`pnpm test` also fails when a clip is missing or out of date. `assets/voice/voice.lock.json` holds a hash per clip, so only changed text goes to Azure. The script also writes `lib/voice-files.ts` (the bundled file list and lengths).
+
+Cost: the Speech resource is on the free tier (F0): 0.5 million characters a month. The full set is about 12,000 characters, so even a full re-render is free. F0 allows 20 requests a minute; the script batches 25 clips per request and waits between requests, a full render takes about 10 minutes.
 
 ## Browser version (`/spelen`)
 
@@ -55,7 +74,7 @@ Where the browser differs from the phone, a `lib/*.web.ts` file replaces the pho
 
 | | Phone | Browser |
 |---|---|---|
-| Reading aloud | `expo-speech` | `speechSynthesis`, best Dutch voice the browser has |
+| Reading aloud | the voice clips via `expo-audio` | the same clips via Web Audio |
 | Praten | `expo-speech-recognition` | Web Speech API: Chrome, Edge, Safari. Not in Firefox: Praten is greyed out there and the game starts on Typen |
 | Progress | AsyncStorage | localStorage, per browser |
 | Analytics | opt-in Firebase | none, and the question is never asked |
