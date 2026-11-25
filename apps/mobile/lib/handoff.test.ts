@@ -9,6 +9,7 @@ import {
   LISTEN_LEAD_MS,
   listenDelayMs,
   speechStartCounts,
+  sumOnly,
 } from './handoff'
 
 const sum = { a: 7, b: 8 }
@@ -131,5 +132,41 @@ describe('echoSuspect and speechStartCounts', () => {
     expect(echoSuspect(s)).toBe(false)
     expect(speechStartCounts(s, 1000 + ECHO_WINDOW_MS - 1)).toBe(false)
     expect(speechStartCounts(s, 1000 + ECHO_WINDOW_MS)).toBe(true)
+  })
+})
+
+describe('sumOnly', () => {
+  it('spots the sum without an answer after it', () => {
+    expect(sumOnly('zeven keer acht', sum)).toBe(true)
+    expect(sumOnly('7 x 8', sum)).toBe(true)
+    expect(sumOnly('7x8', sum)).toBe(true)
+    expect(sumOnly('zeven maal acht is', sum)).toBe(true)
+    expect(sumOnly('acht keer zeven', sum)).toBe(true)
+    expect(sumOnly('een keer acht', { a: 1, b: 8 })).toBe(true)
+  })
+
+  it('is false once an answer follows, or without a sum', () => {
+    expect(sumOnly('zeven keer acht is zesenvijftig', sum)).toBe(false)
+    expect(sumOnly('7 x 8 is 56', sum)).toBe(false)
+    expect(sumOnly('een keer acht is acht', { a: 1, b: 8 })).toBe(false)
+    expect(sumOnly('zesenvijftig', sum)).toBe(false)
+    expect(sumOnly('acht', { a: 1, b: 8 })).toBe(false)
+  })
+})
+
+describe('judge in the repeat step', () => {
+  const late = { spokenEndAt: 1000, firstHeardAt: 5000 }
+
+  it('does not take a paused sum as the answer, interim or final', () => {
+    expect(judge(['zeven keer acht'], sum, late)).toBeNull()
+    expect(judge(['7 x 8'], sum, late)).toBeNull()
+    expect(judge(['een keer acht'], { a: 1, b: 8 }, late)).toBeNull()
+  })
+
+  it('takes the answer after the sum, or the answer alone', () => {
+    expect(judge(['zeven keer acht is zesenvijftig'], sum, late)?.value).toBe(56)
+    expect(judge(['zesenvijftig'], sum, late)?.value).toBe(56)
+    expect(judge(['een keer acht is acht'], { a: 1, b: 8 }, late)?.value).toBe(8)
+    expect(judge(['acht'], { a: 1, b: 8 }, late)?.value).toBe(8)
   })
 })

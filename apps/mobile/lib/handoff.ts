@@ -76,6 +76,30 @@ export function echoOnly(text: string, sum: Sum): boolean {
   })
 }
 
+const MULTIPLY = new Set(['keer', 'x', 'maal'])
+
+/**
+ * True when the transcript is the sum said out loud ("zeven keer acht", "7 x 8",
+ * "zeg maar na zeven keer acht is") with nothing after it yet. The last number of
+ * that is a factor, never her answer: she may pause before the answer. "een keer
+ * acht is acht" has an answer after the sum, so it is not sum-only.
+ */
+export function sumOnly(text: string, sum: Sum): boolean {
+  const tokens = normalize(text)
+    .split(' ')
+    .filter(Boolean)
+    .flatMap((t) => {
+      const glued = t.match(/^(\d+)x(\d+)$/)
+      return glued ? [glued[1], 'x', glued[2]] : [t]
+    })
+  const at = tokens.findIndex((t) => MULTIPLY.has(t))
+  if (at === -1) return false
+  const right = tokens.slice(at + 1)
+  const second = right.length > 0 ? parseDutchNumber(right[0]) : null
+  if (second === null || (second !== sum.a && second !== sum.b)) return false
+  return right.slice(1).every((t) => FILLER.has(t))
+}
+
 export type HandoffState = {
   /** When the voice finished, or null while it is still speaking. */
   spokenEndAt: number | null
@@ -96,6 +120,9 @@ export type Judged = { value: number; text: string } | null
  * when it must not count (yet):
  * - while the voice still speaks, only the right answer counts, and only when it
  *   is not just the question echoed;
+ * - a transcript that is only the sum said ("zeven keer acht", also in the
+ *   "Zeg maar na" step) never counts, whenever it comes in: she may pause before
+ *   the answer;
  * - after that, a transcript that is only the question echoed is ignored when it
  *   started early enough to be the voice. Later it is her answer ("acht" for 1 × 8).
  */
@@ -105,6 +132,7 @@ export function judge(alternatives: string[], sum: Sum, s: HandoffState): Judged
   for (const text of alternatives) {
     const value = parseDutchNumber(text)
     if (value === null) continue
+    if (sumOnly(text, sum)) continue
     const echo = echoOnly(text, sum)
     if (s.spokenEndAt === null) {
       if (value === expected && !echo) return { value, text }
