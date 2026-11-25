@@ -41,6 +41,8 @@ export default function Start() {
   const weak = weakestTable(progress)
   const bossTable = weak ?? (boss[0] ? boss[0].a : null)
   const bossInTable = bossTable ? boss.filter((s) => s.a === bossTable || s.b === bossTable) : []
+  // The boss card takes a row of space: tighten the hero and gaps so the scroll area still fits at rest.
+  const tight = compact || (bossTable !== null && bossInTable.length > 0)
   const best = rounds.reduce<{ score: number; seconds: number } | null>((b, r) => {
     if (r.total !== 10) return b
     if (!b || r.score > b.score || (r.score === b.score && r.seconds < b.seconds)) return { score: r.score, seconds: r.seconds }
@@ -77,7 +79,7 @@ export default function Start() {
   }
 
   return (
-    <Screen style={compact ? { gap: space.m } : undefined}>
+    <Screen style={tight ? { gap: space.m } : undefined}>
       <View style={ui.row}>
         <View style={s.level}>
           <Txt style={{ fontFamily: fonts.display, fontSize: 16 }} color={colors.ink}>
@@ -108,9 +110,9 @@ export default function Start() {
         <IconButton icon={SettingsIcon} label="Instellingen" onPress={() => router.push('/instellingen')} />
       </View>
 
-      <ScrollView contentContainerStyle={{ gap: compact ? space.m : space.xl, paddingBottom: compact ? space.s : space.l }} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ gap: tight ? space.m : space.xl, paddingBottom: space.m, flexGrow: 1 }} showsVerticalScrollIndicator={false} bounces={false}>
         <View>
-          {compact ? (
+          {tight ? (
             <Txt variant="hero" style={{ fontSize: 40, lineHeight: 42 }} numberOfLines={1} adjustsFontSizeToFit>
               TAFEL <Txt variant="hero" color={colors.lime} style={{ fontSize: 40, lineHeight: 42 }}>RUSH</Txt>
             </Txt>
@@ -122,7 +124,7 @@ export default function Start() {
               </Txt>
             </>
           )}
-          <Txt variant={compact ? 'small' : 'body'} color={colors.muted} style={{ marginTop: compact ? 4 : 10 }}>
+          <Txt variant={tight ? 'small' : 'body'} color={colors.muted} style={{ marginTop: tight ? 4 : 10 }}>
             {best ? `Record: ${best.score}/10 in ${best.seconds} sec.` : 'Nog geen record. Tijd om er een neer te zetten.'}
           </Txt>
         </View>
@@ -153,11 +155,11 @@ export default function Start() {
           </Pressable>
         ) : null}
 
-        <View style={{ gap: compact ? space.s : 10 }}>
+        <View style={{ gap: tight ? space.s : 10 }}>
           <Txt variant="label" color={colors.muted}>
             Tafels
           </Txt>
-          <View style={[s.grid, compact && { gap: 6 }]}>
+          <View style={[s.grid, tight && { gap: 6 }]}>
             {BASE_TABLES.map((t) => {
               const on = picked.includes(t)
               return (
@@ -167,7 +169,7 @@ export default function Start() {
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={`Tafel van ${t}`}
                   onPress={() => toggle(t)}
-                  style={[s.table, compact && { height: 44 }, on ? s.tableOn : null]}>
+                  style={[s.table, tight && { height: 44 }, on ? s.tableOn : null]}>
                   <Txt style={{ fontFamily: fonts.displayBold, fontSize: 18 }} color={on ? colors.ink : colors.text}>
                     {t}
                   </Txt>
@@ -175,7 +177,7 @@ export default function Start() {
               )
             })}
           </View>
-          <View style={[s.own, compact && { gap: 6 }]}>
+          <View style={[s.own, tight && { gap: 6 }]}>
             {own.map((t) => {
               const on = picked.includes(t)
               return (
@@ -263,15 +265,9 @@ export default function Start() {
             )
           })}
         </View>
-        {compact ? (
-          canTalk ? null : (
-            <Txt variant="small" color={colors.muted}>
-              {NO_LISTENING_HINT}
-            </Txt>
-          )
-        ) : (
+        {canTalk ? null : (
           <Txt variant="small" color={colors.muted}>
-            {canTalk ? INPUT_HINTS[settings.input] : `${NO_LISTENING_HINT} ${INPUT_HINTS[settings.input]}`}
+            {NO_LISTENING_HINT}
           </Txt>
         )}
         <Button
@@ -292,9 +288,9 @@ export default function Start() {
 const canTalk = listeningPossible()
 
 const INPUTS = [
-  { value: 'praten', label: 'Praten', icon: Mic },
   { value: 'typen', label: 'Typen', icon: Keyboard },
   { value: 'kiezen', label: 'Meerkeuze', icon: LayoutGrid },
+  { value: 'praten', label: 'Praten', icon: Mic },
 ] as const
 
 const INPUT_HINTS = {

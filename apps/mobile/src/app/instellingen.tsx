@@ -20,9 +20,9 @@ const WEB = Platform.OS === 'web'
 
 // Browsers without speech recognition (Firefox) get no Praten.
 const INPUT_OPTIONS: [Settings['input'], string][] = [
-  ...(listeningPossible() ? [['praten', 'Praten'] as [Settings['input'], string]] : []),
   ['typen', 'Typen'],
   ['kiezen', 'Meerkeuze'],
+  ...(listeningPossible() ? [['praten', 'Praten'] as [Settings['input'], string]] : []),
 ]
 
 // Expo Go has its own build number; leave it out there.

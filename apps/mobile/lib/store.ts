@@ -92,7 +92,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pitch: 1.2,
   sounds: true,
   shake: true,
-  input: 'praten',
+  input: 'typen',
   repeatAfterWrong: true,
   name: '',
   mode: 'slim',
