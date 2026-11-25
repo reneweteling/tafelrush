@@ -1,143 +1,196 @@
-// Reads text aloud with one of the phone's Dutch voices. Default: the best Google
-// voice found (what René picked in the voice test); she can choose another one in
-// the settings.
+// Plays what the app says: pre-rendered clips of one voice (lib/voice-lines.ts,
+// assets/voice), the same on every phone and in the browser. No speech engine,
+// no network. A line is one or more clips played back to back; players for the
+// next sum are made ahead of time (preloadSum) so a question starts at once.
 
-import * as Speech from 'expo-speech'
+import { createAudioPlayer, type AudioPlayer } from 'expo-audio'
 import { Platform } from 'react-native'
 
+import type { Sum } from '@tafelrush/shared'
+
 import { handoffLog } from './devlog'
-import { listenDelayMs, MIC_WAIT_MS, micBeforeVoice } from './handoff'
-import { getState } from './store'
+import { cueDelayMs, MIC_WAIT_MS, micBeforeVoice } from './handoff'
+import { VOICE_FILES, VOICE_MS } from './voice-files'
+import { introLine, lineClips, lineMs, sumClips, type VoiceLine } from './voice-lines'
 
-export type DutchVoice = { id: string; label: string }
+export type { VoiceLine } from './voice-lines'
 
-let voices: Speech.Voice[] = []
-let bestId: string | undefined
-let ready: Promise<void> | null = null
+/** Players kept around, least recently used goes first. A round needs about 20. */
+const MAX_PLAYERS = 40
+/** Start the next clip of a sentence this long before the current one ends: both clips are padded with silence. */
+const OVERLAP_MS = 30
 
-function isDutch(v: Speech.Voice) {
-  return v.language.toLowerCase().replace('_', '-').startsWith('nl')
+const players = new Map<string, AudioPlayer>()
+
+function playerFor(id: string): AudioPlayer | null {
+  const source = VOICE_FILES[id]
+  if (source === undefined) return null
+  const had = players.get(id)
+  if (had) {
+    players.delete(id)
+    players.set(id, had)
+    return had
+  }
+  let p: AudioPlayer
+  try {
+    // Keep the session on after a clip (see sfx.ts): the mic may be using it.
+    p = createAudioPlayer(source, { keepAudioSessionActive: true, updateInterval: 100 })
+  } catch {
+    return null
+  }
+  players.set(id, p)
+  for (const [oldId, old] of players) {
+    if (players.size <= MAX_PLAYERS) break
+    if (old.playing) continue
+    old.remove()
+    players.delete(oldId)
+  }
+  return p
 }
 
-function score(v: Speech.Voice): number {
-  const lang = v.language.toLowerCase().replace('_', '-')
-  let s = lang === 'nl-nl' ? 10 : 5
-  const id = `${v.identifier} ${v.name}`.toLowerCase()
-  if (id.includes('google') || id.includes('nl-nl-x-')) s += 5
-  if (v.quality === Speech.VoiceQuality.Enhanced) s += 3
-  // Local voices start speaking sooner and work offline.
-  if (id.includes('local')) s += 1
-  return s
+/** Makes the players for these clips now, so they are loaded by the time they play. */
+function preload(ids: string[]) {
+  for (const id of ids) playerFor(id)
 }
 
-/** Google voices come as pairs (-local and -network) per speaker; this is the speaker. */
-function speakerKey(v: Speech.Voice): string {
-  const m = v.identifier.toLowerCase().match(/nl-nl-x-([a-z]+)/)
-  return m ? m[1] : v.identifier
-}
-
+/** Loads the opening lines. */
 export function initVoice(): Promise<void> {
-  if (!ready) {
-    ready = Speech.getAvailableVoicesAsync()
-      .then((all) => {
-        voices = all.filter(isDutch).sort((a, b) => score(b) - score(a))
-        bestId = voices[0]?.identifier
-      })
-      .catch(() => undefined)
-  }
-  return ready
+  preload([...lineClips(introLine(false)), ...lineClips(introLine(true))])
+  return Promise.resolve()
 }
 
-/** One entry per speaker, Netherlands Dutch first, numbered so they are easy to tell apart. */
-export async function dutchVoices(): Promise<DutchVoice[]> {
-  await initVoice()
-  const seen = new Set<string>()
-  const out: DutchVoice[] = []
-  const nl = voices.filter((v) => v.language.toLowerCase().replace('_', '-') === 'nl-nl')
-  const be = voices.filter((v) => v.language.toLowerCase().replace('_', '-') !== 'nl-nl')
-  for (const [list, suffix] of [
-    [nl, ''],
-    [be, ' (Vlaams)'],
-  ] as const) {
-    for (const v of list) {
-      const k = speakerKey(v)
-      if (seen.has(k)) continue
-      seen.add(k)
-      out.push({ id: v.identifier, label: `Stem ${out.length + 1}${suffix}` })
-    }
-  }
-  return out
+/** Loads everything a sum may need (question, "zeg maar na", the answer). */
+export function preloadSum(s: Sum) {
+  preload(sumClips(s))
 }
 
-function chosenId(): string | undefined {
-  const picked = getState().settings.voice
-  if (picked && voices.some((v) => v.identifier === picked)) return picked
-  return bestId
-}
+/** Bumped by stopVoice(): a line still playing or waiting stops. */
+let generation = 0
+const stops = new Set<() => void>()
 
-type Hooks = { onStart?: () => void; onBoundary?: (charIndex: number) => void }
-
-function speak(text: string, opts: { pitch?: number; rate?: number; voice?: string }, hooks: Hooks): Promise<void> {
-  const { rate, pitch } = getState().settings
+function waitLoaded(p: AudioPlayer): Promise<void> {
+  if (p.isLoaded) return Promise.resolve()
   return new Promise((resolve) => {
-    let finished = false
-    const done = () => {
-      if (finished) return
-      finished = true
+    const sub = p.addListener('playbackStatusUpdate', (s) => {
+      if (s.isLoaded) finish()
+    })
+    const guard = setTimeout(finish, 1000)
+    function finish() {
       clearTimeout(guard)
+      sub.remove()
       resolve()
     }
-    // Some engines never call onDone; give up after a generous estimate.
-    const guard = setTimeout(done, 2500 + text.length * 120)
-    Speech.speak(text, {
-      language: 'nl-NL',
-      voice: opts.voice ?? chosenId(),
-      rate: opts.rate ?? rate,
-      pitch: opts.pitch ?? pitch,
-      onStart: hooks.onStart,
-      // iOS (willSpeakRange) and Android 8+ (onRangeStart) report each word as it starts.
-      onBoundary: hooks.onBoundary ? (e: { charIndex: number }) => hooks.onBoundary?.(e.charIndex) : undefined,
-      onDone: done,
-      onStopped: done,
-      onError: done,
-    })
   })
 }
 
-/** Speaks and resolves when done (or stopped). Never rejects: a silent phone should not stop the game. */
-export async function say(
-  text: string,
-  opts: { pitch?: number; rate?: number; voice?: string } = {},
-): Promise<void> {
-  await initVoice()
-  return speak(text, opts, {})
+/**
+ * Plays one clip. `near` resolves OVERLAP_MS before its end (for the next word),
+ * `ended` when it is done, stopped, or clearly stuck.
+ */
+function playClip(id: string): { near: Promise<void>; ended: Promise<void> } {
+  const found = playerFor(id)
+  if (!found) return { near: Promise.resolve(), ended: Promise.resolve() }
+  const p: AudioPlayer = found
+  const ms = VOICE_MS[id] ?? 1000
+  let nearDone = () => {}
+  const near = new Promise<void>((r) => (nearDone = r))
+  const ended = new Promise<void>((resolve) => {
+    let finished = false
+    let nearTimer: ReturnType<typeof setTimeout> | null = null
+    let guard: ReturnType<typeof setTimeout> | null = null
+    const sub = p.addListener('playbackStatusUpdate', (s) => {
+      if (s.didJustFinish) finish()
+    })
+    function finish() {
+      if (finished) return
+      finished = true
+      if (nearTimer) clearTimeout(nearTimer)
+      if (guard) clearTimeout(guard)
+      sub.remove()
+      stops.delete(stop)
+      nearDone()
+      resolve()
+      // Rewind for next time, quietly.
+      void p.seekTo(0).catch(() => undefined)
+    }
+    function stop() {
+      try {
+        p.pause()
+      } catch {
+        // Already stopped.
+      }
+      finish()
+    }
+    stops.add(stop)
+    void waitLoaded(p).then(async () => {
+      if (finished) return
+      try {
+        if (p.currentTime > 0) await p.seekTo(0)
+        if (finished) return
+        p.play()
+      } catch {
+        return finish()
+      }
+      nearTimer = setTimeout(nearDone, Math.max(0, ms - OVERLAP_MS))
+      guard = setTimeout(finish, ms + 1500)
+    })
+  })
+  return { near, ended }
+}
+
+type Hooks = { onStart?: () => void }
+
+/** Plays the clips of a line in order, with the pauses between sentences. */
+async function playLine(line: VoiceLine, hooks: Hooks = {}): Promise<void> {
+  const gen = generation
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+  let last: Promise<void> = Promise.resolve()
+  for (let i = 0; i < line.length; i++) {
+    const piece = line[i]
+    if (piece.pauseMs > 0) {
+      await last
+      await wait(piece.pauseMs)
+    }
+    if (gen !== generation) return
+    const next = line[i + 1]
+    const { near, ended } = playClip(piece.clip)
+    if (i === 0) hooks.onStart?.()
+    last = ended
+    // The next word of the same sentence follows right away; a new sentence after the pause.
+    await (next && next.pauseMs === 0 ? near : ended)
+  }
+  await last
+}
+
+/** Plays a line and resolves when done (or stopped). Never rejects: a silent phone should not stop the game. */
+export async function say(line: VoiceLine): Promise<void> {
+  try {
+    await playLine(line)
+  } catch {
+    // Nothing to say then.
+  }
 }
 
 export type Spoken = {
   /** The voice is done (or stopped, or gave up). */
   done: Promise<void>
-  /** Time to open the mic: shortly before the voice is expected to end, at the latest when it ends. On iOS at once. */
+  /** Time to open the mic: shortly before the line ends, at the latest when it ends. On iOS at once. */
   micCue: Promise<void>
   /** Call when the mic is open. On iOS the voice waits for this (at most MIC_WAIT_MS); elsewhere it does nothing. */
   micOpen: () => void
 }
 
-/** Bumped by stopVoice(), so a question still waiting for the mic is not read after all. */
-let generation = 0
-
 /**
- * Speaks a question and tells when to start listening, so the mic is open by
- * the time the last word ends (see lib/handoff.ts). The cue is re-planned at
- * every word the engine reports; without word events the estimate from the
- * start stands, and without any events the end of the voice is the cue.
+ * Plays a question and tells when to start listening, so the mic is open by the
+ * time the last word ends (see lib/handoff.ts). The clips' lengths are known, so
+ * the cue is planned from the moment the line starts.
  *
- * On iOS starting the mic cuts the voice off, so there it goes the other way
- * round: the cue comes at once and the voice starts when micOpen() is called.
+ * On iOS the mic opens first and the line starts when micOpen() is called.
  */
-export function sayWithCue(text: string): Spoken {
-  const rate = getState().settings.rate
+export function sayWithCue(line: VoiceLine): Spoken {
   const micFirst = micBeforeVoice(Platform.OS)
   const gen = generation
+  const totalMs = lineMs(line, (id) => VOICE_MS[id] ?? 0)
   let cue = () => {}
   const micCue = new Promise<void>((r) => (cue = r))
   let cued = false
@@ -149,19 +202,13 @@ export function sayWithCue(text: string): Spoken {
     handoffLog('mic cue', why)
     cue()
   }
-  const plan = (charIndex: number) => {
-    if (cued) return
-    if (timer) clearTimeout(timer)
-    const ms = listenDelayMs(text, charIndex, rate)
-    timer = setTimeout(() => fire(`planned at char ${charIndex}`), ms)
-  }
 
   let micOpen = () => {}
   let gate: Promise<void> = Promise.resolve()
   if (micFirst) {
     gate = new Promise<void>((r) => {
       const wait = setTimeout(() => {
-        handoffLog('tts waited long enough for the mic')
+        handoffLog('voice waited long enough for the mic')
         r()
       }, MIC_WAIT_MS)
       micOpen = () => {
@@ -172,33 +219,29 @@ export function sayWithCue(text: string): Spoken {
     fire('mic first')
   }
 
-  handoffLog('tts speak', text)
-  const done = initVoice()
-    .then(() => gate)
+  handoffLog('voice line', `${line.map((p) => p.clip).join(' ')} (${totalMs} ms)`)
+  const done = gate
     .then(() => {
       if (gen !== generation) return
-      return speak(text, {}, {
+      return playLine(line, {
         onStart: () => {
-          handoffLog('tts start')
-          plan(0)
-        },
-        onBoundary: (i) => {
-          handoffLog('tts word', `char ${i}`)
-          plan(i)
+          handoffLog('voice start')
+          if (!cued) timer = setTimeout(() => fire('planned from clip length'), cueDelayMs(totalMs))
         },
       })
     })
+    .catch(() => undefined)
     .then(() => {
-      handoffLog('tts end')
-      fire('tts end')
+      handoffLog('voice end')
+      fire('voice end')
     })
   return { done, micCue, micOpen }
 }
 
 export function stopVoice() {
   generation++
-  void Speech.stop()
+  for (const stop of [...stops]) stop()
 }
 
-/** Only needed in the browser (see voice.web.ts); the phone may always speak. */
+/** Only needed in the browser (see voice.web.ts); the phone may always play. */
 export function unlockVoice() {}

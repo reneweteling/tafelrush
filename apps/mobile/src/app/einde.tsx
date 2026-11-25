@@ -12,6 +12,7 @@ import { play } from '@/lib/sfx'
 import { getState, setState, useStore } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
 import { say } from '@/lib/voice'
+import { phraseLine } from '@/lib/voice-lines'
 
 export default function Einde() {
   const result = useStore((s) => s.lastRound)
@@ -24,13 +25,13 @@ export default function Einde() {
     if (!result) return null
     const { settings } = getState()
     const p = pickPhrase(endKind(result.score, result.total), { slang: settings.slang, banned: getState().banned })
-    return p ? fill(p.text, {}) : null
+    return p ? { ...fill(p.text, {}), line: phraseLine(p, {}) } : null
   }, [result])
 
   useEffect(() => {
     if (!result) return
     if (result.score >= 8) play('airhorn')
-    if (line) void say(line.spoken)
+    if (line) void say(line.line)
   }, [result, line])
 
   if (!result) {

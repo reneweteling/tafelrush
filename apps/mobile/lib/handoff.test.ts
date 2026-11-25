@@ -1,40 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  cueDelayMs,
   ECHO_WINDOW_MS,
   echoOnly,
   echoSuspect,
-  estimateSpeechMs,
   judge,
   LISTEN_LEAD_MS,
-  listenDelayMs,
   micBeforeVoice,
   speechStartCounts,
   sumOnly,
 } from './handoff'
 
 const sum = { a: 7, b: 8 }
-
-describe('estimateSpeechMs', () => {
-  it('reads digits as the words the voice says', () => {
-    expect(estimateSpeechMs('7 keer 8?')).toBe(estimateSpeechMs('zeven keer acht?'))
-  })
-
-  it('puts a short sum around a second', () => {
-    const ms = estimateSpeechMs('7 keer 8?')
-    expect(ms).toBeGreaterThan(700)
-    expect(ms).toBeLessThan(1500)
-  })
-
-  it('is longer for longer text and shorter at a higher rate', () => {
-    expect(estimateSpeechMs('Zeg maar na: 7 keer 8 is')).toBeGreaterThan(estimateSpeechMs('7 keer 8?'))
-    expect(estimateSpeechMs('7 keer 8?', 2)).toBeLessThan(estimateSpeechMs('7 keer 8?', 1))
-  })
-
-  it('is zero for nothing to say', () => {
-    expect(estimateSpeechMs('')).toBe(0)
-  })
-})
 
 describe('micBeforeVoice', () => {
   it('opens the mic before the voice only on iOS, where starting it cuts the voice off', () => {
@@ -44,19 +22,18 @@ describe('micBeforeVoice', () => {
   })
 })
 
-describe('listenDelayMs', () => {
-  it('opens the mic the lead before the expected end', () => {
-    expect(listenDelayMs('7 keer 8?', 0)).toBe(estimateSpeechMs('7 keer 8?') - LISTEN_LEAD_MS)
+describe('cueDelayMs', () => {
+  it('opens the mic the lead before the line ends', () => {
+    expect(cueDelayMs(1200)).toBe(1200 - LISTEN_LEAD_MS)
   })
 
-  it('counts from the word the voice is at', () => {
-    const text = '7 keer 8?'
-    expect(listenDelayMs(text, text.indexOf('8'))).toBeLessThan(100)
-    expect(listenDelayMs(text, text.indexOf('keer'))).toBeLessThan(listenDelayMs(text, 0))
+  it('counts from where the line is now', () => {
+    expect(cueDelayMs(1200, 500)).toBe(700 - LISTEN_LEAD_MS)
   })
 
   it('never goes negative', () => {
-    expect(listenDelayMs('Ja.', 0)).toBe(0)
+    expect(cueDelayMs(300)).toBe(0)
+    expect(cueDelayMs(1200, 5000)).toBe(0)
   })
 })
 

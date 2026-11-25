@@ -1,51 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  choiceForKey,
-  latestResult,
-  rankDutchVoices,
-  webVoiceScore,
-  type WebVoice,
-} from './webspeech'
-
-const voice = (name: string, lang: string, voiceURI = name): WebVoice => ({
-  name,
-  lang,
-  voiceURI,
-  localService: true,
-})
-
-describe('rankDutchVoices', () => {
-  it('keeps only Dutch voices, Netherlands first, Google on top', () => {
-    const out = rankDutchVoices([
-      voice('Ellen', 'nl-BE'),
-      voice('Samantha', 'en-US'),
-      voice('Xander', 'nl-NL'),
-      voice('Google Nederlands', 'nl-NL'),
-    ])
-    expect(out).toEqual([
-      { id: 'Google Nederlands', label: 'Stem 1' },
-      { id: 'Xander', label: 'Stem 2' },
-      { id: 'Ellen', label: 'Stem 3 (Vlaams)' },
-    ])
-  })
-
-  it('reads underscores in language tags', () => {
-    expect(rankDutchVoices([voice('Claire', 'nl_NL')])).toHaveLength(1)
-  })
-
-  it('is empty without Dutch voices', () => {
-    expect(rankDutchVoices([voice('Samantha', 'en-US')])).toEqual([])
-  })
-})
-
-describe('webVoiceScore', () => {
-  it('prefers online neural voices over plain local ones', () => {
-    expect(
-      webVoiceScore(voice('Microsoft Fenna Online (Natural) - Dutch (Netherlands)', 'nl-NL')),
-    ).toBeGreaterThan(webVoiceScore(voice('Microsoft Frank - Dutch (Netherlands)', 'nl-NL')))
-  })
-})
+import { choiceForKey, latestResult } from './webspeech'
 
 describe('latestResult', () => {
   it('takes the last phrase of a continuous session, trimmed', () => {

@@ -15,8 +15,6 @@ export type Settings = {
   /** Thinking time per sum; 0 means no timer. */
   seconds: TimerSeconds
   slang: boolean
-  rate: number
-  pitch: number
   sounds: boolean
   shake: boolean
   /** Last picked input method, the default for the next round. */
@@ -30,9 +28,10 @@ export type Settings = {
   ownTables: number[]
   /** Anonymous usage statistics. null = not asked yet, so off. */
   analytics: boolean | null
-  /** Chosen Dutch voice (identifier); null = the best one the app finds. */
-  voice: string | null
 }
+
+/** Settings older versions stored and that are gone now: the system voice, its speed and pitch. */
+type DroppedSettings = { typing?: boolean; voice?: unknown; rate?: unknown; pitch?: unknown }
 
 export type RoundLog = {
   at: number
@@ -88,8 +87,6 @@ export type State = {
 export const DEFAULT_SETTINGS: Settings = {
   seconds: 6,
   slang: true,
-  rate: 1.1,
-  pitch: 1.2,
   sounds: true,
   shake: true,
   input: 'typen',
@@ -99,7 +96,6 @@ export const DEFAULT_SETTINGS: Settings = {
   tables: [6, 7, 8],
   ownTables: [],
   analytics: null,
-  voice: null,
 }
 
 const KEY = 'tafelrush:v1'
@@ -147,7 +143,8 @@ export async function loadState() {
     const raw = await AsyncStorage.getItem(KEY)
     if (raw) {
       const saved = JSON.parse(raw) as Partial<State>
-      const { typing, ...settings } = (saved.settings ?? {}) as Partial<Settings> & { typing?: boolean }
+      // The voice is pre-recorded now: the old voice, rate and pitch settings are dropped.
+      const { typing, voice: _v, rate: _r, pitch: _p, ...settings } = (saved.settings ?? {}) as Partial<Settings> & DroppedSettings
       state = {
         ...state,
         ...saved,

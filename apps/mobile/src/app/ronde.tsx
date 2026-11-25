@@ -53,7 +53,8 @@ import { play } from '@/lib/sfx'
 import { clockStartsOn, elapsedMs, fractionLeft, freezeClock, newClock, secondsLeft, startClock, timeUp } from '@/lib/clock'
 import { getState, setState, today, updateSettings, type InputMethod, type RoundResult } from '@/lib/store'
 import { colors, fonts, radius, space } from '@/lib/theme'
-import { say, sayWithCue, stopVoice, type Spoken } from '@/lib/voice'
+import { preloadSum, say, sayWithCue, stopVoice, type Spoken } from '@/lib/voice'
+import { introLine, phraseLine, questionLine, repeatLine, type VoiceLine } from '@/lib/voice-lines'
 
 type Phase = 'start' | 'spreken' | 'luisteren' | 'goed' | 'fout' | 'nazeggen' | 'telaat' | 'pauze'
 type Line = { id: number; from: 'app' | 'me'; text: string; live?: boolean }
@@ -174,12 +175,12 @@ export default function Ronde() {
     if (!p) return null
     eng.current.lastIds[kind] = p.id
     eng.current.phraseIds.push(p.id)
-    return fill(p.text, vars)
+    return { ...fill(p.text, vars), line: phraseLine(p, vars) }
   }, [])
 
   /** Reads aloud when talking. Without voice the screen just stays up for `quietMs`. */
-  const speak = useCallback(async (text: string, quietMs = 0) => {
-    if (eng.current.input === 'praten') await say(text)
+  const speak = useCallback(async (line: VoiceLine, quietMs = 0) => {
+    if (eng.current.input === 'praten') await say(line)
     else if (quietMs > 0) await wait(quietMs)
   }, [])
 
@@ -302,7 +303,10 @@ export default function Ronde() {
       if (talking) {
         addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
         handoffMark(`q${i + 1} ${s.a}x${s.b}`)
-        const q = sayWithCue(`${s.a} keer ${s.b}?`)
+        const q = sayWithCue(questionLine(s))
+        // Load the next sum's clips while this one is answered.
+        const next = e.plan[i + 1]
+        if (next) preloadSum(next)
         await q.micCue
         if (token.cancelled) return false
         spoken = q
@@ -347,7 +351,7 @@ export default function Ronde() {
         const p = phrase(kind, vars)
         patch({ phase: 'goed', sixSeven, headline: '' })
         if (p) addLine('app', p.shown)
-        await speak(p?.spoken ?? '', 900)
+        await speak(p?.line ?? [], 900)
         await wait(350)
         return true
       }
@@ -370,13 +374,13 @@ export default function Ronde() {
         const slangHead = settings.slang && p?.shown.startsWith('Bruh')
         patch({ phase: 'fout', headline: slangHead ? 'BRUH.' : settings.slang && p?.shown.startsWith('Wat de helly') ? 'WAT DE\nHELLY.' : 'MIS.' })
         if (p) addLine('app', p.shown)
-        await speak(p?.spoken ?? '', 1800)
+        await speak(p?.line ?? [], 1800)
       } else {
         play('buffering')
         const p = phrase('telaat', vars)
         patch({ phase: 'telaat', headline: 'Buffering...' })
         if (p) addLine('app', p.shown)
-        await speak(p?.spoken ?? '', 1800)
+        await speak(p?.line ?? [], 1800)
       }
       if (token.cancelled) return false
 
@@ -387,7 +391,7 @@ export default function Ronde() {
         if (e.input === 'praten') {
           addLine('app', `Zeg maar na: ${dutchNumberWord(s.a)} keer ${dutchNumberWord(s.b)} is...`)
           handoffMark(`repeat ${s.a}x${s.b}`)
-          const q = sayWithCue(`Zeg maar na: ${s.a} keer ${s.b} is`)
+          const q = sayWithCue(repeatLine(s))
           await q.micCue
           repeatSpoken = q
         } else {
@@ -401,7 +405,7 @@ export default function Ronde() {
         const p = phrase(again.value === ans ? 'onthouden' : 'nogniet', vars)
         if (again.value === ans) play('goed')
         if (p) addLine('app', p.shown)
-        await speak(p?.spoken ?? '', 900)
+        await speak(p?.line ?? [], 900)
       }
       e.plan = reinsert(e.plan, i, s, Math.random)
       await wait(300)
@@ -500,9 +504,11 @@ export default function Ronde() {
         input: e.input === 'praten' ? 'voice' : e.input === 'kiezen' ? 'choice' : 'typed',
         timer: settings.seconds,
       })
+      // The name stays on screen; the voice cannot say names, so it says "Je bent uitgedaagd".
       const intro = challenge ? `${challenge.name || 'Iemand'} daagt je uit. Daar gaan we.` : 'Daar gaan we.'
       addLine('app', intro)
-      await speak(intro, 700)
+      if (e.input === 'praten') preloadSum(e.plan[0])
+      await speak(introLine(!!challenge), 700)
       if (alive) void runFrom(0)
     })()
 

@@ -4,7 +4,7 @@ import Constants, { ExecutionEnvironment } from 'expo-constants'
 import { router } from 'expo-router'
 import * as StoreReview from 'expo-store-review'
 import * as WebBrowser from 'expo-web-browser'
-import { Check, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react-native'
+import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react-native'
 import { useEffect, useState } from 'react'
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native'
 
@@ -14,7 +14,8 @@ import { resetProgress, updateSettings as saveSettings, useStore, type Settings 
 import { colors, fonts, radius, space } from '@/lib/theme'
 import { downloadDutchModel, listeningPossible, NO_LISTENING_HINT, onDeviceStatus } from '@/lib/listen'
 import { shareText } from '@/lib/share'
-import { dutchVoices, say, type DutchVoice } from '@/lib/voice'
+import { say } from '@/lib/voice'
+import { questionLine } from '@/lib/voice-lines'
 
 const WEB = Platform.OS === 'web'
 
@@ -44,13 +45,10 @@ function open(url: string) {
 export default function Instellingen() {
   const settings = useStore((s) => s.settings)
   const [confirmReset, setConfirmReset] = useState(false)
-  const [voices, setVoices] = useState<DutchVoice[]>([])
   const [model, setModel] = useState<'on' | 'missing' | 'unsupported' | 'busy' | 'asked' | 'failed'>('unsupported')
   useEffect(() => {
-    void dutchVoices().then(setVoices)
     void onDeviceStatus().then(setModel)
   }, [])
-  const activeVoice = settings.voice && voices.some((v) => v.id === settings.voice) ? settings.voice : voices[0]?.id
 
   return (
     <Screen>
@@ -98,51 +96,7 @@ export default function Instellingen() {
         </Group>
 
         <Group title="Stem">
-          {voices.length > 1 ? (
-            <View style={s.list}>
-              {voices.map((v, i) => {
-                const on = v.id === activeVoice
-                return (
-                  <Pressable
-                    key={v.id}
-                    accessibilityRole="radio"
-                    aria-checked={on}
-                    onPress={() => {
-                      saveSettings({ voice: v.id })
-                      track('setting_changed', { key: 'voice', value: String(i + 1) })
-                      void say('Zeven keer acht?', { voice: v.id })
-                    }}
-                    style={({ pressed }) => [s.row, i < voices.length - 1 && s.rowLine, pressed && { opacity: 0.6 }]}>
-                    <Txt style={{ flex: 1 }} variant={on ? 'bodyBold' : 'body'}>
-                      {v.label}
-                    </Txt>
-                    <View style={s.rowIcon}>
-                      {on ? <Check size={20} color={colors.lime} /> : <Volume2 size={18} color={colors.muted} />}
-                    </View>
-                  </Pressable>
-                )
-              })}
-            </View>
-          ) : null}
-          <Segments
-            value={settings.rate}
-            options={[
-              [0.9, 'Rustig'],
-              [1.1, 'Normaal'],
-              [1.3, 'Snel'],
-            ]}
-            onChange={(rate) => updateSettings({ rate })}
-          />
-          <Segments
-            value={settings.pitch}
-            options={[
-              [1.0, 'Laag'],
-              [1.2, 'Normaal'],
-              [1.4, 'Hoog'],
-            ]}
-            onChange={(pitch) => updateSettings({ pitch })}
-          />
-          <Button label="Laat horen" kind="secondary" icon={Volume2} onPress={() => void say('Zeven keer acht? Tuff.')} />
+          <Button label="Laat horen" kind="secondary" icon={Volume2} onPress={() => void say(questionLine({ a: 7, b: 8 }))} />
         </Group>
 
         {model !== 'unsupported' ? (

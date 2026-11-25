@@ -9,14 +9,14 @@
 //   transcript that is just the question coming back ("zeven keer acht"), and
 //   judge() decides per recognizer result whether it may count.
 
-import { dutchNumberWord, normalize, parseDutchNumber, type Sum } from '@tafelrush/shared'
+import { normalize, parseDutchNumber, type Sum } from '@tafelrush/shared'
 
 /**
- * True where starting the recognizer while the voice speaks cuts the voice off.
- * On iOS starting the recognizer's audio engine stops AVSpeechSynthesizer output
- * on the spot, also with the same playAndRecord session already active (seen in
- * a TestFlight recording: every question went silent at the planned mic start and
- * never came back). There the mic opens first and the voice waits for it.
+ * True where the mic opens before the question is played. On iOS starting the
+ * recognizer's audio engine stopped the old system voice (AVSpeechSynthesizer) on
+ * the spot, also with the same playAndRecord session already active (seen in a
+ * TestFlight recording). The voice is now an audio file, which may well survive
+ * that, but this order is proven: the mic opens first and the voice waits for it.
  */
 export function micBeforeVoice(os: string): boolean {
   return os === 'ios'
@@ -34,36 +34,12 @@ export const LISTEN_LEAD_MS = 400
  */
 export const ECHO_WINDOW_MS = 700
 
-/** Roughly what a Dutch TTS voice needs per letter and per word gap at rate 1. */
-const MS_PER_LETTER = 65
-const MS_PER_GAP = 40
-/** The rise and pause after a question mark or full stop. */
-const MS_PER_STOP = 150
-
-/** "7 keer 8?" as it is spoken: "zeven keer acht?". */
-function spokenForm(text: string): string {
-  return text.replace(/\d+/g, (d) => dutchNumberWord(Number(d)))
-}
-
 /**
- * How long a voice at `rate` (1 = normal) takes to say `text`, from the first
- * sound. An estimate: only used to open the mic early, never to cut the voice off.
+ * Ms from now until the mic should start, for a line of `totalMs` that has been
+ * playing for `elapsedMs`. The clips are pre-rendered, so their length is known.
  */
-export function estimateSpeechMs(text: string, rate = 1): number {
-  const spoken = spokenForm(text)
-  const letters = (spoken.match(/\p{L}/gu) ?? []).length
-  const words = spoken.split(/\s+/).filter((w) => /\p{L}/u.test(w)).length
-  const stops = (spoken.match(/[?.!]/g) ?? []).length
-  const ms = letters * MS_PER_LETTER + Math.max(0, words - 1) * MS_PER_GAP + stops * MS_PER_STOP
-  return Math.round(ms / Math.max(0.25, rate))
-}
-
-/**
- * Ms from now until the mic should start, when the voice is now at `charIndex`
- * of `text` (0 when it just started; a word boundary event gives a later one).
- */
-export function listenDelayMs(text: string, charIndex: number, rate = 1, leadMs = LISTEN_LEAD_MS): number {
-  return Math.max(0, estimateSpeechMs(text.slice(Math.max(0, charIndex)), rate) - leadMs)
+export function cueDelayMs(totalMs: number, elapsedMs = 0, leadMs = LISTEN_LEAD_MS): number {
+  return Math.max(0, totalMs - elapsedMs - leadMs)
 }
 
 /** Words that may be heard back from a question or a "Zeg maar na" line. */
