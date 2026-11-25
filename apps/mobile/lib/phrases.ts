@@ -42,7 +42,7 @@ export const SLANG_WORDS = [
   // Approved by René: for when things go wrong.
   'skeer',
   // Approved by René.
-  'hell nah',
+  'hell nahhh',
 ]
 
 // {som} = "7×8" on screen, "7 keer 8" spoken. {antwoord}, {combo}, {tafel}.
