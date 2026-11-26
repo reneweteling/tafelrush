@@ -7,18 +7,19 @@ import {
   echoSuspect,
   judge,
   LISTEN_LEAD_MS,
-  micBeforeVoice,
+  micAfterVoice,
+  micMissedVoice,
   speechStartCounts,
   sumOnly,
 } from './handoff'
 
 const sum = { a: 7, b: 8 }
 
-describe('micBeforeVoice', () => {
-  it('opens the mic before the voice only on iOS, where starting it cuts the voice off', () => {
-    expect(micBeforeVoice('ios')).toBe(true)
-    expect(micBeforeVoice('android')).toBe(false)
-    expect(micBeforeVoice('web')).toBe(false)
+describe('micAfterVoice', () => {
+  it('opens the mic after the voice only on iOS, so the recognizer never hears the question', () => {
+    expect(micAfterVoice('ios')).toBe(true)
+    expect(micAfterVoice('android')).toBe(false)
+    expect(micAfterVoice('web')).toBe(false)
   })
 })
 
@@ -66,9 +67,9 @@ describe('echoOnly', () => {
 })
 
 describe('judge', () => {
-  const speaking = { spokenEndAt: null, firstHeardAt: 0 }
-  const justDone = { spokenEndAt: 1000, firstHeardAt: 900 }
-  const late = { spokenEndAt: 1000, firstHeardAt: 1000 + ECHO_WINDOW_MS + 100 }
+  const speaking = { spokenEndAt: null, firstHeardAt: 0, micStartAt: null }
+  const justDone = { spokenEndAt: 1000, firstHeardAt: 900, micStartAt: null }
+  const late = { spokenEndAt: 1000, firstHeardAt: 1000 + ECHO_WINDOW_MS + 100, micStartAt: null }
 
   it('ignores the voice while it speaks', () => {
     expect(judge(['zeven keer acht'], sum, speaking)).toBeNull()
@@ -102,8 +103,8 @@ describe('judge', () => {
     expect(judge(['acht'], { a: 1, b: 8 }, justDone)).toBeNull()
   })
 
-  it('with the mic open for the whole question (iOS), ignores the full echo and takes what follows', () => {
-    const wholeQuestion = { spokenEndAt: 1000, firstHeardAt: 100 }
+  it('with the mic open for the whole question, ignores the full echo and takes what follows', () => {
+    const wholeQuestion = { spokenEndAt: 1000, firstHeardAt: 100, micStartAt: null }
     const oneEight = { a: 1, b: 8 }
     expect(judge(['een keer acht'], oneEight, wholeQuestion)).toBeNull()
     expect(judge(['een keer acht acht'], oneEight, wholeQuestion)).toEqual({ value: 8, text: 'een keer acht acht' })
@@ -122,15 +123,40 @@ describe('judge', () => {
 
 describe('echoSuspect and speechStartCounts', () => {
   it('suspects everything while the voice speaks', () => {
-    expect(echoSuspect({ spokenEndAt: null, firstHeardAt: null })).toBe(true)
-    expect(speechStartCounts({ spokenEndAt: null, firstHeardAt: null }, 5000)).toBe(false)
+    expect(echoSuspect({ spokenEndAt: null, firstHeardAt: null, micStartAt: null })).toBe(true)
+    expect(speechStartCounts({ spokenEndAt: null, firstHeardAt: null, micStartAt: null }, 5000)).toBe(false)
   })
 
   it('trusts what starts after the echo window', () => {
-    const s = { spokenEndAt: 1000, firstHeardAt: 1000 + ECHO_WINDOW_MS }
+    const s = { spokenEndAt: 1000, firstHeardAt: 1000 + ECHO_WINDOW_MS, micStartAt: null }
     expect(echoSuspect(s)).toBe(false)
     expect(speechStartCounts(s, 1000 + ECHO_WINDOW_MS - 1)).toBe(false)
     expect(speechStartCounts(s, 1000 + ECHO_WINDOW_MS)).toBe(true)
+  })
+})
+
+describe('mic started after the voice (iOS)', () => {
+  const after = { spokenEndAt: 1000, firstHeardAt: 1100, micStartAt: 1000 }
+  const oneEight = { a: 1, b: 8 }
+
+  it('knows the recognizer cannot have heard the voice', () => {
+    expect(micMissedVoice(after)).toBe(true)
+    expect(micMissedVoice({ ...after, micStartAt: 999 })).toBe(false)
+    expect(micMissedVoice({ ...after, spokenEndAt: null })).toBe(false)
+    expect(micMissedVoice({ ...after, micStartAt: null })).toBe(false)
+  })
+
+  it('suspects no echo, so a quick answer equal to a factor counts (1 x 8 = 8)', () => {
+    expect(echoSuspect(after)).toBe(false)
+    expect(judge(['acht'], oneEight, after)).toEqual({ value: 8, text: 'acht' })
+  })
+
+  it('counts speechstart right away', () => {
+    expect(speechStartCounts(after, 1001)).toBe(true)
+  })
+
+  it('still does not take the sum said back as the answer', () => {
+    expect(judge(['een keer acht'], oneEight, after)).toBeNull()
   })
 })
 
@@ -154,7 +180,7 @@ describe('sumOnly', () => {
 })
 
 describe('judge in the repeat step', () => {
-  const late = { spokenEndAt: 1000, firstHeardAt: 5000 }
+  const late = { spokenEndAt: 1000, firstHeardAt: 5000, micStartAt: null }
 
   it('does not take a paused sum as the answer, interim or final', () => {
     expect(judge(['zeven keer acht'], sum, late)).toBeNull()

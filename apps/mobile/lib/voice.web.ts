@@ -164,12 +164,10 @@ export async function say(line: VoiceLine): Promise<void> {
 }
 
 export type Spoken = {
-  /** The voice is done (or stopped, or gave up). */
-  done: Promise<void>
+  /** The voice is done (or stopped, or gave up); resolves with the time it ended. */
+  done: Promise<number>
   /** Time to open the mic: shortly before the line ends, at the latest when it ends. */
   micCue: Promise<void>
-  /** The mic is open. Only the iPhone app waits for this (see voice.ts); nothing to do in a browser. */
-  micOpen: () => void
 }
 
 /**
@@ -204,10 +202,12 @@ export function sayWithCue(line: VoiceLine): Spoken {
   })
     .catch(() => undefined)
     .then(() => {
+      const at = Date.now()
       handoffLog('voice end')
       fire('voice end')
+      return at
     })
-  return { done, micCue, micOpen: () => {} }
+  return { done, micCue }
 }
 
 export function stopVoice() {

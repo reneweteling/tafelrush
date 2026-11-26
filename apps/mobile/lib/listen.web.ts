@@ -107,15 +107,18 @@ export function holdAudioSession() {}
 
 export function releaseAudioSession() {}
 
+/** Only the iPhone app needs this (see listen.ts). */
+export function warmUpListening(): Promise<void> {
+  return Promise.resolve()
+}
+
 export type ListenOptions = {
   timeoutMs: number
   /** The sum asked: the right answer counts at once, and the question read back is not an answer. */
   sum: Sum
-  /** The voice reading the question; resolves when it is done. Absent: nothing is being read. */
-  spoken?: Promise<void>
+  /** The voice reading the question; resolves with the time it ended. Absent: nothing is being read. */
+  spoken?: Promise<number>
   signal: { cancelled: boolean }
-  /** The mic is open (or never will be): on iOS the question is read only now, see voice.ts. */
-  onMicOpen?: () => void
   onPartial?: (text: string) => void
   onListening?: () => void
   onSpeech?: () => void
@@ -127,7 +130,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
     if (!Rec) return reject(new ListenError('service-not-allowed'))
 
     const expected = opts.sum.a * opts.sum.b
-    const hs: HandoffState = { spokenEndAt: opts.spoken ? null : Date.now(), firstHeardAt: null }
+    const hs: HandoffState = { spokenEndAt: opts.spoken ? null : Date.now(), firstHeardAt: null, micStartAt: null }
     let micOpenAt: number | null = null
     let t0: number | null = null
     let speechAt: number | null = null
@@ -160,7 +163,6 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       if (micOpenAt !== null) return
       micOpenAt = Date.now()
       handoffLog('mic open', why)
-      opts.onMicOpen?.()
       maybeStartClock()
     }
 
@@ -255,9 +257,9 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       // no-speech, network, aborted: the 'end' event that follows restarts or finishes.
     }
 
-    function spokenDone() {
+    function spokenDone(at: number) {
       if (settled || hs.spokenEndAt !== null) return
-      hs.spokenEndAt = Date.now()
+      hs.spokenEndAt = at
       startGuard = setTimeout(() => opened('guard'), START_TIMEOUT_MS)
       maybeStartClock()
       evaluate()
@@ -300,6 +302,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
     function start() {
       if (settled || opts.signal.cancelled) return
       handoffLog('rec start requested')
+      if (hs.micStartAt === null) hs.micStartAt = Date.now()
       try {
         rec.start()
       } catch {

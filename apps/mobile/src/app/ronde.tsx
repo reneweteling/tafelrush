@@ -46,6 +46,7 @@ import {
   ListenError,
   releaseAudioSession,
   stopListening,
+  warmUpListening,
 } from '@/lib/listen'
 import { choiceForKey } from '@/lib/webspeech'
 import { fill, pickPhrase, type PhraseKind, type PhraseVars } from '@/lib/phrases'
@@ -192,7 +193,7 @@ export default function Ronde() {
       token: Token,
       withTimer: boolean,
       sum: Sum,
-      /** The question being read aloud; listening starts before it ends (on iOS before it starts). */
+      /** The question being read aloud; listening starts just before it ends (on iOS when it ends). */
       spoken?: Spoken,
     ): Promise<{ value: number | null; ms: number | null; input: 'voice' | 'typed' | 'choice' }> => {
       const e = eng.current
@@ -238,10 +239,10 @@ export default function Ronde() {
           timeoutMs,
           sum,
           spoken: spoken?.done,
-          onMicOpen: spoken?.micOpen,
           signal: token,
           onPartial: (t) => patch({ heard: t }),
           onListening: () => {
+            // The mic really hears her from here on: this tick is her cue to answer.
             play('tick')
             clock = startClock(clock, Date.now())
           },
@@ -298,7 +299,7 @@ export default function Ronde() {
         secondsLeft: settings.seconds,
         choices: e.input === 'kiezen' ? choicesFor(s, Math.random) : [],
       })
-      // Talking: the mic starts just before the question ends, on iOS before it starts (see lib/handoff.ts).
+      // Talking: the mic starts just before the question ends, on iOS when it ends (see lib/handoff.ts).
       let spoken: Spoken | undefined
       if (talking) {
         addLine('app', `${cap(dutchNumberWord(s.a))} keer ${dutchNumberWord(s.b)}?`)
@@ -498,7 +499,11 @@ export default function Ronde() {
       }
       if (!alive) return
       // One audio session for the whole round, so the mic can open without clipping the voice.
-      if (e.input === 'praten') holdAudioSession()
+      if (e.input === 'praten') {
+        holdAudioSession()
+        await warmUpListening()
+        if (!alive) return
+      }
       track('round_start', {
         mode: challenge ? 'challenge' : settings.mode,
         input: e.input === 'praten' ? 'voice' : e.input === 'kiezen' ? 'choice' : 'typed',

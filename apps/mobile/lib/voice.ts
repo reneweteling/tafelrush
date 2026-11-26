@@ -9,7 +9,7 @@ import { Platform } from 'react-native'
 import type { Sum } from '@tafelrush/shared'
 
 import { handoffLog } from './devlog'
-import { cueDelayMs, MIC_WAIT_MS, micBeforeVoice } from './handoff'
+import { cueDelayMs, micAfterVoice } from './handoff'
 import { VOICE_FILES, VOICE_MS } from './voice-files'
 import { introLine, lineClips, lineMs, sumClips, type VoiceLine } from './voice-lines'
 
@@ -172,23 +172,20 @@ export async function say(line: VoiceLine): Promise<void> {
 }
 
 export type Spoken = {
-  /** The voice is done (or stopped, or gave up). */
-  done: Promise<void>
-  /** Time to open the mic: shortly before the line ends, at the latest when it ends. On iOS at once. */
+  /** The voice is done (or stopped, or gave up); resolves with the time it ended. */
+  done: Promise<number>
+  /** Time to open the mic: shortly before the line ends, at the latest when it ends. On iOS when it ends. */
   micCue: Promise<void>
-  /** Call when the mic is open. On iOS the voice waits for this (at most MIC_WAIT_MS); elsewhere it does nothing. */
-  micOpen: () => void
 }
 
 /**
- * Plays a question and tells when to start listening, so the mic is open by the
- * time the last word ends (see lib/handoff.ts). The clips' lengths are known, so
- * the cue is planned from the moment the line starts.
- *
- * On iOS the mic opens first and the line starts when micOpen() is called.
+ * Plays a question and tells when to start listening (see lib/handoff.ts). The
+ * clips' lengths are known, so the cue is planned from the moment the line starts:
+ * a little before its end, so the mic is open by the time the last word ends. On
+ * iOS the cue comes when the line has ended, so the recognizer never hears it.
  */
 export function sayWithCue(line: VoiceLine): Spoken {
-  const micFirst = micBeforeVoice(Platform.OS)
+  const early = !micAfterVoice(Platform.OS)
   const gen = generation
   const totalMs = lineMs(line, (id) => VOICE_MS[id] ?? 0)
   let cue = () => {}
@@ -203,39 +200,25 @@ export function sayWithCue(line: VoiceLine): Spoken {
     cue()
   }
 
-  let micOpen = () => {}
-  let gate: Promise<void> = Promise.resolve()
-  if (micFirst) {
-    gate = new Promise<void>((r) => {
-      const wait = setTimeout(() => {
-        handoffLog('voice waited long enough for the mic')
-        r()
-      }, MIC_WAIT_MS)
-      micOpen = () => {
-        clearTimeout(wait)
-        r()
-      }
-    })
-    fire('mic first')
-  }
-
   handoffLog('voice line', `${line.map((p) => p.clip).join(' ')} (${totalMs} ms)`)
-  const done = gate
+  const done = Promise.resolve()
     .then(() => {
       if (gen !== generation) return
       return playLine(line, {
         onStart: () => {
           handoffLog('voice start')
-          if (!cued) timer = setTimeout(() => fire('planned from clip length'), cueDelayMs(totalMs))
+          if (early && !cued) timer = setTimeout(() => fire('planned from clip length'), cueDelayMs(totalMs))
         },
       })
     })
     .catch(() => undefined)
     .then(() => {
+      const at = Date.now()
       handoffLog('voice end')
       fire('voice end')
+      return at
     })
-  return { done, micCue, micOpen }
+  return { done, micCue }
 }
 
 export function stopVoice() {

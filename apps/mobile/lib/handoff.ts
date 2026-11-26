@@ -1,29 +1,29 @@
 // The handoff from reading a sum aloud to listening for the answer. Pure, so it
 // runs in Vitest; voice.ts, listen.ts and their .web versions use it.
 //
-// - The mic opens a little before the voice is done (LISTEN_LEAD_MS), so it is
-//   live the moment the question ends instead of half a second later. Not on an
-//   iPhone: there starting the mic silences the voice for good, so the mic opens
-//   before the question is read (micBeforeVoice).
-// - The mic then also hears the end of the question. echoOnly() spots a
-//   transcript that is just the question coming back ("zeven keer acht"), and
-//   judge() decides per recognizer result whether it may count.
+// - Android and browsers: the mic opens a little before the voice is done
+//   (LISTEN_LEAD_MS), so it is live the moment the question ends instead of half
+//   a second later. The mic then also hears the end of the question. echoOnly()
+//   spots a transcript that is just the question coming back ("zeven keer acht"),
+//   and judge() decides per recognizer result whether it may count.
+// - iPhone: the mic opens when the voice ends (micAfterVoice), so the recognizer
+//   never hears the question and her answer is the first thing it hears.
 
 import { normalize, parseDutchNumber, type Sum } from '@tafelrush/shared'
 
 /**
- * True where the mic opens before the question is played. On iOS starting the
- * recognizer's audio engine stopped the old system voice (AVSpeechSynthesizer) on
- * the spot, also with the same playAndRecord session already active (seen in a
- * TestFlight recording). The voice is now an audio file, which may well survive
- * that, but this order is proven: the mic opens first and the voice waits for it.
+ * True where the mic opens only once the question has been played.
+ *
+ * iOS: a recognition task that heard the question treats it as speech, and iOS
+ * ends that task by itself after a short silence. That silence is exactly when
+ * she starts answering, so her first word fell into the restart of the task
+ * (TestFlight build 12: "it only hears me if I wait"). A task that starts after
+ * the voice hears her first. Starting the mic no longer stops the voice: that was
+ * the old system voice (AVSpeechSynthesizer), the voice is now an audio file.
  */
-export function micBeforeVoice(os: string): boolean {
+export function micAfterVoice(os: string): boolean {
   return os === 'ios'
 }
-
-/** How long the voice waits for the mic to open before it reads the question anyway. */
-export const MIC_WAIT_MS = 1500
 
 /** Start the recognizer this long before the voice is expected to finish. */
 export const LISTEN_LEAD_MS = 400
@@ -97,11 +97,19 @@ export type HandoffState = {
   spokenEndAt: number | null
   /** When this listen heard its first words (any result), or null. */
   firstHeardAt: number | null
+  /** When the recognizer was first asked to start, or null before that. */
+  micStartAt: number | null
+}
+
+/** The mic started after the voice ended, so nothing it heard can be the voice. */
+export function micMissedVoice(s: HandoffState): boolean {
+  return s.spokenEndAt !== null && s.micStartAt !== null && s.micStartAt >= s.spokenEndAt
 }
 
 /** The first heard words may be the voice: they came in before it ended plus the echo window. */
 export function echoSuspect(s: HandoffState): boolean {
   if (s.spokenEndAt === null) return true
+  if (micMissedVoice(s)) return false
   return s.firstHeardAt === null || s.firstHeardAt < s.spokenEndAt + ECHO_WINDOW_MS
 }
 
@@ -138,5 +146,5 @@ export function judge(alternatives: string[], sum: Sum, s: HandoffState): Judged
 
 /** The recognizer says she started talking; that only counts once it cannot be the voice. */
 export function speechStartCounts(s: HandoffState, now: number): boolean {
-  return s.spokenEndAt !== null && now >= s.spokenEndAt + ECHO_WINDOW_MS
+  return s.spokenEndAt !== null && (micMissedVoice(s) || now >= s.spokenEndAt + ECHO_WINDOW_MS)
 }

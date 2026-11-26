@@ -1,22 +1,33 @@
 // Listens for one spoken number.
 //
 // Speed matters, so:
-// - the mic starts a little before the question has been read, so it is live when
-//   the voice ends (lib/handoff.ts); on iOS it starts before the question, as
-//   starting it mid-sentence silences the voice; the clock starts once the
-//   question is read and the mic is really open, whichever is later;
-// - what the mic hears of the question itself does not count (lib/handoff.ts);
+// - Android: the mic starts a little before the question has been read, so it is
+//   live when the voice ends; what it hears of the question does not count
+//   (lib/handoff.ts);
+// - iOS: the mic starts when the question has been read, see micAfterVoice() in
+//   lib/handoff.ts. warmUpListening() at the start of a round makes that start
+//   quick (the very first one in an app session takes most of a second);
+// - the clock (and its tick) starts once the question is read and the mic is
+//   really open ('audiostart', sent once audio flows into the recognizer),
+//   whichever is later;
 // - the clock stops when she starts talking ('speechstart'): recognition time is
 //   not her thinking time, and she gets a short grace period to finish;
 // - a number that cannot grow any more ("zesenvijftig", "16") counts at once,
 //   "zes" waits a moment because it may still become "zesenvijftig";
 // - continuous mode, so Android does not restart (and beep) after a pause;
 // - on-device recognition when the Dutch model is on the phone: no round trip.
+//
+// Not one recognizer for the whole round: iOS ends a recognition task by itself
+// after a silence and after about a minute, and each restart is a fresh task with
+// a fresh audio engine. A round-long task would restart at moments we do not
+// choose, also halfway through her answer, and it would hear every line the app
+// says. One task per answer, started when nothing else is being said, avoids both.
 
 import { numberIsComplete, type Sum } from '@tafelrush/shared'
 import {
   ExpoSpeechRecognitionModule,
   type ExpoSpeechRecognitionErrorCode,
+  type ExpoSpeechRecognitionOptions,
   type SetCategoryOptions,
 } from 'expo-speech-recognition'
 import { Platform } from 'react-native'
@@ -45,6 +56,8 @@ const SHORT_NUMBER_MS = 450
 const GRACE_MS = 2500
 /** Ask the recognizer for this when the mic never reports it opened. */
 const START_TIMEOUT_MS = 2000
+/** Wait this long before starting again after a recognizer error. */
+const RETRY_MS = 250
 
 const ON_DEVICE_PACKAGE = 'com.google.android.as'
 let onDevice: boolean | null = null
@@ -176,11 +189,9 @@ export type ListenOptions = {
   timeoutMs: number
   /** The sum asked: the right answer counts at once, and the question read back is not an answer. */
   sum: Sum
-  /** The voice reading the question; resolves when it is done. Absent: nothing is being read. */
-  spoken?: Promise<void>
+  /** The voice reading the question; resolves with the time it ended. Absent: nothing is being read. */
+  spoken?: Promise<number>
   signal: { cancelled: boolean }
-  /** The mic is open (or never will be): on iOS the question is read only now, see voice.ts. */
-  onMicOpen?: () => void
   onPartial?: (text: string) => void
   /** The question is read and the mic is open: start the visible clock. */
   onListening?: () => void
@@ -191,7 +202,7 @@ export type ListenOptions = {
 export function listenForNumber(opts: ListenOptions): Promise<Heard> {
   return new Promise((resolve, reject) => {
     const expected = opts.sum.a * opts.sum.b
-    const hs: HandoffState = { spokenEndAt: opts.spoken ? null : Date.now(), firstHeardAt: null }
+    const hs: HandoffState = { spokenEndAt: opts.spoken ? null : Date.now(), firstHeardAt: null, micStartAt: null }
     let micOpenAt: number | null = null
     let t0: number | null = null
     let speechAt: number | null = null
@@ -204,6 +215,8 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
     let deadline: ReturnType<typeof setTimeout> | null = null
     let shortTimer: ReturnType<typeof setTimeout> | null = null
     let startGuard: ReturnType<typeof setTimeout> | null = null
+    let retry: ReturnType<typeof setTimeout> | null = null
+    let errorAt: number | null = null
 
     const elapsed = () => (t0 === null ? 0 : Date.now() - t0)
 
@@ -225,7 +238,6 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       if (micOpenAt !== null) return
       micOpenAt = Date.now()
       handoffLog('mic open', why)
-      opts.onMicOpen?.()
       maybeStartClock()
     }
 
@@ -289,12 +301,18 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
         if (settled) return
         if (last !== null) return finish(last)
         // Non-continuous recognizers stop after a silence: go again while there is time.
-        if (elapsed() < opts.timeoutMs - 400 || (speechAt !== null && Date.now() - speechAt < GRACE_MS)) start()
-        else finish(null)
+        if (elapsed() < opts.timeoutMs - 400 || (speechAt !== null && Date.now() - speechAt < GRACE_MS)) {
+          // Right after an error, wait a moment: an iOS recognizer that refuses a task refuses the next one too.
+          const wait = errorAt !== null && Date.now() - errorAt < 1000 ? RETRY_MS : 0
+          errorAt = null
+          if (wait === 0) start()
+          else retry = setTimeout(start, wait)
+        } else finish(null)
       }),
       ExpoSpeechRecognitionModule.addListener('error', (e) => {
         if (settled) return
-        handoffLog('rec error', e.error)
+        handoffLog('rec error', `${e.error}: ${e.message}`)
+        errorAt = Date.now()
         if (onDevice && (e.error === 'language-not-supported' || e.error === 'service-not-allowed')) {
           // The on-device model let us down; use Google's servers from now on.
           onDevice = false
@@ -303,17 +321,15 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
         if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'language-not-supported') {
           settled = true
           cleanup()
-          // The mic will not open; a question waiting for it is read anyway.
-          opts.onMicOpen?.()
           reject(new ListenError(e.error))
         }
         // no-speech, network, busy: the 'end' event that follows restarts or finishes.
       }),
     ]
 
-    function spokenDone() {
+    function spokenDone(at: number) {
       if (settled || hs.spokenEndAt !== null) return
-      hs.spokenEndAt = Date.now()
+      hs.spokenEndAt = at
       // Some recognizers never send audiostart; start the clock anyway after a while.
       startGuard = setTimeout(() => opened('guard'), START_TIMEOUT_MS)
       maybeStartClock()
@@ -330,6 +346,7 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
       if (deadline) clearTimeout(deadline)
       if (shortTimer) clearTimeout(shortTimer)
       if (startGuard) clearTimeout(startGuard)
+      if (retry) clearTimeout(retry)
       clearInterval(cancelPoll)
       subs.forEach((s) => s.remove())
       if (running) ExpoSpeechRecognitionModule.abort()
@@ -349,26 +366,76 @@ export function listenForNumber(opts: ListenOptions): Promise<Heard> {
     function start() {
       if (settled || opts.signal.cancelled) return
       handoffLog('rec start requested')
+      if (hs.micStartAt === null) hs.micStartAt = Date.now()
       try {
-        ExpoSpeechRecognitionModule.start({
-          lang: 'nl-NL',
-          interimResults: true,
-          continuous: true,
-          maxAlternatives: 3,
-          requiresOnDeviceRecognition: onDevice === true,
-          ...(onDevice ? { androidRecognitionServicePackage: ON_DEVICE_PACKAGE } : {}),
-          iosTaskHint: 'confirmation',
-          // Exactly the session holdAudioSession() set up, so starting the mic changes nothing about it.
-          iosCategory: IOS_SESSION,
-          androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'web_search' },
-        })
+        ExpoSpeechRecognitionModule.start(startOptions())
       } catch {
-        opts.onMicOpen?.()
         finish(null)
       }
     }
 
     start()
+  })
+}
+
+function startOptions(): ExpoSpeechRecognitionOptions {
+  return {
+    lang: 'nl-NL',
+    interimResults: true,
+    continuous: true,
+    maxAlternatives: 3,
+    requiresOnDeviceRecognition: onDevice === true,
+    ...(onDevice ? { androidRecognitionServicePackage: ON_DEVICE_PACKAGE } : {}),
+    iosTaskHint: 'confirmation',
+    // Exactly the session holdAudioSession() set up, so starting the mic changes nothing about it.
+    iosCategory: IOS_SESSION,
+    androidIntentOptions: { EXTRA_LANGUAGE_MODEL: 'web_search' },
+  }
+}
+
+/** Longest a warm-up may hold up the round. */
+const WARM_UP_MS = 1500
+
+/**
+ * iOS: opens the mic once and closes it again, before the round's first line.
+ * The first start in an app session sets up the recognizer and the audio input
+ * and takes most of a second; after this, the mic opens within a few dozen ms
+ * once a question has been read. Resolves when done, never rejects. Elsewhere
+ * nothing to do: there the mic starts before the question ends.
+ */
+export function warmUpListening(): Promise<void> {
+  if (Platform.OS !== 'ios') return Promise.resolve()
+  return new Promise((resolve) => {
+    let done = false
+    const subs: { remove: () => void }[] = []
+    const guard = setTimeout(() => finish('timeout'), WARM_UP_MS)
+    function finish(why: string) {
+      if (done) return
+      done = true
+      clearTimeout(guard)
+      subs.forEach((s) => s.remove())
+      handoffLog('warm-up done', why)
+      // stop(), not abort(): a task cancelled this early makes iOS refuse the next
+      // ones for a second or more (kAFAssistantErrorDomain 209, seen in the simulator).
+      // Its 'end' comes later and finds no listener: listenForNumber subscribes only per question.
+      try {
+        ExpoSpeechRecognitionModule.stop()
+      } catch {
+        // Nothing was listening.
+      }
+      resolve()
+    }
+    subs.push(
+      ExpoSpeechRecognitionModule.addListener('audiostart', () => finish('audiostart')),
+      ExpoSpeechRecognitionModule.addListener('error', (e) => finish(e.error)),
+      ExpoSpeechRecognitionModule.addListener('end', () => finish('end')),
+    )
+    handoffLog('warm-up')
+    try {
+      ExpoSpeechRecognitionModule.start(startOptions())
+    } catch {
+      finish('failed')
+    }
   })
 }
 
