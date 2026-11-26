@@ -18,8 +18,10 @@ import type { Sum } from '@tafelrush/shared'
 import { PHRASES, type Phrase, type PhraseKind, type PhraseVars } from './phrases'
 
 export const VOICE = 'nl-NL-MaartenNeural'
-/** A bit quicker and brighter than the default: friendly and awake, not shouting. */
-export const PROSODY = { rate: '+5%', pitch: '+5%' }
+/** Speech rate and pitch relative to the voice default: friendly and awake, not shouting. */
+export const SPEECH_RATE = '+12%'
+export const SPEECH_PITCH = '+8%'
+export const PROSODY = { rate: SPEECH_RATE, pitch: SPEECH_PITCH }
 /** Pause between sentences, inside a clip (Azure) and between clips of a line (player). */
 export const SENTENCE_PAUSE_MS = 300
 /** Bump when the processing in the generation script changes, so every clip is rendered again. */
